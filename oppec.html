@@ -1,0 +1,1761 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Operasi Hitung Pecahan Interaktif</title>
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@500;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        /* --- DESIGN SYSTEM & GENERAL STYLES --- */
+        :root {
+            --primary: #bc84ee;
+            --primary-light: #f3e8ff;
+            --secondary: #ff823a;
+            --secondary-light: #fff3eb;
+            --accent: #dcfd8b;
+            --accent-dark: #8cb913;
+            --dark: #1e293b;
+            --light: #f8fafc;
+            --white: #ffffff;
+            --correct: #22c55e;
+            --wrong: #ef4444;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            user-select: none;
+        }
+
+        body {
+            background-color: #0f172a;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* --- IMMERSIVE FRAME (1280x720) --- */
+        .presentation-frame {
+            width: 1280px;
+            height: 720px;
+            background-color: var(--white);
+            border-radius: 24px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            border: 8px solid var(--accent);
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* --- SLIDE STRUCTURE --- */
+        .slide {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 50px 70px;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.5s ease-in-out, visibility 0.5s ease-in-out;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            background-color: var(--white);
+        }
+
+        .slide.active {
+            opacity: 1;
+            visibility: visible;
+            position: relative;
+        }
+
+        /* --- NAVIGATION CONTROLS --- */
+        .bottom-nav {
+            position: absolute;
+            bottom: 25px;
+            left: 70px;
+            right: 70px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 50;
+        }
+
+        .nav-btn {
+            background-color: var(--dark);
+            color: var(--white);
+            border: none;
+            padding: 10px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 16px;
+        }
+
+        .nav-btn:hover {
+            background-color: var(--primary);
+            transform: translateY(-2px);
+        }
+
+        .nav-btn:disabled {
+            background-color: #cbd5e1;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .slide-indicator {
+            font-size: 16px;
+            font-weight: 600;
+            color: #64748b;
+            background: #f1f5f9;
+            padding: 6px 16px;
+            border-radius: 20px;
+        }
+
+        /* --- COMMON ELEMENT TYPOGRAPHY & BLOCKS --- */
+        h1 {
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+            font-size: 56px;
+            color: var(--dark);
+        }
+
+        h2.slide-title {
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+            font-size: 36px;
+            color: var(--dark);
+            border-bottom: 4px solid var(--primary);
+            padding-bottom: 10px;
+            display: inline-block;
+            margin-bottom: 25px;
+        }
+
+        h3 {
+            font-family: 'Comfortaa', cursive;
+            font-size: 20px;
+            color: var(--dark);
+            margin-bottom: 12px;
+        }
+
+        p {
+            font-size: 18px;
+            color: #475569;
+            line-height: 1.6;
+        }
+
+        /* --- FORMULA RENDER STYLING --- */
+        .math-expr {
+            display: inline-flex;
+            align-items: center;
+            font-size: 28px;
+            font-weight: bold;
+            color: var(--dark);
+            font-family: 'Comfortaa', cursive;
+            margin: 0 5px;
+        }
+
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            vertical-align: middle;
+            align-items: center;
+            padding: 0 6px;
+            font-size: 26px;
+        }
+
+        .frac > span {
+            display: block;
+            text-align: center;
+        }
+
+        .frac > span:first-child {
+            border-bottom: 3px solid var(--dark);
+            width: 100%;
+            padding-bottom: 2px;
+        }
+
+        .frac > span:last-child {
+            padding-top: 2px;
+        }
+
+        .mixed-num {
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .whole-num {
+            font-size: 34px;
+            margin-right: 2px;
+            font-family: 'Comfortaa', cursive;
+        }
+
+        /* --- INTERACTIVE TABS --- */
+        .tab-bar {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .tab-btn {
+            background-color: var(--light);
+            border: 2px solid #e2e8f0;
+            padding: 10px 20px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background-color: var(--primary-light);
+            border-color: var(--primary);
+            color: #7c3aed;
+        }
+
+        .tab-btn-quiz {
+            background-color: var(--secondary-light);
+            border-color: var(--secondary);
+            color: #ea580c;
+        }
+
+        .tab-btn-quiz.active {
+            background-color: var(--secondary);
+            border-color: var(--secondary);
+            color: var(--white);
+        }
+
+        /* --- INPUTS & BUTTONS --- */
+        input[type="text"] {
+            border: 3px solid #cbd5e1;
+            padding: 12px 18px;
+            border-radius: 12px;
+            font-size: 18px;
+            font-weight: 600;
+            outline: none;
+            transition: all 0.2s ease;
+            background-color: var(--white);
+        }
+
+        input[type="text"]:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 4px var(--primary-light);
+        }
+
+        .input-correct {
+            border-color: var(--correct) !important;
+            background-color: #f0fdf4 !important;
+            color: #15803d !important;
+        }
+
+        .input-wrong {
+            border-color: var(--wrong) !important;
+            background-color: #fef2f2 !important;
+            color: #b91c1c !important;
+        }
+
+        .action-btn {
+            background-color: var(--primary);
+            color: var(--white);
+            border: none;
+            padding: 12px 24px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 16px;
+        }
+
+        .action-btn:hover {
+            opacity: 0.9;
+            transform: translateY(-1px);
+        }
+
+        .btn-green {
+            background-color: var(--correct);
+        }
+
+        .btn-orange {
+            background-color: var(--secondary);
+        }
+
+        /* --- SLIDE 1 SPECIFIC --- */
+        .slide-cover {
+            background: linear-gradient(135deg, var(--primary-light) 0%, var(--secondary-light) 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .cover-content {
+            z-index: 10;
+        }
+
+        .student-setup {
+            display: flex;
+            gap: 30px;
+            margin-top: 40px;
+            justify-content: center;
+        }
+
+        .student-setup-card {
+            background: var(--white);
+            padding: 24px;
+            border-radius: 20px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05);
+            border: 3px solid #f1f5f9;
+            width: 280px;
+        }
+
+        /* --- SLIDE 2 SPECIFIC --- */
+        .goals-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 24px;
+            margin-top: 20px;
+        }
+
+        .goal-card {
+            background: #f8fafc;
+            border: 3px solid var(--accent);
+            border-radius: 20px;
+            padding: 30px 24px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .goal-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .goal-icon {
+            font-size: 40px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        /* --- SLIDE 3 SPECIFIC --- */
+        .warmup-deck {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            flex-grow: 1;
+            margin-bottom: 60px;
+        }
+
+        .warmup-panel {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 25px;
+            border: 3px dashed #cbd5e1;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .question-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: var(--white);
+            padding: 15px 20px;
+            border-radius: 14px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
+        }
+
+        /* --- SLIDE 4 & 5 CONTENT GRID --- */
+        .materi-grid {
+            display: grid;
+            grid-template-columns: 1.2fr 0.8fr;
+            gap: 40px;
+            flex-grow: 1;
+            margin-bottom: 60px;
+        }
+
+        .materi-illustration-box {
+            background-color: #f8fafc;
+            border-radius: 20px;
+            border: 3px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            overflow: hidden;
+            height: 250px;
+            margin-bottom: 20px;
+        }
+
+        .materi-img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+            border-radius: 10px;
+        }
+
+        .exercise-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            flex-grow: 1;
+            margin-bottom: 60px;
+        }
+
+        .exercise-card {
+            background-color: var(--light);
+            border: 3px solid var(--accent);
+            border-radius: 20px;
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .exercise-control-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        /* --- SLIDE 8: GAME BOARD --- */
+        .game-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .timer-card {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: #fee2e2;
+            border: 3px solid #fca5a5;
+            padding: 12px 24px;
+            border-radius: 16px;
+            font-size: 26px;
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+            color: #ef4444;
+        }
+
+        .scoreboard {
+            display: flex;
+            gap: 20px;
+        }
+
+        .score-box {
+            background: #f1f5f9;
+            border: 3px solid #cbd5e1;
+            padding: 10px 20px;
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            font-weight: 700;
+        }
+
+        .score-box.player-1 { border-color: var(--primary); background: var(--primary-light); }
+        .score-box.player-2 { border-color: var(--secondary); background: var(--secondary-light); }
+
+        .score-val {
+            font-size: 24px;
+            font-family: 'Comfortaa', cursive;
+        }
+
+        .score-add-btn {
+            background: var(--dark);
+            color: var(--white);
+            border: none;
+            width: 35px;
+            height: 35px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .cards-board {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 15px;
+            flex-grow: 1;
+            margin-bottom: 50px;
+        }
+
+        .magic-card {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+            border-radius: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--white);
+            font-family: 'Comfortaa', cursive;
+            font-weight: 700;
+            font-size: 28px;
+            cursor: pointer;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transition: all 0.2s ease;
+        }
+
+        .magic-card:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.2);
+        }
+
+        .magic-card.opened {
+            background: #e2e8f0;
+            color: #94a3b8;
+            cursor: not-allowed;
+            box-shadow: none;
+            transform: none;
+        }
+
+        /* Game Overlay Panel */
+        .game-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 100;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 80px;
+        }
+
+        .overlay-card {
+            background: var(--white);
+            border-radius: 24px;
+            width: 800px;
+            padding: 40px;
+            text-align: center;
+            border: 8px solid var(--accent);
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* --- SLIDE 9: WORD PROBLEMS --- */
+        .story-container {
+            background: #fdfdfd;
+            border: 3px solid var(--accent);
+            border-radius: 24px;
+            padding: 40px;
+            flex-grow: 1;
+            margin-bottom: 60px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+        }
+
+        .story-pembahasan {
+            background: var(--primary-light);
+            border-radius: 16px;
+            padding: 20px;
+            border-left: 6px solid var(--primary);
+            font-size: 18px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        /* --- SLIDE 10: REFLECTION --- */
+        .reflection-container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-top: 20px;
+        }
+
+        .reflection-panel {
+            background: var(--light);
+            border-radius: 20px;
+            padding: 30px;
+        }
+
+        .reflection-panel.ref-yellow {
+            background: var(--secondary-light);
+            border: 3px solid var(--secondary);
+        }
+
+        .reflection-panel.ref-blue {
+            background: var(--primary-light);
+            border: 3px solid var(--primary);
+        }
+
+        /* --- SLIDE 11: CLOSING --- */
+        .closing-container {
+            text-align: center;
+            margin: auto;
+            max-width: 800px;
+        }
+
+        .closing-container h1 {
+            font-size: 72px;
+            color: var(--primary);
+            margin-bottom: 20px;
+        }
+
+        .closing-container p {
+            font-size: 28px;
+            color: var(--dark);
+            font-weight: 600;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="presentation-frame">
+        
+        <!-- SLIDE 1: COVER -->
+        <div class="slide slide-cover active" id="slide1">
+            <div class="cover-content">
+                <h1>Operasi Hitung Pecahan</h1>
+                <p style="font-size: 24px; color: #475569; margin-top: 15px;">Tantangan Matematika Seru & Interaktif</p>
+                <div class="student-setup">
+                    <div class="student-setup-card">
+                        <h3>Siswa 1</h3>
+                        <input type="text" id="s1-name-input" placeholder="Nama Siswa 1" value="Siswa 1" oninput="updateStudentNames()">
+                    </div>
+                    <div class="student-setup-card">
+                        <h3>Siswa 2</h3>
+                        <input type="text" id="s2-name-input" placeholder="Nama Siswa 2" value="Siswa 2" oninput="updateStudentNames()">
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <div></div>
+                <div class="slide-indicator">Slide 1 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Mulai <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 2: GOALS -->
+        <div class="slide" id="slide2">
+            <div>
+                <h2 class="slide-title">Tujuan Pembelajaran</h2>
+                <div class="goals-container">
+                    <div class="goal-card">
+                        <div class="goal-icon"><i class="fa-solid fa-rotate"></i></div>
+                        <h3>Konversi Pecahan</h3>
+                        <p>Siswa mampu mengonversi pecahan biasa ke pecahan campuran, serta menyederhanakan pecahan ke bentuk paling sederhana.</p>
+                    </div>
+                    <div class="goal-card">
+                        <div class="goal-icon"><i class="fa-solid fa-calculator"></i></div>
+                        <h3>Penjumlahan & Pengurangan</h3>
+                        <p>Menguasai operasi penjumlahan dan pengurangan pecahan, baik pecahan penyebut sama, berbeda, maupun campuran.</p>
+                    </div>
+                    <div class="goal-card">
+                        <div class="goal-icon"><i class="fa-solid fa-multiply"></i></div>
+                        <h3>Perkalian & Pembagian</h3>
+                        <p>Memahami dan mahir menyelesaikan perkalian dan pembagian pecahan dengan cara cepat dan runtut.</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 2 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 3: WARMUP -->
+        <div class="slide" id="slide3">
+            <div>
+                <h2 class="slide-title">Sesi Pemanasan (Warm-up)</h2>
+                <div class="tab-bar">
+                    <button class="tab-btn active" id="btn-warmup1" onclick="switchWarmup(1)">Pemanasan 1: Ke Campuran</button>
+                    <button class="tab-btn" id="btn-warmup2" onclick="switchWarmup(2)">Pemanasan 2: Ke Biasa</button>
+                    <button class="tab-btn" id="btn-warmup3" onclick="switchWarmup(3)">Pemanasan 3: Sederhanakan</button>
+                </div>
+
+                <div class="warmup-deck" id="warmup-deck-container">
+                    <!-- Dynamic content filled by JS -->
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 3 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 4: PENJUMLAHAN -->
+        <div class="slide" id="slide4">
+            <div>
+                <div style="display: flex; gap: 40px; align-items: center; margin-bottom: 10px;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT06kXNFHy_1YQzcpTtWBSfisZaBdocjzQrZ9IfwA10oWXkAoDZhPjV2qk&s=10" style="height: 60px; object-fit: contain; border-radius: 8px;">
+                    <h2 class="slide-title" style="margin-bottom: 0;">Penjumlahan Pecahan</h2>
+                </div>
+                
+                <div class="tab-bar">
+                    <button class="tab-btn active" id="btn-materi-4-1" onclick="switchMateri(4, 1)">Materi 1: Penyebut Sama</button>
+                    <button class="tab-btn" id="btn-materi-4-2" onclick="switchMateri(4, 2)">Materi 2: Penyebut Berbeda</button>
+                    <button class="tab-btn" id="btn-materi-4-3" onclick="switchMateri(4, 3)">Materi 3: Cara Cepat Campuran</button>
+                    <button class="tab-btn tab-btn-quiz" id="btn-materi-4-quiz" onclick="switchMateri(4, 'quiz')">Latihan Soal</button>
+                </div>
+
+                <!-- Dynamic Materi / Quiz area -->
+                <div id="materi-4-container" style="flex-grow: 1;">
+                    <!-- JS updates this based on active tab -->
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 4 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 5: PENGURANGAN -->
+        <div class="slide" id="slide5">
+            <div>
+                <div style="display: flex; gap: 40px; align-items: center; margin-bottom: 10px;">
+                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDEKhWlBCQCUXnxyHHHTKXglJ2kIt3H4Gryq6AjEHgCQ&s=10" style="height: 60px; object-fit: contain; border-radius: 8px;">
+                    <h2 class="slide-title" style="margin-bottom: 0;">Pengurangan Pecahan</h2>
+                </div>
+
+                <div class="tab-bar">
+                    <button class="tab-btn active" id="btn-materi-5-1" onclick="switchMateri(5, 1)">Materi 1: Penyebut Sama</button>
+                    <button class="tab-btn" id="btn-materi-5-2" onclick="switchMateri(5, 2)">Materi 2: Penyebut Berbeda</button>
+                    <button class="tab-btn" id="btn-materi-5-3" onclick="switchMateri(5, 3)">Materi 3: Pengurangan Campuran</button>
+                    <button class="tab-btn tab-btn-quiz" id="btn-materi-5-quiz" onclick="switchMateri(5, 'quiz')">Latihan Soal</button>
+                </div>
+
+                <!-- Dynamic Materi / Quiz area -->
+                <div id="materi-5-container" style="flex-grow: 1;">
+                    <!-- JS updates this -->
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 5 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 6: PERKALIAN -->
+        <div class="slide" id="slide6">
+            <div>
+                <h2 class="slide-title">Perkalian Pecahan</h2>
+                <div class="tab-bar">
+                    <button class="tab-btn active" id="btn-materi-6-1" onclick="switchMateri(6, 1)">Materi 1: Pecahan biasa</button>
+                    <button class="tab-btn" id="btn-materi-6-2" onclick="switchMateri(6, 2)">Materi 2: Pecahan Campuran</button>
+                    <button class="tab-btn" id="btn-materi-6-3" onclick="switchMateri(6, 3)">Materi 3: Pecahan & Bilangan Bulat</button>
+                    <button class="tab-btn" id="btn-materi-6-4" onclick="switchMateri(6, 4)">Materi 4: Jumlah Bagian Benda</button>
+                    <button class="tab-btn tab-btn-quiz" id="btn-materi-6-quiz" onclick="switchMateri(6, 'quiz')">Latihan Soal</button>
+                </div>
+
+                <div id="materi-6-container" style="flex-grow: 1;">
+                    <!-- JS updates this -->
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 6 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 7: PEMBAGIAN -->
+        <div class="slide" id="slide7">
+            <div>
+                <h2 class="slide-title">Pembagian Pecahan</h2>
+                <div class="tab-bar">
+                    <button class="tab-btn active" id="btn-materi-7-1" onclick="switchMateri(7, 1)">Materi 1: Pecahan Biasa</button>
+                    <button class="tab-btn" id="btn-materi-7-2" onclick="switchMateri(7, 2)">Materi 2: Pecahan Campuran</button>
+                    <button class="tab-btn" id="btn-materi-7-3" onclick="switchMateri(7, 3)">Materi 3: Pecahan & Bil. Bulat</button>
+                    <button class="tab-btn" id="btn-materi-7-4" onclick="switchMateri(7, 4)">Materi 4: Jumlah Bagian Benda</button>
+                    <button class="tab-btn tab-btn-quiz" id="btn-materi-7-quiz" onclick="switchMateri(7, 'quiz')">Latihan Soal</button>
+                </div>
+
+                <div id="materi-7-container" style="flex-grow: 1;">
+                    <!-- JS updates this -->
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 7 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 8: GAME TIME -->
+        <div class="slide" id="slide8">
+            <div>
+                <div class="game-header">
+                    <h2 class="slide-title" style="margin-bottom:0;">Tantangan Kartu Ajaib</h2>
+                    <div class="timer-card">
+                        <i class="fa-solid fa-clock"></i> <span id="game-timer-val">03:00</span>
+                    </div>
+                    <div class="scoreboard">
+                        <div class="score-box player-1">
+                            <span id="score-p1-label">Siswa 1</span>
+                            <span class="score-val" id="score-p1-val">0</span>
+                            <button class="score-add-btn" onclick="addScore(1)">+1</button>
+                        </div>
+                        <div class="score-box player-2">
+                            <span id="score-p2-label">Siswa 2</span>
+                            <span class="score-val" id="score-p2-val">0</span>
+                            <button class="score-add-btn" onclick="addScore(2)">+1</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="cards-board" id="cards-board-container">
+                    <!-- Cards populated via JS (1-20) -->
+                </div>
+            </div>
+
+            <!-- Overlay for active card challenge -->
+            <div class="game-overlay" id="game-overlay-panel">
+                <div class="overlay-card">
+                    <h2 style="font-family: 'Comfortaa'; color: var(--primary);" id="game-card-title">KARTU #1</h2>
+                    <div style="font-size: 36px; font-weight: bold; margin: 20px 0;" id="game-card-math"></div>
+                    <div style="display: flex; gap: 20px; justify-content: center;">
+                        <input type="text" id="game-input-ans" placeholder="Jawaban..." style="width: 300px; text-align: center;">
+                        <button class="action-btn" onclick="checkGameAnswer()">Cek Jawaban</button>
+                    </div>
+                    <div style="display: flex; gap: 20px; justify-content: center; margin-top: 20px;">
+                        <button class="action-btn btn-orange" onclick="addGameTime()">+30 Detik (Lempar)</button>
+                        <button class="action-btn btn-green" onclick="announceWinner()">Umumkan Pemenang</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 8 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 9: WORD PROBLEMS -->
+        <div class="slide" id="slide9">
+            <div>
+                <h2 class="slide-title">Petualangan Soal Cerita</h2>
+                <div class="story-container">
+                    <div>
+                        <h3 id="story-number" style="color: var(--secondary);">Soal 1 dari 20</h3>
+                        <p id="story-content-text" style="font-size: 24px; margin-top: 15px;"></p>
+                    </div>
+
+                    <div>
+                        <div style="display: flex; gap: 20px; align-items: center; margin-top: 30px;">
+                            <input type="text" id="story-user-ans" placeholder="Ketik jawaban kamu di sini" style="flex-grow: 1;">
+                            <button class="action-btn" onclick="checkStoryAnswer()">Cek Jawaban</button>
+                            <button class="action-btn btn-orange" onclick="togglePembahasan()">Pembahasan</button>
+                            <button class="action-btn btn-green" onclick="nextStory()">Soal Selanjutnya <i class="fa-solid fa-forward"></i></button>
+                        </div>
+                        <div class="story-pembahasan" id="story-pembahasan-panel">
+                            <!-- Dynamic pembahasan -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 9 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 10: REFLECTION -->
+        <div class="slide" id="slide10">
+            <div>
+                <h2 class="slide-title">Kesimpulan & Refleksi</h2>
+                <div class="reflection-container">
+                    <div class="reflection-panel ref-blue">
+                        <h3 style="color: #4f46e5; margin-bottom: 20px;"><i class="fa-solid fa-lightbulb"></i> Poin Kunci Hari Ini</h3>
+                        <p style="font-size: 18px; margin-bottom: 12px;"><strong style="color: var(--dark);">Konsep Penyebut:</strong> Menyamakan penyebut adalah langkah krusial dalam penjumlahan dan pengurangan.</p>
+                        <p style="font-size: 18px; margin-bottom: 12px;"><strong style="color: var(--dark);">Perkalian vs Pembagian:</strong> Perkalian mengalikan atas dan bawah secara instan. Pembagian mengharuskan kita membalik pembagi terlebih dahulu.</p>
+                        <p style="font-size: 18px;"><strong style="color: var(--dark);">Sederhanakan:</strong> Bentuk hasil akhir pecahan selalu paling elok saat disederhanakan sesingkat mungkin.</p>
+                    </div>
+
+                    <div class="reflection-panel ref-yellow">
+                        <h3 style="color: #b45309; margin-bottom: 20px;"><i class="fa-solid fa-comments"></i> Refleksi Siswa</h3>
+                        <p style="font-size: 18px; margin-bottom: 15px;">1. Bagian materi operasi pecahan manakah yang terasa paling mudah hari ini?</p>
+                        <p style="font-size: 18px; margin-bottom: 15px;">2. Trik pembagian atau penjumlahan manakah yang ingin kamu pelajari lebih dalam lagi?</p>
+                        <p style="font-size: 18px;">Ingat! Matematika adalah seni berlatih. Semakin banyak mencoba, kalian akan semakin mahir!</p>
+                    </div>
+                </div>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 10 / 11</div>
+                <button class="nav-btn" onclick="nextSlide()">Lanjut <i class="fa-solid fa-arrow-right"></i></button>
+            </div>
+        </div>
+
+        <!-- SLIDE 11: THANK YOU -->
+        <div class="slide" id="slide11">
+            <div class="closing-container">
+                <h1>Thank You For Today!</h1>
+                <p>Good Job All! 🥳👏</p>
+                <div style="font-size: 120px; margin: 40px 0;">🏆</div>
+                <p style="font-size: 20px; color: #64748b;">Sampai jumpa di kelas matematika yang seru selanjutnya!</p>
+            </div>
+            <div class="bottom-nav">
+                <button class="nav-btn" onclick="prevSlide()"><i class="fa-solid fa-arrow-left"></i> Kembali</button>
+                <div class="slide-indicator">Slide 11 / 11</div>
+                <div></div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- --- JAVASCRIPT GAME LOGIC & EXERCISE SYSTEM --- -->
+    <script>
+        // --- IMMERSIVE PRESENTATION STATE ENGINE ---
+        let currentSlide = 1;
+        const totalSlides = 11;
+        let p1Name = "Siswa 1";
+        let p2Name = "Siswa 2";
+        let p1Score = 0;
+        let p2Score = 0;
+
+        // --- MATH RENDER HELPER ---
+        // Generates beautiful custom HTML representation of a fraction
+        function createFracHtml(num, den) {
+            return `<span class="frac"><span>${num}</span><span>${den}</span></span>`;
+        }
+
+        function createMixedHtml(whole, num, den) {
+            return `<span class="mixed-num"><span class="whole-num">${whole}</span>${createFracHtml(num, den)}</span>`;
+        }
+
+        // --- NAME SYNCRONIZATION ---
+        function updateStudentNames() {
+            p1Name = document.getElementById('s1-name-input').value.trim() || "Siswa 1";
+            p2Name = document.getElementById('s2-name-input').value.trim() || "Siswa 2";
+            
+            // Sync all labels in DOM
+            document.getElementById('score-p1-label').innerText = p1Name;
+            document.getElementById('score-p2-label').innerText = p2Name;
+            
+            // Refresh dynamic components if rendered
+            if (currentSlide === 3) switchWarmup(activeWarmupTab);
+            if (currentSlide === 4) switchMateri(4, activeMateriTab[4]);
+            if (currentSlide === 5) switchMateri(5, activeMateriTab[5]);
+            if (currentSlide === 6) switchMateri(6, activeMateriTab[6]);
+            if (currentSlide === 7) switchMateri(7, activeMateriTab[7]);
+        }
+
+        // --- SLIDE NAVIGATION CONTROL ---
+        function showSlide(num) {
+            document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+            document.getElementById('slide' + num).classList.add('active');
+            currentSlide = num;
+
+            // Trigger specific actions on entering slides
+            if (num === 3) switchWarmup(1);
+            if (num === 4) switchMateri(4, 1);
+            if (num === 5) switchMateri(5, 1);
+            if (num === 6) switchMateri(6, 1);
+            if (num === 7) switchMateri(7, 1);
+            if (num === 8) initGameBoard();
+            if (num === 9) renderStoryProblem();
+        }
+
+        function nextSlide() {
+            if (currentSlide < totalSlides) {
+                showSlide(currentSlide + 1);
+            }
+        }
+
+        function prevSlide() {
+            if (currentSlide > 1) {
+                showSlide(currentSlide - 1);
+            }
+        }
+
+        // --- SESSION 3: WARMUP ENGINE ---
+        let activeWarmupTab = 1;
+        const warmupData = {
+            1: {
+                title: "Mengubah Pecahan Biasa ke Pecahan Campuran",
+                s1: [
+                    { q: "5/3", html: createFracHtml("5", "3"), a: "1 2/3" },
+                    { q: "9/4", html: createFracHtml("9", "4"), a: "2 1/4" }
+                ],
+                s2: [
+                    { q: "7/2", html: createFracHtml("7", "2"), a: "3 1/2" },
+                    { q: "11/5", html: createFracHtml("11", "5"), a: "2 1/5" }
+                ]
+            },
+            2: {
+                title: "Mengubah Pecahan Campuran ke Pecahan Biasa",
+                s1: [
+                    { q: "1 3/4", html: createMixedHtml("1", "3", "4"), a: "7/4" },
+                    { q: "3 1/2", html: createMixedHtml("3", "1", "2"), a: "7/2" }
+                ],
+                s2: [
+                    { q: "2 1/5", html: createMixedHtml("2", "1", "5"), a: "11/5" },
+                    { q: "4 2/3", html: createMixedHtml("4", "2", "3"), a: "14/3" }
+                ]
+            },
+            3: {
+                title: "Menyederhanakan Pecahan Ke Bentuk Paling Sederhana",
+                s1: [
+                    { q: "6/8", html: createFracHtml("6", "8"), a: "3/4" },
+                    { q: "10/15", html: createFracHtml("10", "15"), a: "2/3" }
+                ],
+                s2: [
+                    { q: "12/16", html: createFracHtml("12", "16"), a: "3/4" },
+                    { q: "14/21", html: createFracHtml("14", "21"), a: "2/3" }
+                ]
+            }
+        };
+
+        function switchWarmup(tabNum) {
+            activeWarmupTab = tabNum;
+            document.querySelectorAll('#slide3 .tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('btn-warmup' + tabNum).classList.add('active');
+
+            const container = document.getElementById('warmup-deck-container');
+            const data = warmupData[tabNum];
+
+            let html = `
+                <div class="warmup-panel">
+                    <h3 style="color: var(--primary);"><i class="fa-solid fa-user-graduate"></i> Porsi ${p1Name}</h3>
+                    <div class="question-row">
+                        <span class="math-expr">Soal 1: ${data.s1[0].html}</span>
+                        <div>
+                            <input type="text" id="wu-p1-0" placeholder="Jawaban..." style="width: 130px;">
+                            <button class="action-btn btn-green" onclick="checkAnswer('wu-p1-0', '${data.s1[0].a}')">Cek</button>
+                        </div>
+                    </div>
+                    <div class="question-row">
+                        <span class="math-expr">Soal 2: ${data.s1[1].html}</span>
+                        <div>
+                            <input type="text" id="wu-p1-1" placeholder="Jawaban..." style="width: 130px;">
+                            <button class="action-btn btn-green" onclick="checkAnswer('wu-p1-1', '${data.s1[1].a}')">Cek</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="warmup-panel">
+                    <h3 style="color: var(--secondary);"><i class="fa-solid fa-user-graduate"></i> Porsi ${p2Name}</h3>
+                    <div class="question-row">
+                        <span class="math-expr">Soal 1: ${data.s2[0].html}</span>
+                        <div>
+                            <input type="text" id="wu-p2-0" placeholder="Jawaban..." style="width: 130px;">
+                            <button class="action-btn btn-green" onclick="checkAnswer('wu-p2-0', '${data.s2[0].a}')">Cek</button>
+                        </div>
+                    </div>
+                    <div class="question-row">
+                        <span class="math-expr">Soal 2: ${data.s2[1].html}</span>
+                        <div>
+                            <input type="text" id="wu-p2-1" placeholder="Jawaban..." style="width: 130px;">
+                            <button class="action-btn btn-green" onclick="checkAnswer('wu-p2-1', '${data.s2[1].a}')">Cek</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            container.innerHTML = html;
+        }
+
+        function checkAnswer(inputId, correctAns) {
+            const input = document.getElementById(inputId);
+            const userAns = input.value.trim().toLowerCase().replace(/\s+/g, ' ');
+            const normalizedCorrect = correctAns.toLowerCase().trim().replace(/\s+/g, ' ');
+
+            if (userAns === normalizedCorrect) {
+                input.className = "input-correct";
+            } else {
+                input.className = "input-wrong";
+            }
+        }
+
+        // --- MATERI AND QUIZ NAVIGATION ---
+        let activeMateriTab = { 4: 1, 5: 1, 6: 1, 7: 1 };
+        let activeQuizIndex = {
+            4: { p1: 0, p2: 0 },
+            5: { p1: 0, p2: 0 },
+            6: { p1: 0, p2: 0 },
+            7: { p1: 0, p2: 0 }
+        };
+
+        // --- PREDEFINED 10 HIGH-QUALITY EXERCISES FOR EACH TYPE ---
+        const exercisesDB = {
+            4: { // Addition
+                p1: [
+                    { q: `Penyebut Sama: ${createFracHtml("1", "5")} + ${createFracHtml("2", "5")}`, raw: "1/5 + 2/5", a: "3/5" },
+                    { q: `Penyebut Sama: ${createFracHtml("3", "8")} + ${createFracHtml("1", "8")}`, raw: "3/8 + 1/8", a: "1/2" },
+                    { q: `Penyebut Berbeda: ${createFracHtml("1", "2")} + ${createFracHtml("1", "3")}`, raw: "1/2 + 1/3", a: "5/6" },
+                    { q: `Penyebut Berbeda: ${createFracHtml("2", "5")} + ${createFracHtml("1", "4")}`, raw: "2/5 + 1/4", a: "13/20" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("1", "1", "3")} + ${createMixedHtml("2", "1", "3")}`, raw: "1 1/3 + 2 1/3", a: "3 2/3" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("2", "1", "2")} + ${createMixedHtml("1", "1", "4")}`, raw: "2 1/2 + 1 1/4", a: "3 3/4" },
+                    { q: `Tantangan: ${createFracHtml("3", "10")} + ${createFracHtml("2", "5")}`, raw: "3/10 + 2/5", a: "7/10" },
+                    { q: `Campuran Beda: ${createMixedHtml("1", "1", "5")} + ${createMixedHtml("2", "1", "2")}`, raw: "1 1/5 + 2 1/2", a: "3 7/10" },
+                    { q: `Sederhana: ${createFracHtml("5", "12")} + ${createFracHtml("1", "12")}`, raw: "5/12 + 1/12", a: "1/2" },
+                    { q: `Tantangan Akhir: ${createMixedHtml("3", "1", "4")} + ${createMixedHtml("1", "5", "6")}`, raw: "3 1/4 + 1 5/6", a: "5 1/12" }
+                ],
+                p2: [
+                    { q: `Penyebut Sama: ${createFracHtml("2", "5")} + ${createFracHtml("2", "5")}`, raw: "2/5 + 2/5", a: "4/5" },
+                    { q: `Penyebut Sama: ${createFracHtml("5", "8")} + ${createFracHtml("1", "8")}`, raw: "5/8 + 1/8", a: "3/4" },
+                    { q: `Penyebut Berbeda: ${createFracHtml("1", "3")} + ${createFracHtml("1", "4")}`, raw: "1/3 + 1/4", a: "7/12" },
+                    { q: `Penyebut Berbeda: ${createFracHtml("3", "5")} + ${createFracHtml("1", "6")}`, raw: "3/5 + 1/6", a: "23/30" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("2", "1", "4")} + ${createMixedHtml("1", "2", "4")}`, raw: "2 1/4 + 1 2/4", a: "3 3/4" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("1", "1", "2")} + ${createMixedHtml("2", "1", "3")}`, raw: "1 1/2 + 2 1/3", a: "3 5/6" },
+                    { q: `Tantangan: ${createFracHtml("1", "6")} + ${createFracHtml("2", "3")}`, raw: "1/6 + 2/3", a: "5/6" },
+                    { q: `Campuran Beda: ${createMixedHtml("2", "1", "4")} + ${createMixedHtml("1", "1", "3")}`, raw: "2 1/4 + 1 1/3", a: "3 7/12" },
+                    { q: `Sederhana: ${createFracHtml("3", "10")} + ${createFracHtml("1", "10")}`, raw: "3/10 + 1/10", a: "2/5" },
+                    { q: `Tantangan Akhir: ${createMixedHtml("2", "1", "6")} + ${createMixedHtml("2", "3", "4")}`, raw: "2 1/6 + 2 3/4", a: "4 11/12" }
+                ]
+            },
+            5: { // Subtraction
+                p1: [
+                    { q: `Penyebut Sama: ${createFracHtml("4", "5")} - ${createFracHtml("1", "5")}`, raw: "4/5 - 1/5", a: "3/5" },
+                    { q: `Penyebut Berbeda: ${createFracHtml("1", "2")} - ${createFracHtml("1", "3")}`, raw: "1/2 - 1/3", a: "1/6" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("3", "2", "5")} - ${createMixedHtml("1", "1", "5")}`, raw: "3 2/5 - 1 1/5", a: "2 1/5" },
+                    { q: `Campuran Pinjam: ${createMixedHtml("3", "1", "4")} - ${createMixedHtml("1", "3", "4")}`, raw: "3 1/4 - 1 3/4", a: "1 1/2" },
+                    { q: `Penyebut Beda: ${createFracHtml("3", "4")} - ${createFracHtml("2", "5")}`, raw: "3/4 - 2/5", a: "7/20" },
+                    { q: `Sederhanakan: ${createFracHtml("5", "6")} - ${createFracHtml("1", "6")}`, raw: "5/6 - 1/6", a: "2/3" },
+                    { q: `Campuran Beda: ${createMixedHtml("4", "1", "2")} - ${createMixedHtml("1", "1", "3")}`, raw: "4 1/2 - 1 1/3", a: "3 1/6" },
+                    { q: `Suku Pinjam Beda: ${createMixedHtml("3", "1", "3")} - ${createMixedHtml("1", "1", "2")}`, raw: "3 1/3 - 1 1/2", a: "1 5/6" },
+                    { q: `Tantangan: ${createFracHtml("9", "10")} - ${createFracHtml("2", "5")}`, raw: "9/10 - 2/5", a: "1/2" },
+                    { q: `Ujian Akhir: ${createMixedHtml("5", "1", "6")} - ${createMixedHtml("2", "2", "3")}`, raw: "5 1/6 - 2 2/3", a: "2 1/2" }
+                ],
+                p2: [
+                    { q: `Penyebut Sama: ${createFracHtml("3", "4")} - ${createFracHtml("1", "4")}`, raw: "3/4 - 1/4", a: "1/2" },
+                    { q: `Penyebut Berbeda: ${createFracHtml("2", "3")} - ${createFracHtml("1", "4")}`, raw: "2/3 - 1/4", a: "5/12" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("4", "3", "5")} - ${createMixedHtml("2", "1", "5")}`, raw: "4 3/5 - 2 1/5", a: "2 2/5" },
+                    { q: `Campuran Pinjam: ${createMixedHtml("4", "1", "3")} - ${createMixedHtml("2", "2", "3")}`, raw: "4 1/3 - 2 2/3", a: "1 2/3" },
+                    { q: `Penyebut Beda: ${createFracHtml("4", "5")} - ${createFracHtml("1", "3")}`, raw: "4/5 - 1/3", a: "7/15" },
+                    { q: `Sederhanakan: ${createFracHtml("7", "8")} - ${createFracHtml("3", "8")}`, raw: "7/8 - 3/8", a: "1/2" },
+                    { q: `Campuran Beda: ${createMixedHtml("3", "2", "3")} - ${createMixedHtml("1", "1", "4")}`, raw: "3 2/3 - 1 1/4", a: "2 5/12" },
+                    { q: `Suku Pinjam Beda: ${createMixedHtml("2", "1", "4")} - ${createMixedHtml("1", "2", "3")}`, raw: "2 1/4 - 1 2/3", a: "7/12" },
+                    { q: `Tantangan: ${createFracHtml("7", "12")} - ${createFracHtml("1", "4")}`, raw: "7/12 - 1/4", a: "1/3" },
+                    { q: `Ujian Akhir: ${createMixedHtml("4", "2", "5")} - ${createMixedHtml("1", "1", "2")}`, raw: "4 2/5 - 1 1/2", a: "2 9/10" }
+                ]
+            },
+            6: { // Multiplication
+                p1: [
+                    { q: `Pecahan biasa: ${createFracHtml("2", "3")} × ${createFracHtml("4", "5")}`, raw: "2/3 x 4/5", a: "8/15" },
+                    { q: `Sederhanakan: ${createFracHtml("1", "2")} × ${createFracHtml("4", "5")}`, raw: "1/2 x 4/5", a: "2/5" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("1", "1", "2")} × ${createMixedHtml("1", "1", "3")}`, raw: "1 1/2 x 1 1/3", a: "2" },
+                    { q: `Campuran & Biasa: ${createMixedHtml("2", "1", "4")} × ${createFracHtml("2", "3")}`, raw: "2 1/4 x 2/3", a: "1 1/2" },
+                    { q: `Bilangan Bulat: ${createFracHtml("3", "4")} × 8`, raw: "3/4 x 8", a: "6" },
+                    { q: `Bilangan Bulat: 10 × ${createFracHtml("2", "5")}`, raw: "10 x 2/5", a: "4" },
+                    { q: `Banyak Bagian: ${createFracHtml("1", "2")} dari 12`, raw: "1/2 dari 12", a: "6" },
+                    { q: `Banyak Bagian: ${createFracHtml("2", "3")} dari 15`, raw: "2/3 dari 15", a: "10" },
+                    { q: `Tantangan Campuran: ${createMixedHtml("2", "1", "2")} × 5`, raw: "2 1/2 x 5", a: "12 1/2" },
+                    { q: `Ujian Akhir: ${createMixedHtml("1", "3", "5")} × ${createMixedHtml("2", "1", "4")}`, raw: "1 3/5 x 2 1/4", a: "3 3/5" }
+                ],
+                p2: [
+                    { q: `Pecahan biasa: ${createFracHtml("3", "4")} × ${createFracHtml("2", "5")}`, raw: "3/4 x 2/5", a: "3/10" },
+                    { q: `Sederhanakan: ${createFracHtml("1", "3")} × ${createFracHtml("3", "5")}`, raw: "1/3 x 3/5", a: "1/5" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("1", "1", "4")} × ${createMixedHtml("1", "1", "5")}`, raw: "1 1/4 x 1 1/5", a: "1 1/2" },
+                    { q: `Campuran & Biasa: ${createMixedHtml("1", "2", "3")} × ${createFracHtml("3", "5")}`, raw: "1 2/3 x 3/5", a: "1" },
+                    { q: `Bilangan Bulat: ${createFracHtml("2", "3")} × 9`, raw: "2/3 x 9", a: "6" },
+                    { q: `Bilangan Bulat: 12 × ${createFracHtml("3", "4")}`, raw: "12 x 3/4", a: "9" },
+                    { q: `Banyak Bagian: ${createFracHtml("1", "3")} dari 18`, raw: "1/3 dari 18", a: "6" },
+                    { q: `Banyak Bagian: ${createFracHtml("3", "4")} dari 20`, raw: "3/4 dari 20", a: "15" },
+                    { q: `Tantangan Campuran: ${createMixedHtml("1", "1", "2")} × 8`, raw: "1 1/2 x 8", a: "12" },
+                    { q: `Ujian Akhir: ${createMixedHtml("2", "2", "3")} × ${createMixedHtml("1", "1", "5")}`, raw: "2 2/3 x 1 1/5", a: "3 1/5" }
+                ]
+            },
+            7: { // Division
+                p1: [
+                    { q: `Pecahan Biasa: ${createFracHtml("1", "2")} : ${createFracHtml("1", "4")}`, raw: "1/2 : 1/4", a: "2" },
+                    { q: `Pecahan Biasa: ${createFracHtml("3", "5")} : ${createFracHtml("2", "3")}`, raw: "3/5 : 2/3", a: "9/10" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("1", "1", "2")} : ${createMixedHtml("1", "1", "4")}`, raw: "1 1/2 : 1 1/4", a: "1 1/5" },
+                    { q: `Campuran & Biasa: ${createMixedHtml("2", "2", "3")} : ${createFracHtml("4", "9")}`, raw: "2 2/3 : 4/9", a: "6" },
+                    { q: `Pecahan : Bulat: ${createFracHtml("3", "4")} : 3`, raw: "3/4 : 3", a: "1/4" },
+                    { q: `Bulat : Pecahan: 6 : ${createFracHtml("2", "3")}`, raw: "6 : 2/3", a: "9" },
+                    { q: `Banyak Bagian: 8 dibagi ${createFracHtml("1", "2")}`, raw: "8 dibagi 1/2", a: "16" },
+                    { q: `Banyak Bagian: 5 dibagi ${createFracHtml("1", "3")}`, raw: "5 dibagi 1/3", a: "15" },
+                    { q: `Tantangan: ${createMixedHtml("3", "1", "2")} : 7`, raw: "3 1/2 : 7", a: "1/2" },
+                    { q: `Ujian Akhir: ${createMixedHtml("2", "1", "4")} : ${createMixedHtml("1", "1", "2")}`, raw: "2 1/4 : 1 1/2", a: "1 1/2" }
+                ],
+                p2: [
+                    { q: `Pecahan Biasa: ${createFracHtml("1", "3")} : ${createFracHtml("1", "6")}`, raw: "1/3 : 1/6", a: "2" },
+                    { q: `Pecahan Biasa: ${createFracHtml("2", "5")} : ${createFracHtml("3", "4")}`, raw: "2/5 : 3/4", a: "8/15" },
+                    { q: `Pecahan Campuran: ${createMixedHtml("1", "2", "3")} : ${createMixedHtml("1", "1", "9")}`, raw: "1 2/3 : 1 1/9", a: "1 1/2" },
+                    { q: `Campuran & Biasa: ${createMixedHtml("1", "3", "4")} : ${createFracHtml("7", "8")}`, raw: "1 3/4 : 7/8", a: "2" },
+                    { q: `Pecahan : Bulat: ${createFracHtml("4", "5")} : 2`, raw: "4/5 : 2", a: "2/5" },
+                    { q: `Bulat : Pecahan: 8 : ${createFracHtml("4", "5")}`, raw: "8 : 4/5", a: "10" },
+                    { q: `Banyak Bagian: 12 dibagi ${createFracHtml("1", "2")}`, raw: "12 dibagi 1/2", a: "24" },
+                    { q: `Banyak Bagian: 6 dibagi ${createFracHtml("1", "4")}`, raw: "6 dibagi 1/4", a: "24" },
+                    { q: `Tantangan: ${createMixedHtml("2", "2", "3")} : 4`, raw: "2 2/3 : 4", a: "2/3" },
+                    { q: `Ujian Akhir: ${createMixedHtml("3", "3", "4")} : ${createMixedHtml("1", "1", "4")}`, raw: "3 3/4 : 1 1/4", a: "3" }
+                ]
+            }
+        };
+
+        function switchMateri(slideId, tabNum) {
+            activeMateriTab[slideId] = tabNum;
+            document.querySelectorAll(`#slide${slideId} .tab-btn`).forEach(b => b.classList.remove('active'));
+            
+            const btnId = 'btn-materi-' + slideId + '-' + tabNum;
+            const targetBtn = document.getElementById(btnId);
+            if (targetBtn) targetBtn.classList.add('active');
+
+            const container = document.getElementById('materi-' + slideId + '-container');
+
+            if (tabNum === 'quiz') {
+                renderQuizLayout(slideId, container);
+                return;
+            }
+
+            // Render instructional slides dynamically
+            let contentHtml = "";
+            if (slideId === 4) { // Addition
+                if (tabNum === 1) {
+                    contentHtml = `
+                        <div class="materi-grid">
+                            <div class="materi-box">
+                                <h3>Materi 1: Penyebut yang Sama</h3>
+                                <p style="margin-bottom: 20px;">Jika penyebut kedua pecahan sudah sama, kalian hanya perlu menjumlahkan angka pembilangnya (bagian atas). Angka penyebut (bagian bawah) tetap sama!</p>
+                                <div class="math-expr" style="font-size: 34px;">
+                                    ${createFracHtml("1", "5")} + ${createFracHtml("2", "5")} = ${createFracHtml("1 + 2", "5")} = ${createFracHtml("3", "5")}
+                                </div>
+                            </div>
+                            <div>
+                                <div class="materi-illustration-box">
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT06kXNFHy_1YQzcpTtWBSfisZaBdocjzQrZ9IfwA10oWXkAoDZhPjV2qk&s=10" class="materi-img" alt="Ilustrasi Penjumlahan Pecahan">
+                                </div>
+                                <p style="font-size: 15px; text-align: center; color: #64748b;">Visualisasi representasi pecahan lingkaran</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 2) {
+                    contentHtml = `
+                        <div class="materi-grid">
+                            <div class="materi-box">
+                                <h3>Materi 2: Penyebut Berbeda</h3>
+                                <p style="margin-bottom: 15px;">Kita harus menyamakan penyebutnya terlebih dahulu menggunakan <strong>KPK (Kelipatan Persekutuan Terkecil)</strong>.</p>
+                                <p style="margin-bottom: 15px;">Contoh: ${createFracHtml("1", "2")} + ${createFracHtml("1", "3")}</p>
+                                <p style="margin-bottom: 15px;">KPK dari 2 dan 3 adalah <strong>6</strong>.</p>
+                                <div class="math-expr" style="font-size: 28px;">
+                                    ${createFracHtml("1 × 3", "2 × 3")} + ${createFracHtml("1 × 2", "3 × 2")} = ${createFracHtml("3", "6")} + ${createFracHtml("2", "6")} = ${createFracHtml("5", "6")}
+                                </div>
+                            </div>
+                            <div class="materi-illustration-box" style="height: auto; align-self: center;">
+                                <div style="padding: 20px; font-weight: bold; background: #e0f2fe; border-radius: 12px; border: 2px solid #bae6fd;">
+                                    <p>💡 <strong>Tips Cepat Kali Silang:</strong></p>
+                                    <p style="font-size: 16px; margin-top: 10px;">(a/b) + (c/d) = (a×d + b×c) / (b×d)</p>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 3) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 3: Cara Cepat Menjumlahkan Pecahan Campuran</h3>
+                            <p style="margin-bottom: 15px;">Jumlahkan <strong>bilangan induk (bulat) dengan bilangan induk</strong>, lalu jumlahkan <strong>pecahan dengan pecahan</strong>.</p>
+                            <div class="math-expr" style="font-size: 28px; display: block; margin: 20px 0;">
+                                ${createMixedHtml("2", "1", "5")} + ${createMixedHtml("3", "2", "5")} = (2 + 3) + (${createFracHtml("1", "5")} + ${createFracHtml("2", "5")}) = 5 + ${createFracHtml("3", "5")} = ${createMixedHtml("5", "3", "5")}
+                            </div>
+                            <p>Sangat mudah dan menghindarkan kalian dari mengubah pecahan ke angka yang terlalu besar!</p>
+                        </div>
+                    `;
+                }
+            } else if (slideId === 5) { // Subtraction
+                if (tabNum === 1) {
+                    contentHtml = `
+                        <div class="materi-grid">
+                            <div class="materi-box">
+                                <h3>Materi 1: Penyebut yang Sama</h3>
+                                <p style="margin-bottom: 20px;">Kurangkan pembilang pecahan pertama dengan pembilang pecahan kedua. Penyebutnya tetap utuh dan sama.</p>
+                                <div class="math-expr" style="font-size: 34px;">
+                                    ${createFracHtml("4", "5")} - ${createFracHtml("1", "5")} = ${createFracHtml("4 - 1", "5")} = ${createFracHtml("3", "5")}
+                                </div>
+                            </div>
+                            <div>
+                                <div class="materi-illustration-box">
+                                    <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSDEKhWlBCQCUXnxyHHHTKXglJ2kIt3H4Gryq6AjEHgCQ&s=10" class="materi-img" alt="Ilustrasi Pengurangan Pecahan">
+                                </div>
+                                <p style="font-size: 15px; text-align: center; color: #64748b;">Visualisasi konsep pengurangan</p>
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 2) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 2: Penyebut yang Berbeda</h3>
+                            <p style="margin-bottom: 15px;">Sama seperti penjumlahan, kita harus menyamakan penyebutnya menggunakan KPK.</p>
+                            <p style="margin-bottom: 15px;">Contoh: ${createFracHtml("3", "4")} - ${createFracHtml("1", "3")}</p>
+                            <p style="margin-bottom: 15px;">KPK dari 4 dan 3 adalah <strong>12</strong>.</p>
+                            <div class="math-expr" style="font-size: 28px;">
+                                ${createFracHtml("3 × 3", "4 × 3")} - ${createFracHtml("1 × 4", "3 × 4")} = ${createFracHtml("9", "12")} - ${createFracHtml("4", "12")} = ${createFracHtml("5", "12")}
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 3) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 3: Trik Pengurangan Pecahan Campuran</h3>
+                            <p style="margin-bottom: 15px;">Kurangi induk dengan induk dan pecahan dengan pecahan. <strong>Bagaimana jika pecahan pengurangnya lebih besar?</strong></p>
+                            <p style="margin-bottom: 15px;">Pinjam 1 dari bilangan induk!</p>
+                            <div class="math-expr" style="font-size: 24px; display: block; margin: 20px 0;">
+                                ${createMixedHtml("3", "1", "5")} - ${createMixedHtml("1", "3", "5")} = ${createMixedHtml("2", "6", "5")} - ${createMixedHtml("1", "3", "5")} = (2 - 1) + (${createFracHtml("6", "5")} - ${createFracHtml("3", "5")}) = ${createMixedHtml("1", "3", "5")}
+                            </div>
+                            <p>💡 <em>Catatan: Angka bulat 3 berkurang 1 menjadi 2, dan pecahan 1/5 ditambah 5/5 menjadi 6/5.</em></p>
+                        </div>
+                    `;
+                }
+            } else if (slideId === 6) { // Multiplication
+                if (tabNum === 1) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 1: Perkalian Pecahan biasa</h3>
+                            <p style="margin-bottom: 15px;">Kalikan pembilang dengan pembilang, dan penyebut dengan penyebut secara langsung!</p>
+                            <div class="math-expr" style="font-size: 32px;">
+                                ${createFracHtml("2", "3")} × ${createFracHtml("4", "5")} = ${createFracHtml("2 × 4", "3 × 5")} = ${createFracHtml("8", "15")}
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 2) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 2: Perkalian Pecahan Campuran</h3>
+                            <p style="margin-bottom: 15px;"><strong>Wajib!</strong> Ubah terlebih dahulu pecahan campuran menjadi pecahan biasa, kemudian kalikan seperti biasa.</p>
+                            <div class="math-expr" style="font-size: 28px;">
+                                ${createMixedHtml("1", "1", "2")} × ${createMixedHtml("1", "1", "3")} = ${createFracHtml("3", "2")} × ${createFracHtml("4", "3")} = ${createFracHtml("12", "6")} = 2
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 3) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 3: Pecahan dengan Bilangan Bulat</h3>
+                            <p style="margin-bottom: 15px;">Kalikan bilangan bulat langsung ke pembilangnya saja. Penyebutnya tetap.</p>
+                            <div class="math-expr" style="font-size: 28px;">
+                                5 × ${createFracHtml("2", "7")} = ${createFracHtml("5 × 2", "7")} = ${createFracHtml("10", "7")} = ${createMixedHtml("1", "3", "7")}
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 4) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 4: Banyaknya Jumlah Bagian Benda</h3>
+                            <p style="margin-bottom: 15px;">Kata hubung <strong>'dari'</strong> dalam matematika diterjemahkan menjadi operasi perkalian.</p>
+                            <p style="font-size: 20px; margin-bottom: 15px;">Contoh: Berapa banyak buah apel jika ${createFracHtml("1", "2")} dari 10 buah apel?</p>
+                            <div class="math-expr" style="font-size: 28px;">
+                                ${createFracHtml("1", "2")} × 10 = ${createFracHtml("10", "2")} = 5
+                            </div>
+                        </div>
+                    `;
+                }
+            } else if (slideId === 7) { // Division
+                if (tabNum === 1) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 1: Pembagian Pecahan biasa</h3>
+                            <p style="margin-bottom: 15px;">Ubahlah tanda bagi <strong>(:)</strong> menjadi kali <strong>(×)</strong>, lalu balikkan pecahan yang kedua.</p>
+                            <div class="math-expr" style="font-size: 32px;">
+                                ${createFracHtml("1", "2")} : ${createFracHtml("2", "3")} = ${createFracHtml("1", "2")} × ${createFracHtml("3", "2")} = ${createFracHtml("3", "4")}
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 2) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 2: Pembagian Pecahan Campuran</h3>
+                            <p style="margin-bottom: 15px;">Ubah terlebih dahulu semua pecahan campuran menjadi pecahan biasa, kemudian lakukan trik pembalikan.</p>
+                            <div class="math-expr" style="font-size: 28px;">
+                                ${createMixedHtml("1", "1", "2")} : ${createMixedHtml("1", "1", "4")} = ${createFracHtml("3", "2")} : ${createFracHtml("5", "4")} = ${createFracHtml("3", "2")} × ${createFracHtml("4", "5")} = ${createFracHtml("12", "10")} = ${createMixedHtml("1", "1", "5")}
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 3) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 3: Pembagian dengan Bilangan Bulat</h3>
+                            <p style="margin-bottom: 15px;">Ubah bilangan bulat menjadi bentuk pecahan per-satu terlebih dahulu (misalnya: 3 ditulis ${createFracHtml("3", "1")}), lalu selesaikan.</p>
+                            <div class="math-expr" style="font-size: 28px;">
+                                ${createFracHtml("3", "4")} : 3 = ${createFracHtml("3", "4")} : ${createFracHtml("3", "1")} = ${createFracHtml("3", "4")} × ${createFracHtml("1", "3")} = ${createFracHtml("3", "12")} = ${createFracHtml("1", "4")}
+                            </div>
+                        </div>
+                    `;
+                } else if (tabNum === 4) {
+                    contentHtml = `
+                        <div class="materi-box">
+                            <h3>Materi 4: Banyaknya Jumlah Bagian Benda</h3>
+                            <p style="margin-bottom: 15px;">Membagi sebuah benda ke beberapa bagian.</p>
+                            <p style="font-size: 20px; margin-bottom: 15px;">Contoh: 10 batang cokelat dibagikan masing-masing mendapat ${createFracHtml("1", "2")} bagian. Berapa orang yang dapat?</p>
+                            <div class="math-expr" style="font-size: 28px;">
+                                10 : ${createFracHtml("1", "2")} = 10 × ${createFracHtml("2", "1")} = 20 \text{ orang}
+                            </div>
+                        </div>
+                    `;
+                }
+            }
+            container.innerHTML = contentHtml;
+        }
+
+        function renderQuizLayout(slideId, container) {
+            const p1Idx = activeQuizIndex[slideId].p1;
+            const p2Idx = activeQuizIndex[slideId].p2;
+            const p1Question = exercisesDB[slideId].p1[p1Idx];
+            const p2Question = exercisesDB[slideId].p2[p2Idx];
+
+            container.innerHTML = `
+                <div class="exercise-grid">
+                    <div class="exercise-card">
+                        <div>
+                            <h3 style="color: var(--primary);"><i class="fa-solid fa-user-graduate"></i> Porsi ${p1Name}</h3>
+                            <p style="font-size: 20px; margin-bottom: 15px; color: #334155;">Soal ${p1Idx+1} dari 10:</p>
+                            <div class="math-expr" style="font-size: 30px; display: block; margin-bottom: 20px;">${p1Question.q}</div>
+                        </div>
+                        <div>
+                            <input type="text" id="quiz-${slideId}-p1-ans" placeholder="Isi jawaban..." style="width: 100%;">
+                            <div class="exercise-control-group">
+                                <button class="action-btn btn-green" onclick="checkExercise(${slideId}, 1, '${p1Question.a}')" style="flex: 1;">Cek Jawaban</button>
+                                <button class="action-btn btn-orange" onclick="swapQuestion(${slideId}, 1)" style="flex: 1;">Ganti Soal</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="exercise-card">
+                        <div>
+                            <h3 style="color: var(--secondary);"><i class="fa-solid fa-user-graduate"></i> Porsi ${p2Name}</h3>
+                            <p style="font-size: 20px; margin-bottom: 15px; color: #334155;">Soal ${p2Idx+1} dari 10:</p>
+                            <div class="math-expr" style="font-size: 30px; display: block; margin-bottom: 20px;">${p2Question.q}</div>
+                        </div>
+                        <div>
+                            <input type="text" id="quiz-${slideId}-p2-ans" placeholder="Isi jawaban..." style="width: 100%;">
+                            <div class="exercise-control-group">
+                                <button class="action-btn btn-green" onclick="checkExercise(${slideId}, 2, '${p2Question.a}')" style="flex: 1;">Cek Jawaban</button>
+                                <button class="action-btn btn-orange" onclick="swapQuestion(${slideId}, 2)" style="flex: 1;">Ganti Soal</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function checkExercise(slideId, playerNum, correctAns) {
+            const inputId = `quiz-${slideId}-p${playerNum}-ans`;
+            const input = document.getElementById(inputId);
+            const userAns = input.value.trim().toLowerCase().replace(/\s+/g, ' ');
+            const normalizedCorrect = correctAns.toLowerCase().trim().replace(/\s+/g, ' ');
+
+            if (userAns === normalizedCorrect) {
+                input.className = "input-correct";
+            } else {
+                input.className = "input-wrong";
+            }
+        }
+
+        function swapQuestion(slideId, playerNum) {
+            const pKey = playerNum === 1 ? 'p1' : 'p2';
+            activeQuizIndex[slideId][pKey] = (activeQuizIndex[slideId][pKey] + 1) % 10;
+            switchMateri(slideId, 'quiz');
+        }
+
+        // --- SLIDE 8: GAME CARDS SYSTEM ---
+        let gameTimerInterval;
+        let activeCardIndex = null;
+        let activeCardCorrectAnswer = "";
+
+        const gameCardProblems = {
+            1: { q: `${createFracHtml("2", "5")} + ${createFracHtml("1", "5")}`, a: "3/5" },
+            2: { q: `${createFracHtml("1", "2")} + ${createFracHtml("1", "4")}`, a: "3/4" },
+            3: { q: `${createMixedHtml("1", "1", "3")} + ${createMixedHtml("2", "1", "3")}`, a: "3 2/3" },
+            4: { q: `${createFracHtml("7", "8")} - ${createFracHtml("3", "8")}`, a: "1/2" },
+            5: { q: `${createFracHtml("1", "2")} - ${createFracHtml("1", "4")}`, a: "1/4" },
+            6: { q: `${createMixedHtml("4", "1", "5")} - ${createMixedHtml("1", "3", "5")}`, a: "2 3/5" },
+            7: { q: `${createFracHtml("2", "3")} × ${createFracHtml("3", "4")}`, a: "1/2" },
+            8: { q: `${createMixedHtml("1", "1", "2")} × ${createFracHtml("2", "3")}`, a: "1" },
+            9: { q: `10 × ${createFracHtml("3", "5")}`, a: "6" },
+            10: { q: `${createFracHtml("1", "3")} dari 18`, a: "6" },
+            11: { q: `${createFracHtml("3", "4")} : ${createFracHtml("1", "2")}`, a: "1 1/2" },
+            12: { q: `${createMixedHtml("2", "1", "2")} : ${createMixedHtml("1", "1", "4")}`, a: "2" },
+            13: { q: `${createFracHtml("2", "5")} : 4`, a: "1/10" },
+            14: { q: `12 dibagi ${createFracHtml("1", "3")}`, a: "36" },
+            15: { q: `${createFracHtml("1", "2")} + ${createFracHtml("1", "3")}`, a: "5/6" },
+            16: { q: `${createFracHtml("5", "6")} - ${createFracHtml("1", "3")}`, a: "1/2" },
+            17: { q: `${createFracHtml("4", "5")} × ${createFracHtml("5", "8")}`, a: "1/2" },
+            18: { q: `${createFracHtml("2", "3")} : ${createFracHtml("4", "9")}`, a: "1 1/2" },
+            19: { q: `${createMixedHtml("3", "1", "2")} + ${createMixedHtml("1", "1", "4")}`, a: "4 3/4" },
+            20: { q: `${createMixedHtml("5", "1", "2")} - ${createMixedHtml("2", "1", "4")}`, a: "3 1/4" }
+        };
+
+        function initGameBoard() {
+            const container = document.getElementById('cards-board-container');
+            container.innerHTML = "";
+            for (let i = 1; i <= 20; i++) {
+                const card = document.createElement('div');
+                card.className = "magic-card";
+                card.id = `magic-card-${i}`;
+                card.innerText = i;
+                card.onclick = () => openMagicCard(i);
+                container.appendChild(card);
+            }
+            resetTimer();
+        }
+
+        function openMagicCard(num) {
+            const cardElement = document.getElementById(`magic-card-${num}`);
+            if (cardElement.classList.contains('opened')) return;
+
+            activeCardIndex = num;
+            const problem = gameCardProblems[num];
+            activeCardCorrectAnswer = problem.a;
+
+            document.getElementById('game-card-title').innerText = `TANTANGAN KARTU #${num}`;
+            document.getElementById('game-card-math').innerHTML = problem.q;
+            document.getElementById('game-input-ans').value = "";
+            document.getElementById('game-input-ans').className = "";
+            document.getElementById('game-overlay-panel').style.display = "flex";
+
+            resetTimer();
+        }
+
+        function resetTimer() {
+            clearInterval(gameTimerInterval);
+            timeLeft = 180; // 3 minutes
+            updateTimerDisplay();
+
+            gameTimerInterval = setInterval(() => {
+                timeLeft--;
+                updateTimerDisplay();
+                if (timeLeft <= 0) {
+                    clearInterval(gameTimerInterval);
+                    alert("Waktu Habis!");
+                }
+            }, 1000);
+        }
+
+        function updateTimerDisplay() {
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById('game-timer-val').innerText = 
+                `${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`;
+        }
+
+        function addGameTime() {
+            timeLeft += 30;
+            updateTimerDisplay();
+        }
+
+        function checkGameAnswer() {
+            const input = document.getElementById('game-input-ans');
+            const userAns = input.value.trim().toLowerCase().replace(/\s+/g, ' ');
+            const correctAns = activeCardCorrectAnswer.toLowerCase().trim().replace(/\s+/g, ' ');
+
+            if (userAns === correctAns) {
+                input.className = "input-correct";
+                clearInterval(gameTimerInterval);
+                
+                // Mark card as resolved in 1 second
+                setTimeout(() => {
+                    closeGameOverlay(true);
+                }, 1000);
+            } else {
+                input.className = "input-wrong";
+            }
+        }
+
+        function closeGameOverlay(success = false) {
+            document.getElementById('game-overlay-panel').style.display = "none";
+            if (success && activeCardIndex) {
+                const card = document.getElementById(`magic-card-${activeCardIndex}`);
+                card.classList.add('opened');
+                card.style.background = "#cbd5e1";
+            }
+        }
+
+        function addScore(playerNum) {
+            if (playerNum === 1) {
+                p1Score++;
+                document.getElementById('score-p1-val').innerText = p1Score;
+            } else {
+                p2Score++;
+                document.getElementById('score-p2-val').innerText = p2Score;
+            }
+        }
+
+        function announceWinner() {
+            let winText = "";
+            if (p1Score > p2Score) {
+                winText = `Selamat kepada ${p1Name} atas kemenangan luar biasa hari ini!`;
+            } else if (p2Score > p1Score) {
+                winText = `Selamat kepada ${p2Name} atas kemenangan luar biasa hari ini!`;
+            } else {
+                winText = `Permainan selesai dengan skor seimbang! Selamat kepada ${p1Name} dan ${p2Name}!`;
+            }
+
+            // Text to speech
+            if ('speechSynthesis' in window) {
+                const utterance = new SpeechSynthesisUtterance(winText);
+                utterance.lang = 'id-ID';
+                window.speechSynthesis.speak(utterance);
+            }
+            alert(winText);
+        }
+
+        // --- SLIDE 9: 20 PRE-DEFINED SOAL CERITA ---
+        const storyProblems = [
+            {
+                q: "Ibu memiliki kue bolu utuh. Ia memberikan 1/4 bagian kepada kakak dan 1/2 bagian kepada adik. Berapa bagian total kue yang sudah dibagikan?",
+                a: "3/4",
+                p: "Kita jumlahkan pecahan bagian kakak dan adik: 1/4 + 1/2 = 1/4 + 2/4 = 3/4 bagian."
+            },
+            {
+                q: "Andi membeli tali sepanjang 1 1/2 meter. Kemudian membeli lagi sepanjang 2 1/4 meter. Berapa meter panjang seluruh tali milik Andi?",
+                a: "3 3/4",
+                p: "Jumlahkan panjang tali: 1 1/2 + 2 1/4 = 1 2/4 + 2 1/4 = 3 3/4 meter."
+            },
+            {
+                q: "Ayah memiliki 10 liter bensin di mobil. Setelah digunakan pergi ke kantor, bensin berkurang sebanyak 2 1/2 liter. Berapa sisa bensin Ayah sekarang?",
+                a: "7 1/2",
+                p: "Gunakan trik peminjaman: 10 - 2 1/2 = 9 2/2 - 2 1/2 = 7 1/2 liter."
+            },
+            {
+                q: "Pak Budi memotong sebuah bambu sepanjang 3 meter menjadi bagian-bagian kecil yang masing-masing panjangnya 1/2 meter. Berapa potong bambu yang didapatkan?",
+                a: "6",
+                p: "Lakukan pembagian: 3 : 1/2 = 3 × 2/1 = 6 potong bambu."
+            },
+            {
+                q: "Siti mempunyai tepung terigu sebanyak 2 3/4 kg. Ia menggunakan 1 1/4 kg tepung untuk membuat donat. Berapa sisa tepung Siti?",
+                a: "1 1/2",
+                p: "Lakukan pengurangan: 2 3/4 - 1 1/4 = 1 2/4. Sederhanakan menjadi 1 1/2 kg."
+            },
+            {
+                q: "Toni mempunyai 15 butir kelereng. Sebanyak 1/3 bagian kelereng tersebut diberikan kepada Roni. Berapa butir kelereng yang diterima Roni?",
+                a: "5",
+                p: "Hitung bagian kelereng: 1/3 dari 15 = 1/3 × 15 = 5 butir."
+            },
+            {
+                q: "Rini memerlukan waktu 1/2 jam untuk membaca satu bab buku cerita. Berapa bab buku cerita yang dapat dibaca Rini dalam waktu 3 jam?",
+                a: "6",
+                p: "Bagi waktu luang dengan durasi per bab: 3 : 1/2 = 3 × 2/1 = 6 bab."
+            },
+            {
+                q: "Budi memiliki sebatang cokelat. Ia memberikan 3/10 bagian cokelat ke adiknya. Berapa bagian cokelat yang masih disimpan Budi?",
+                a: "7/10",
+                p: "Bentuk utuh cokelat adalah 1 (atau 10/10). Maka sisa cokelat: 10/10 - 3/10 = 7/10 bagian."
+            },
+            {
+                q: "Dina berlari mengelilingi lapangan sepak bola sebanyak 1 1/2 kali putaran, lalu beristirahat. Ia melanjutkan kembali sebanyak 2 1/2 putaran. Berapa total putaran Dina?",
+                a: "4",
+                p: "Jumlahkan putaran: 1 1/2 + 2 1/2 = (1 + 2) + (1/2 + 1/2) = 3 + 1 = 4 putaran."
+            },
+            {
+                q: "Kakek membagikan uang kepada 10 cucunya. Setiap cucu mendapatkan 1/2 bagian dari total amplop kado. Berapa banyak amplop kado yang dimiliki kakek seluruhnya?",
+                a: "5",
+                p: "Kalikan jumlah bagian: 10 × 1/2 = 5 amplop."
+            },
+            {
+                q: "Sebuah botol minuman terisi jus jeruk sebanyak 3/4 bagian. Jika kita menuangkan 1/2 bagian isi jus tersebut ke gelas lain, berapa sisa bagian jus jeruk dalam botol?",
+                a: "1/4",
+                p: "Lakukan pengurangan pecahan penyebut berbeda: 3/4 - 1/2 = 3/4 - 2/4 = 1/4 bagian."
+            },
+            {
+                q: "Riri memiliki sehelai kain sepanjang 2 meter. Ia memotong kain tersebut menjadi potongan sepanjang 1/4 meter untuk pita rambut. Berapa banyak pita rambut yang didapatkan?",
+                a: "8",
+                p: "Lakukan operasi pembagian: 2 : 1/4 = 2 × 4/1 = 8 pita rambut."
+            },
+            {
+                q: "Seorang petani memiliki sawah seluas 4 2/3 hektar. Ia menjual sawah tersebut seluas 1 1/3 hektar. Berapa luas sawah petani sekarang?",
+                a: "3 1/3",
+                p: "Lakukan pengurangan: 4 2/3 - 1 1/3 = 3 1/3 hektar."
+            },
+            {
+                q: "Setiap resep kue bolu membutuhkan 2/3 cangkir gula pasir. Jika Ibu ingin membuat 3 resep kue bolu secara bersamaan, berapa cangkir gula pasir yang dibutuhkan?",
+                a: "2",
+                p: "Lakukan perkalian pecahan dengan bilangan bulat: 3 × 2/3 = 2 cangkir."
+            },
+            {
+                q: "Di dalam kelas terdapat 20 siswa. Sebanyak 2/5 bagian dari jumlah siswa tersebut adalah laki-laki. Berapa jumlah siswa laki-laki di kelas?",
+                a: "8",
+                p: "Hitung bagian siswa laki-laki: 2/5 × 20 = 40/5 = 8 siswa."
+            },
+            {
+                q: "Sebuah wadah berisi 5 1/2 liter air. Air tersebut dituang rata ke dalam wadah kecil berkapasitas 1/2 liter. Berapa wadah kecil yang dibutuhkan?",
+                a: "11",
+                p: "Bagi total air dengan kapasitas wadah kecil: 5 1/2 : 1/2 = 11/2 × 2/1 = 11 wadah."
+            },
+            {
+                q: "Nenek memiliki kain renda sepanjang 3 1/4 meter. Ia menggunakan kain renda tersebut sepanjang 1 3/4 meter untuk hiasan meja. Berapa sisa kain renda Nenek?",
+                a: "1 1/2",
+                p: "Pengurangan dengan trik pinjam: 3 1/4 - 1 3/4 = 2 5/4 - 1 3/4 = 1 2/4 = 1 1/2 meter."
+            },
+            {
+                q: "Kakak membeli 12 butir telur. Setengah bagian telur tersebut digunakan untuk membuat martabak telur telur. Berapa telur yang digunakan?",
+                a: "6",
+                p: "Hitung bagian: 1/2 dari 12 = 1/2 × 12 = 6 butir telur."
+            },
+            {
+                q: "Di perpustakaan ada 15 buku matematika. Pak Anton membagikan buku matematika tersebut rata, dengan ketentuan masing-masing anak mendapat 1 1/2 buku. Berapa anak yang dapat?",
+                a: "10",
+                p: "Lakukan pembagian: 15 : 1 1/2 = 15 : 3/2 = 15 × 2/3 = 10 anak."
+            },
+            {
+                q: "Sebuah kue dipotong menjadi 12 bagian sama besar. Dina memakan 2 bagian, Roni memakan 4 bagian. Berapa bagian kue yang tersisa?",
+                a: "1/2",
+                p: "Total dimakan = 2/12 + 4/12 = 6/12 bagian. Sisa kue = 12/12 - 6/12 = 6/12 = 1/2 bagian."
+            }
+        ];
+
+        let storyIndex = 0;
+
+        function renderStoryProblem() {
+            const data = storyProblems[storyIndex];
+            document.getElementById('story-number').innerText = `Soal ${storyIndex + 1} dari 20`;
+            document.getElementById('story-content-text').innerText = data.q;
+            document.getElementById('story-user-ans').value = "";
+            document.getElementById('story-user-ans').className = "";
+            document.getElementById('story-pembahasan-panel').style.display = "none";
+        }
+
+        function checkStoryAnswer() {
+            const input = document.getElementById('story-user-ans');
+            const userAns = input.value.trim().toLowerCase().replace(/\s+/g, ' ');
+            const correctAns = storyProblems[storyIndex].a.toLowerCase().trim().replace(/\s+/g, ' ');
+
+            if (userAns === correctAns) {
+                input.className = "input-correct";
+            } else {
+                input.className = "input-wrong";
+            }
+        }
+
+        function togglePembahasan() {
+            const panel = document.getElementById('story-pembahasan-panel');
+            panel.innerText = storyProblems[storyIndex].p;
+            if (panel.style.display === "block") {
+                panel.style.display = "none";
+            } else {
+                panel.style.display = "block";
+            }
+        }
+
+        function nextStory() {
+            storyIndex = (storyIndex + 1) % 20;
+            renderStoryProblem();
+        }
+
+        // --- GLOBAL INITIALIZATION ---
+        window.onload = function() {
+            updateStudentNames();
+        }
+    </script>
+</body>
+</html>
