@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Petualangan Pecahan - Latihan Interaktif</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@400;500;600;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <style>
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: linear-gradient(135deg, #e0e7ff 0%, #f3e8ff 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 15px;
+            color: #334155;
+        }
+        h1, h2, h3, .font-kids { font-family: 'Baloo 2', cursive; }
+        
+        .slide { display: none; animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .slide.active { display: flex; }
+        
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.95) translateY(10px); }
+            to { opacity: 1; transform: scale(1) translateY(0); }
+        }
+
+        .btn-action { transition: all 0.2s; box-shadow: 0 4px 0px rgba(0,0,0,0.15); cursor: pointer; }
+        .btn-action:hover:not(:disabled) { transform: translateY(2px); box-shadow: 0 2px 0px rgba(0,0,0,0.15); }
+        .btn-action:active:not(:disabled) { transform: translateY(4px); box-shadow: none; }
+        .btn-action:disabled { opacity: 0.5; cursor: not-allowed; transform: translateY(4px); box-shadow: none; }
+        
+        .custom-scroll::-webkit-scrollbar { width: 6px; height: 6px; }
+        .custom-scroll::-webkit-scrollbar-track { background: #f8fafc; border-radius: 4px; }
+        .custom-scroll::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+
+        /* Styling Khusus Matematika Pecahan */
+        .frac {
+            display: inline-flex;
+            flex-direction: column;
+            align-items: center;
+            vertical-align: middle;
+            margin: 0 4px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+        .frac > span:first-child { border-bottom: 2px solid currentColor; padding: 0 3px; width: 100%; text-align: center; }
+        .frac > span:last-child { padding: 0 3px; }
+        .mixed { display: inline-flex; align-items: center; font-weight: bold; }
+        .mixed .whole { margin-right: 2px; }
+
+        /* Custom Options (PG / PGK) */
+        .opt-label {
+            display: flex; align-items: center; gap: 10px; padding: 10px 15px;
+            border: 2px solid #e2e8f0; border-radius: 12px; cursor: pointer; transition: 0.2s;
+            background: white;
+        }
+        .opt-label:hover { border-color: #818cf8; background: #e0e7ff; }
+        .opt-label input:checked + span { font-weight: bold; color: #4f46e5; }
+        .opt-label.correct { border-color: #22c55e; background: #dcfce7; }
+        .opt-label.wrong { border-color: #ef4444; background: #fee2e2; }
+
+        .q-nav-btn {
+            width: 32px; height: 32px; border-radius: 8px; font-weight: bold; font-size: 12px;
+            border: 2px solid #cbd5e1; background: white; color: #64748b; cursor: pointer;
+        }
+        .q-nav-btn.active { border-color: #4f46e5; background: #4f46e5; color: white; transform: scale(1.1); }
+        .q-nav-btn.done { border-color: #22c55e; background: #dcfce7; color: #166534; }
+    </style>
+</head>
+<body>
+
+    <div class="w-full max-w-7xl h-[94vh] min-h-[650px] bg-white rounded-[30px] shadow-2xl flex flex-col overflow-hidden border-[6px] border-indigo-100 relative">
+        
+        <!-- HEADER NAV -->
+        <div class="bg-indigo-600 px-6 py-3 flex justify-between items-center z-10 shrink-0 text-white">
+            <div class="flex items-center gap-3">
+                <i class="fa-solid fa-chart-pie text-2xl bg-white/20 p-2 rounded-xl"></i>
+                <h1 class="font-kids text-2xl tracking-wide hidden sm:block">Arena Pecahan</h1>
+            </div>
+            
+            <div id="student-badges" class="hidden items-center gap-4">
+                <span class="bg-sky-500 px-4 py-1 rounded-full font-bold text-sm shadow-sm border border-sky-400"><i class="fa-solid fa-user"></i> <span id="s1-display">P1</span></span>
+                <span class="bg-rose-500 px-4 py-1 rounded-full font-bold text-sm shadow-sm border border-rose-400"><i class="fa-solid fa-user"></i> <span id="s2-display">P2</span></span>
+            </div>
+
+            <div class="flex gap-2">
+                <button onclick="navSlide(-1)" class="w-8 h-8 rounded-lg bg-indigo-500 hover:bg-indigo-400 flex items-center justify-center transition" id="btn-prev" disabled><i class="fa-solid fa-chevron-left"></i></button>
+                <span id="slide-indicator" class="flex items-center font-bold text-indigo-200 text-sm px-2">1/5</span>
+                <button onclick="navSlide(1)" class="w-8 h-8 rounded-lg bg-amber-500 hover:bg-amber-400 flex items-center justify-center transition text-amber-900" id="btn-next" disabled><i class="fa-solid fa-chevron-right"></i></button>
+            </div>
+        </div>
+
+        <!-- MAIN CONTENT AREA -->
+        <div class="flex-grow overflow-hidden relative bg-slate-50">
+            
+            <!-- SLIDE 1: COVER -->
+            <div id="slide-1" class="slide active flex-col justify-center items-center h-full p-8 text-center bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] relative">
+                <h1 class="font-kids text-5xl md:text-7xl font-extrabold text-indigo-900 mb-2 drop-shadow-sm">Master <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-500 to-indigo-500">Pecahan</span></h1>
+                <p class="text-indigo-600 text-xl font-bold mb-8">Ujian Akhir Kolaboratif (35 Soal)</p>
+                
+                <div class="bg-white p-8 rounded-3xl shadow-xl border-4 border-indigo-100 w-full max-w-lg z-10 space-y-6">
+                    <h2 class="font-kids text-2xl font-bold text-indigo-500">Daftarkan Pemain</h2>
+                    <div class="grid grid-cols-2 gap-4">
+                        <div>
+                            <label class="block text-left text-xs font-bold text-sky-500 uppercase tracking-widest mb-1">Siswa 1 (Kiri)</label>
+                            <input type="text" id="input-s1" placeholder="Nama..." class="w-full bg-sky-50 border-2 border-sky-200 rounded-xl px-4 py-3 outline-none focus:border-sky-500 font-bold text-center text-sky-700">
+                        </div>
+                        <div>
+                            <label class="block text-left text-xs font-bold text-rose-500 uppercase tracking-widest mb-1">Siswa 2 (Kanan)</label>
+                            <input type="text" id="input-s2" placeholder="Nama..." class="w-full bg-rose-50 border-2 border-rose-200 rounded-xl px-4 py-3 outline-none focus:border-rose-500 font-bold text-center text-rose-700">
+                        </div>
+                    </div>
+                    <button onclick="startApp()" class="w-full bg-indigo-600 hover:bg-indigo-700 text-white font-kids text-2xl font-bold py-3 rounded-2xl btn-action mt-4 border-b-4 border-indigo-800">Masuk Arena <i class="fa-solid fa-right-to-bracket ml-2"></i></button>
+                </div>
+            </div>
+
+            <!-- SLIDE 2: MATERI SOAL -->
+            <div id="slide-2" class="slide flex-col justify-center items-center h-full p-8 text-center bg-indigo-50/50">
+                <h2 class="font-kids text-4xl font-bold text-indigo-700 mb-6"><i class="fa-solid fa-list-check"></i> Cakupan Ujian Hari Ini</h2>
+                <p class="text-slate-600 font-semibold mb-8 max-w-2xl">Kalian berdua akan mengerjakan 35 soal dengan tingkat kesulitan (Mudah, Sedang, HOTS) yang sudah disesuaikan. Soal Kiri dan Kanan berbeda lho!</p>
+                
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 max-w-4xl w-full text-left">
+                    <div class="bg-white p-4 rounded-2xl border-l-4 border-sky-400 shadow-sm"><span class="text-sky-500 font-bold text-lg block mb-1">1-4</span>Membentuk Pecahan</div>
+                    <div class="bg-white p-4 rounded-2xl border-l-4 border-emerald-400 shadow-sm"><span class="text-emerald-500 font-bold text-lg block mb-1">5-8</span>Pecahan Senilai</div>
+                    <div class="bg-white p-4 rounded-2xl border-l-4 border-amber-400 shadow-sm"><span class="text-amber-500 font-bold text-lg block mb-1">9-12</span>Pecahan Campuran</div>
+                    <div class="bg-white p-4 rounded-2xl border-l-4 border-rose-400 shadow-sm"><span class="text-rose-500 font-bold text-lg block mb-1">13-15</span>Kebalikan Pecahan</div>
+                    <div class="bg-white p-4 rounded-2xl border-l-4 border-purple-400 shadow-sm"><span class="text-purple-500 font-bold text-lg block mb-1">16-19</span>Bulat ke Pecahan</div>
+                    <div class="bg-white p-4 rounded-2xl border-l-4 border-fuchsia-400 shadow-sm"><span class="text-fuchsia-500 font-bold text-lg block mb-1">20-23</span>Membandingkan</div>
+                    <div class="bg-white p-4 rounded-2xl border-l-4 border-indigo-400 shadow-sm"><span class="text-indigo-500 font-bold text-lg block mb-1">24-32</span>Operasi Hitung</div>
+                    <div class="bg-white p-4 rounded-2xl border-l-4 border-pink-400 shadow-sm"><span class="text-pink-500 font-bold text-lg block mb-1">33-35</span>Soal Cerita</div>
+                </div>
+                
+                <button onclick="navSlide(1)" class="mt-10 bg-amber-400 text-amber-900 font-kids text-2xl font-bold px-10 py-3 rounded-2xl btn-action border-b-4 border-amber-600">Siap Latihan! <i class="fa-solid fa-play ml-2"></i></button>
+            </div>
+
+            <!-- SLIDE 3: DUAL WORKSPACE LATIHAN -->
+            <div id="slide-3" class="slide flex-col h-full overflow-hidden">
+                <!-- Top Nav Bar (Timer & Q-Nav) -->
+                <div class="bg-white px-4 py-3 border-b border-slate-200 shrink-0 flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div class="flex-grow w-full md:w-auto overflow-x-auto pb-1 custom-scroll">
+                        <div class="flex gap-1 min-w-max" id="q-nav-container">
+                            <!-- JS generates 35 buttons -->
+                        </div>
+                    </div>
+                    
+                    <div class="flex items-center gap-3 bg-rose-50 border border-rose-200 px-4 py-2 rounded-xl shrink-0">
+                        <i class="fa-solid fa-stopwatch text-rose-500 text-xl animate-pulse"></i>
+                        <span id="timer-display" class="font-mono text-2xl font-bold text-rose-600">03:00</span>
+                        <div class="flex gap-1 ml-2">
+                            <button onclick="startTimer()" id="btn-timer" class="bg-emerald-500 text-white text-xs font-bold px-2 py-1 rounded">Start</button>
+                            <button onclick="addTime()" class="bg-slate-700 text-white text-xs font-bold px-2 py-1 rounded">+15s</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Dual Panels -->
+                <div class="flex-grow flex flex-col md:flex-row h-full overflow-hidden">
+                    
+                    <!-- PANEL S1 (KIRI) -->
+                    <div class="w-full md:w-1/2 p-4 md:p-6 overflow-y-auto custom-scroll border-r-2 border-slate-200 bg-sky-50/30 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="bg-sky-100 text-sky-700 font-bold px-3 py-1 rounded-lg text-sm border border-sky-200" id="s1-panel-name">Siswa 1</span>
+                            <span class="text-xs font-bold text-slate-400 bg-white px-2 py-1 rounded border border-slate-200" id="s1-diff">Mudah</span>
+                        </div>
+                        
+                        <div class="bg-white p-5 rounded-2xl border-2 border-sky-100 shadow-sm flex-grow flex flex-col">
+                            <h3 class="font-bold text-slate-700 text-lg mb-4" id="s1-q-text">Pertanyaan 1</h3>
+                            <div class="space-y-2 mb-6" id="s1-opts">
+                                <!-- Options injected here -->
+                            </div>
+                            
+                            <div class="mt-auto pt-4 border-t border-slate-100 space-y-3">
+                                <div class="flex gap-2">
+                                    <button onclick="checkAnswer(1)" id="s1-btn-cek" class="flex-1 bg-sky-500 text-white font-bold py-2 rounded-xl btn-action border-b-4 border-sky-700">Cek <i class="fa-solid fa-check"></i></button>
+                                    <button onclick="showDisc(1)" id="s1-btn-disc" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-xl border-2 border-slate-200 hidden"><i class="fa-solid fa-lightbulb text-amber-500"></i> Bahas</button>
+                                </div>
+                                <div id="s1-fb" class="font-bold text-sm text-center h-5"></div>
+                                <div id="s1-disc-text" class="hidden bg-amber-50 p-3 rounded-lg text-sm text-slate-700 border border-amber-200 font-medium"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- PANEL S2 (KANAN) -->
+                    <div class="w-full md:w-1/2 p-4 md:p-6 overflow-y-auto custom-scroll bg-rose-50/30 flex flex-col">
+                        <div class="flex justify-between items-center mb-4">
+                            <span class="bg-rose-100 text-rose-700 font-bold px-3 py-1 rounded-lg text-sm border border-rose-200" id="s2-panel-name">Siswa 2</span>
+                            <span class="text-xs font-bold text-slate-400 bg-white px-2 py-1 rounded border border-slate-200" id="s2-diff">Mudah</span>
+                        </div>
+                        
+                        <div class="bg-white p-5 rounded-2xl border-2 border-rose-100 shadow-sm flex-grow flex flex-col">
+                            <h3 class="font-bold text-slate-700 text-lg mb-4" id="s2-q-text">Pertanyaan 1</h3>
+                            <div class="space-y-2 mb-6" id="s2-opts">
+                                <!-- Options injected here -->
+                            </div>
+                            
+                            <div class="mt-auto pt-4 border-t border-slate-100 space-y-3">
+                                <div class="flex gap-2">
+                                    <button onclick="checkAnswer(2)" id="s2-btn-cek" class="flex-1 bg-rose-500 text-white font-bold py-2 rounded-xl btn-action border-b-4 border-rose-700">Cek <i class="fa-solid fa-check"></i></button>
+                                    <button onclick="showDisc(2)" id="s2-btn-disc" class="flex-1 bg-slate-100 text-slate-600 font-bold py-2 rounded-xl border-2 border-slate-200 hidden"><i class="fa-solid fa-lightbulb text-amber-500"></i> Bahas</button>
+                                </div>
+                                <div id="s2-fb" class="font-bold text-sm text-center h-5"></div>
+                                <div id="s2-disc-text" class="hidden bg-amber-50 p-3 rounded-lg text-sm text-slate-700 border border-amber-200 font-medium"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- SLIDE 4: STATISTIK & REKAM WAKTU -->
+            <div id="slide-4" class="slide flex-col h-full p-8 overflow-hidden bg-slate-50">
+                <h2 class="font-kids text-4xl font-bold text-indigo-700 mb-6 border-b-2 border-indigo-100 pb-3"><i class="fa-solid fa-chart-line"></i> Rapor Pembelajaran</h2>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 shrink-0 mb-6">
+                    <!-- Skor S1 -->
+                    <div class="bg-white p-6 rounded-3xl border-4 border-sky-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-sm font-bold text-slate-400 uppercase tracking-widest block mb-1" id="stat-s1-name">Siswa 1</span>
+                            <div class="text-4xl font-black text-sky-600" id="stat-s1-score">0 <span class="text-lg text-sky-400">/ 100</span></div>
+                            <div class="text-sm font-bold text-slate-500 mt-2">Rata-rata: <span id="stat-s1-avg" class="text-sky-500">0s</span> / soal</div>
+                        </div>
+                        <i class="fa-solid fa-medal text-5xl text-sky-200"></i>
+                    </div>
+                    <!-- Skor S2 -->
+                    <div class="bg-white p-6 rounded-3xl border-4 border-rose-100 shadow-sm flex items-center justify-between">
+                        <div>
+                            <span class="text-sm font-bold text-slate-400 uppercase tracking-widest block mb-1" id="stat-s2-name">Siswa 2</span>
+                            <div class="text-4xl font-black text-rose-600" id="stat-s2-score">0 <span class="text-lg text-rose-400">/ 100</span></div>
+                            <div class="text-sm font-bold text-slate-500 mt-2">Rata-rata: <span id="stat-s2-avg" class="text-rose-500">0s</span> / soal</div>
+                        </div>
+                        <i class="fa-solid fa-medal text-5xl text-rose-200"></i>
+                    </div>
+                </div>
+
+                <div class="flex-grow bg-white border-2 border-slate-200 rounded-2xl overflow-hidden shadow-sm flex flex-col">
+                    <div class="overflow-y-auto custom-scroll w-full flex-grow">
+                        <table class="w-full text-left text-sm">
+                            <thead class="bg-slate-100 sticky top-0 text-slate-600 font-bold z-10">
+                                <tr>
+                                    <th class="p-3 border-b border-slate-200 w-16 text-center">No</th>
+                                    <th class="p-3 border-b border-slate-200 text-center bg-sky-50/50">Status S1</th>
+                                    <th class="p-3 border-b border-slate-200 text-center bg-sky-50/50">Waktu S1</th>
+                                    <th class="p-3 border-b border-slate-200 text-center bg-rose-50/50">Status S2</th>
+                                    <th class="p-3 border-b border-slate-200 text-center bg-rose-50/50">Waktu S2</th>
+                                </tr>
+                            </thead>
+                            <tbody id="stat-table-body" class="divide-y divide-slate-100 font-semibold text-slate-600">
+                                <!-- Data injected via JS -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- SLIDE 5: KESIMPULAN & REFLEKSI -->
+            <div id="slide-5" class="slide flex-col justify-center items-center h-full p-8 text-center bg-gradient-to-br from-indigo-600 to-purple-700 text-white rounded-3xl relative overflow-hidden">
+                <div class="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] opacity-10"></div>
+                
+                <div class="z-10 bg-white/10 backdrop-blur-md p-10 rounded-3xl border border-white/20 shadow-2xl max-w-4xl w-full">
+                    <div class="text-6xl text-yellow-400 mb-6 drop-shadow-md"><i class="fa-solid fa-trophy"></i></div>
+                    <h2 class="font-kids text-5xl font-extrabold mb-4 drop-shadow-sm">Misi Pecahan Selesai!</h2>
+                    
+                    <div class="bg-black/20 p-6 rounded-2xl text-left space-y-4 mb-8 border border-white/10">
+                        <h3 class="font-bold text-xl text-yellow-300 border-b border-white/20 pb-2"><i class="fa-solid fa-lightbulb"></i> Refleksi Belajar</h3>
+                        <p class="text-indigo-100 leading-relaxed font-medium">
+                            Kalian berdua sangat hebat! Ingatlah bahwa dalam pecahan, <b>penyebut</b> menunjukkan total bagian utuh, dan <b>pembilang</b> adalah bagian yang diambil.
+                        </p>
+                        <p class="text-indigo-100 leading-relaxed font-medium">
+                            Dalam operasi hitung, samakan penyebut untuk <span class="text-emerald-300">+</span> dan <span class="text-rose-300">-</span>. Untuk <span class="text-sky-300">×</span> kalikan atas-atas bawah-bawah, dan untuk <span class="text-amber-300">÷</span> jangan lupa membalik pecahan kedua!
+                        </p>
+                    </div>
+
+                    <div class="bg-indigo-900/50 p-4 rounded-xl border border-indigo-400/30 inline-block mb-8">
+                        <p class="font-bold text-indigo-200 uppercase tracking-widest text-sm mb-1">Materi Selanjutnya:</p>
+                        <p class="font-kids text-2xl text-white">Bilangan Desimal <i class="fa-solid fa-arrow-right ml-1"></i></p>
+                    </div>
+
+                    <h1 class="font-kids text-5xl font-bold text-yellow-400 tracking-wider">THANK YOU FOR TODAY!</h1>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        // --- 1. DATA GENERATOR (35 Questions per student) ---
+        // Helper untuk membuat HTML pecahan
+        const f = (n,d) => `<span class="frac"><span>${n}</span><span>${d}</span></span>`;
+        const mx = (w,n,d) => `<span class="mixed"><span class="whole">${w}</span>${f(n,d)}</span>`;
+
+        function genDB() {
+            let db = [];
+            // 1-4: Membentuk (PG, Mudah)
+            db.push(makeQ('pg', 'mudah', 
+                `Ada 5 potong pizza, Budi makan 2 potong. Pecahan pizza yang dimakan Budi adalah...`, ['1/5','2/5','3/5','5/2'], 1, `2 dari 5 bagian = 2/5.`,
+                `Sebuah kue dipotong 6 bagian sama besar. Ani mengambil 1 bagian. Pecahannya adalah...`, ['1/6','2/6','5/6','6/1'], 0, `1 dari 6 bagian = 1/6.`));
+            db.push(makeQ('pg', 'mudah', 
+                `Daerah yang diarsir 3 dari 8 bagian persegi. Bentuk pecahannya adalah...`, ['3/8','5/8','8/3','1/8'], 0, `3 diarsir dari total 8 = 3/8.`,
+                `Daerah yang diarsir 4 dari 10 bagian. Bentuk pecahannya adalah...`, ['4/10','6/10','10/4','1/10'], 0, `4 diarsir dari total 10 = 4/10.`));
+            db.push(makeQ('pg', 'sedang', 
+                `Ibu membeli seloyang martabak berisi 12 potong. Ayah memakan 3 potong. Sisa martabak dalam pecahan adalah...`, ['3/12','9/12','12/3','1/4'], 1, `Sisa = 12 - 3 = 9 potong. Jadi 9/12.`,
+                `Ada 15 kelereng, 5 berwarna merah sisanya biru. Pecahan kelereng biru adalah...`, ['5/15','10/15','15/5','1/3'], 1, `Biru = 15 - 5 = 10. Pecahan = 10/15.`));
+            db.push(makeQ('pg', 'sedang', 
+                `Sebuah pita panjangnya 1 meter dipotong jadi 5. Rini memakai 2 potong. Berapa meter pita yang dipakai?`, ['2/5 m','3/5 m','5/2 m','1/5 m'], 0, `2 potong dari 5 potong (1 m) = 2/5 meter.`,
+                `Satu liter air dituang merata ke 4 gelas. Isi 3 gelas sama dengan ... liter.`, ['1/4','3/4','4/3','1/3'], 1, `3 gelas dari total 4 = 3/4 liter.`));
+
+            // 5-8: Senilai (PGK, Sedang)
+            db.push(makeQ('pgk', 'sedang', 
+                `Manakah pecahan di bawah ini yang <b>senilai</b> dengan ${f(1,2)}? (Pilih lebih dari satu)`, ['2/4', '3/5', '5/10', '4/8'], [0,2,3], `1/2 kalikan atas-bawah dengan 2(2/4), 5(5/10), 4(4/8).`,
+                `Manakah pecahan yang <b>senilai</b> dengan ${f(1,3)}? (Pilih lebih dari satu)`, ['2/6', '3/9', '4/10', '5/15'], [0,1,3], `1/3 dikali 2(2/6), dikali 3(3/9), dikali 5(5/15).`));
+            db.push(makeQ('pgk', 'sedang', 
+                `Pilih pecahan yang senilai dengan ${f(3,4)}!`, ['6/8', '9/12', '12/16', '5/8'], [0,1,2], `3/4 kalikan dengan 2, 3, dan 4.`,
+                `Pilih pecahan yang senilai dengan ${f(2,5)}!`, ['4/10', '6/15', '10/20', '8/20'], [0,1,3], `2/5 kalikan dengan 2(4/10), 3(6/15), 4(8/20).`));
+            db.push(makeQ('pgk', 'hots', 
+                `Bentuk paling sederhana dari pecahan-pecahan berikut yang benar adalah...`, ['12/16 = 3/4', '15/20 = 3/4', '10/15 = 1/3', '8/12 = 2/3'], [0,1,3], `10/15 harusnya 2/3, opsi C salah.`,
+                `Pernyataan pecahan senilai yang benar adalah...`, ['6/9 = 2/3', '14/21 = 2/3', '10/25 = 2/5', '9/15 = 1/3'], [0,1,2], `9/15 harusnya 3/5. Opsi D salah.`));
+            db.push(makeQ('pgk', 'hots', 
+                `Jika ${f('x',12)} = ${f(2,3)}, nilai x dan pecahan senilainya adalah...`, ['x = 8', 'x = 6', 'senilai dgn 16/24', 'senilai dgn 4/6'], [0,2,3], `2/3 x 4/4 = 8/12. Jadi x=8. Pecahan senilai: 4/6, 16/24.`,
+                `Jika ${f(3,'y')} = ${f(15,20)}, nilai y dan pecahan senilainya adalah...`, ['y = 4', 'y = 5', 'senilai dgn 6/8', 'senilai dgn 3/5'], [0,2], `15/20 = 3/4, jadi y=4. Senilai dgn 6/8.`));
+
+            // 9-12: Pecahan Campuran (PG, Sedang)
+            db.push(makeQ('pg', 'sedang', `Bentuk pecahan campuran dari ${f(13,5)} adalah...`, ['1 3/5','2 3/5','3 2/5','2 2/5'], 1, `13 : 5 = 2 sisa 3. Jadi 2 3/5.`, `Bentuk pecahan campuran dari ${f(11,4)} adalah...`, ['2 3/4','3 1/4','2 1/4','1 3/4'], 0, `11 : 4 = 2 sisa 3. Jadi 2 3/4.`));
+            db.push(makeQ('pg', 'sedang', `Bentuk pecahan biasa dari ${mx(3,1,2)} adalah...`, ['5/2','7/2','6/2','9/2'], 1, `(3x2)+1 = 7. Jadi 7/2.`, `Bentuk pecahan biasa dari ${mx(4,2,3)} adalah...`, ['10/3','11/3','14/3','12/3'], 2, `(4x3)+2 = 14. Jadi 14/3.`));
+            db.push(makeQ('pg', 'hots', `Pecahan campuran paling sederhana dari ${f(26,8)} adalah...`, ['3 2/8','3 1/4','2 10/8','3 1/2'], 1, `26/8 = 3 2/8. Sederhanakan 2/8 jadi 1/4. Hasil: 3 1/4.`, `Pecahan campuran paling sederhana dari ${f(22,6)} adalah...`, ['3 4/6','3 2/3','2 10/6','4 1/3'], 1, `22/6 = 3 4/6. Sederhanakan 4/6 jadi 2/3. Hasil: 3 2/3.`));
+            db.push(makeQ('pg', 'hots', `Urutan dari yang terkecil: ${mx(1,1,2)}, ${f(7,4)}, ${mx(1,1,4)} adalah...`, ['1 1/4, 1 1/2, 7/4','1 1/4, 7/4, 1 1/2','1 1/2, 1 1/4, 7/4','7/4, 1 1/2, 1 1/4'], 0, `1 1/4(1.25), 1 1/2(1.5), 7/4(1.75).`, `Urutan dari yang terbesar: ${mx(2,1,2)}, ${f(11,4)}, ${mx(2,1,4)} adalah...`, ['11/4, 2 1/2, 2 1/4','2 1/2, 11/4, 2 1/4','11/4, 2 1/4, 2 1/2','2 1/4, 2 1/2, 11/4'], 0, `11/4(2.75), 2 1/2(2.5), 2 1/4(2.25).`));
+
+            // 13-15: Kebalikan (PG, Mudah)
+            db.push(makeQ('pg', 'mudah', `Kebalikan dari pecahan ${f(3,5)} adalah...`, ['-3/5','5/3','3/5','-5/3'], 1, `Balik posisi atas dan bawah: 5/3.`, `Kebalikan dari pecahan ${f(4,7)} adalah...`, ['7/4','-4/7','4/7','-7/4'], 0, `Balik posisi atas dan bawah: 7/4.`));
+            db.push(makeQ('pg', 'sedang', `Kebalikan dari bilangan bulat 8 adalah...`, ['8/1','-8','1/8','0/8'], 2, `8 = 8/1. Kebalikannya adalah 1/8.`, `Kebalikan dari bilangan bulat 5 adalah...`, ['5/1','1/5','-5','0/5'], 1, `5 = 5/1. Kebalikannya adalah 1/5.`));
+            db.push(makeQ('pg', 'hots', `Kebalikan dari pecahan campuran ${mx(2,1,4)} adalah...`, ['4/9','9/4','2 4/1','1/4'], 0, `2 1/4 = 9/4. Kebalikannya 4/9.`, `Kebalikan dari pecahan campuran ${mx(3,1,2)} adalah...`, ['2/7','7/2','3 2/1','1/2'], 0, `3 1/2 = 7/2. Kebalikannya 2/7.`));
+
+            // 16-19: Bilangan Bulat -> Pecahan (PGK, Sedang)
+            db.push(makeQ('pgk', 'sedang', `Pecahan mana sajakah yang bernilai sama dengan bilangan <b>3</b>?`, ['6/2','9/3','4/2','15/5'], [0,1,3], `6:2=3, 9:3=3, 15:5=3. (4:2=2 salah).`, `Pecahan mana sajakah yang bernilai sama dengan bilangan <b>4</b>?`, ['8/2','12/3','10/2','16/4'], [0,1,3], `8:2=4, 12:3=4, 16:4=4. (10:2=5 salah).`));
+            db.push(makeQ('pgk', 'sedang', `Pilih pecahan yang mewakili bilangan bulat <b>5</b>!`, ['10/2','20/4','15/5','25/5'], [0,1,3], `10:2=5, 20:4=5, 25:5=5. (15:5=3 salah).`, `Pilih pecahan yang mewakili bilangan bulat <b>2</b>!`, ['4/2','6/3','8/4','10/4'], [0,1,2], `4:2=2, 6:3=2, 8:4=2. (10:4=2.5 salah).`));
+            db.push(makeQ('pgk', 'hots', `Bilangan <b>1</b> dapat diwakili oleh pecahan...`, ['100/100','8/8','0/1','3/3'], [0,1,3], `Atas dan bawah harus sama. (0/1=0 salah).`, `Bilangan <b>0</b> dapat diwakili oleh pecahan...`, ['0/5','0/100','5/0','0/1'], [0,1,3], `0 dibagi berapapun (bukan 0) adalah 0. (5/0 tak terdefinisi).`));
+            db.push(makeQ('pgk', 'hots', `Pernyataan yang benar tentang perubahan bilangan bulat ke pecahan adalah...`, ['7 = 14/2','8 = 24/3','6 = 18/3','9 = 36/4'], [0,1,2,3], `Semua benar. 14/2=7, 24/3=8, 18/3=6, 36/4=9.`, `Pernyataan yang salah tentang bilangan bulat ke pecahan adalah...`, ['5 = 15/2','4 = 16/3','3 = 12/4','2 = 6/4'], [0,1,3], `15/2=7.5 (salah), 16/3=5.3(salah), 6/4=1.5(salah). 12/4=3(benar, krn dicari yg salah maka tdk dipilih).`));
+
+            // 20-23: Membandingkan (PG, Mudah/Sedang)
+            db.push(makeQ('pg', 'mudah', `Bandingkan: ${f(2,5)} ... ${f(4,5)}`, ['>','<','='], 1, `Penyebut sama, 2 < 4. Jadi <.`, `Bandingkan: ${f(3,7)} ... ${f(1,7)}`, ['>','<','='], 0, `Penyebut sama, 3 > 1. Jadi >.`));
+            db.push(makeQ('pg', 'sedang', `Bandingkan: ${f(1,2)} ... ${f(1,3)}`, ['>','<','='], 0, `Kali silang: 1x3=3, 1x2=2. 3 > 2.`, `Bandingkan: ${f(1,4)} ... ${f(1,3)}`, ['>','<','='], 1, `Kali silang: 1x3=3, 1x4=4. 3 < 4.`));
+            db.push(makeQ('pg', 'hots', `Bandingkan: ${f(3,4)} ... ${f(6,8)}`, ['>','<','='], 2, `Kali silang: 24 = 24. Atau sederhanakan 6/8 = 3/4.`, `Bandingkan: ${f(2,3)} ... ${f(4,6)}`, ['>','<','='], 2, `Kali silang: 12 = 12. Atau 4/6 = 2/3.`));
+            db.push(makeQ('pg', 'hots', `Bandingkan: ${mx(1,1,2)} ... ${f(7,5)}`, ['>','<','='], 0, `1 1/2 = 3/2. Kali silang 3/2 dgn 7/5 -> 15 > 14.`, `Bandingkan: ${mx(2,1,4)} ... ${f(9,4)}`, ['>','<','='], 2, `2 1/4 = 9/4. 9/4 = 9/4.`));
+
+            // 24-32: Operasi Hitung (PG, Campuran Tingkat)
+            db.push(makeQ('pg', 'mudah', `Hasil dari ${f(1,4)} + ${f(2,4)} adalah...`, ['3/8','3/4','2/8','1/4'], 1, `Penyebut sama, 1+2 = 3/4.`, `Hasil dari ${f(2,5)} + ${f(1,5)} adalah...`, ['3/10','1/5','3/5','2/5'], 2, `Penyebut sama, 2+1 = 3/5.`));
+            db.push(makeQ('pg', 'sedang', `Hasil dari ${f(1,2)} + ${f(1,3)} adalah...`, ['2/5','5/6','1/6','1/5'], 1, `Samakan penyebut (6). 3/6 + 2/6 = 5/6.`, `Hasil dari ${f(1,3)} + ${f(1,4)} adalah...`, ['2/7','1/12','7/12','2/12'], 2, `Samakan penyebut (12). 4/12 + 3/12 = 7/12.`));
+            db.push(makeQ('pg', 'mudah', `Hasil dari ${f(5,7)} - ${f(2,7)} adalah...`, ['3/7','3/0','7/7','2/7'], 0, `5 - 2 = 3. Jadi 3/7.`, `Hasil dari ${f(8,9)} - ${f(3,9)} adalah...`, ['11/9','5/9','5/0','8/9'], 1, `8 - 3 = 5. Jadi 5/9.`));
+            db.push(makeQ('pg', 'sedang', `Hasil dari ${f(3,4)} - ${f(1,3)} adalah...`, ['2/1','5/12','2/12','1/12'], 1, `Penyebut 12: 9/12 - 4/12 = 5/12.`, `Hasil dari ${f(2,3)} - ${f(1,5)} adalah...`, ['1/2','7/15','1/15','3/8'], 1, `Penyebut 15: 10/15 - 3/15 = 7/15.`));
+            db.push(makeQ('pg', 'hots', `Hasil dari ${mx(2,1,2)} + ${mx(1,1,4)} adalah...`, ['3 3/4','3 1/4','3 1/2','4 1/4'], 0, `2+1=3. 1/2+1/4 = 3/4. Hasil: 3 3/4.`, `Hasil dari ${mx(3,1,3)} + ${mx(1,1,6)} adalah...`, ['4 1/2','4 2/9','4 1/6','4 2/3'], 0, `3+1=4. 1/3+1/6 = 2/6+1/6 = 3/6 = 1/2. Hasil: 4 1/2.`));
+            db.push(makeQ('pg', 'hots', `Hasil dari ${mx(3,1,4)} - ${mx(1,3,4)} adalah...`, ['2 2/4','1 1/2','2 1/2','1 3/4'], 1, `Pinjam 1: 2 5/4 - 1 3/4 = 1 2/4 = 1 1/2.`, `Hasil dari ${mx(4,1,5)} - ${mx(2,4,5)} adalah...`, ['2 3/5','1 2/5','1 3/5','2 2/5'], 1, `Pinjam 1: 3 6/5 - 2 4/5 = 1 2/5.`));
+            db.push(makeQ('pg', 'sedang', `Hasil dari ${f(2,3)} x ${f(4,5)} adalah...`, ['8/15','6/8','2/15','8/5'], 0, `Atas x Atas (8), Bawah x Bawah (15).`, `Hasil dari ${f(3,4)} x ${f(1,2)} adalah...`, ['3/8','4/6','3/6','4/8'], 0, `3x1=3, 4x2=8. Hasil: 3/8.`));
+            db.push(makeQ('pg', 'hots', `Hasil dari 4 x ${f(2,5)} adalah...`, ['8/20','8/5','6/5','4 2/5'], 1, `4/1 x 2/5 = 8/5.`, `Hasil dari 5 x ${f(3,7)} adalah...`, ['15/35','8/7','15/7','5 3/7'], 2, `5/1 x 3/7 = 15/7.`));
+            db.push(makeQ('pg', 'sedang', `Hasil dari ${f(1,2)} : ${f(1,4)} adalah...`, ['1/8','2','4','1/2'], 1, `1/2 x 4/1 = 4/2 = 2.`, `Hasil dari ${f(2,3)} : ${f(1,6)} adalah...`, ['2/18','4','1/4','3'], 1, `2/3 x 6/1 = 12/3 = 4.`));
+
+            // 33-35: Soal Cerita (HOTS)
+            db.push(makeQ('pg', 'hots', `Ibu punya ${mx(2,1,2)} kg terigu. Dipakai ${mx(1,1,4)} kg. Sisa terigu adalah...`, ['1 1/4 kg','1 1/2 kg','1 3/4 kg','1 kg'], 0, `2 1/2 - 1 1/4 = 2 2/4 - 1 1/4 = 1 1/4 kg.`, `Ayah beli tali ${mx(3,1,2)} m. Dipakai ${mx(1,3,4)} m. Sisa tali...`, ['1 1/4 m','1 3/4 m','2 1/4 m','1 1/2 m'], 1, `3 2/4 - 1 3/4 -> Pinjam -> 2 6/4 - 1 3/4 = 1 3/4 m.`));
+            db.push(makeQ('pg', 'hots', `Resep butuh ${f(3,4)} kg gula. Jika buat 2 resep, butuh gula...`, ['1 1/2 kg','1 1/4 kg','6/8 kg','3/2 kg'], 0, `2 x 3/4 = 6/4 = 1 2/4 = 1 1/2 kg.`, `Setiap botol isi ${f(2,5)} liter. Jika ada 3 botol, total isi...`, ['6/15 L','1 1/5 L','1 2/5 L','5/5 L'], 1, `3 x 2/5 = 6/5 = 1 1/5 liter.`));
+            db.push(makeQ('pg', 'hots', `Pita ${mx(1,1,2)} meter dibagi rata ke 3 anak. Tiap anak dapat...`, ['1/2 m','1/3 m','3/2 m','2/3 m'], 0, `1 1/2 = 3/2. (3/2) : 3 = (3/2) x (1/3) = 3/6 = 1/2 m.`, `Tali ${mx(2,1,4)} meter dibagi rata ke 3 bagian. Tiap bagian...`, ['3/4 m','1/4 m','9/4 m','4/3 m'], 0, `2 1/4 = 9/4. (9/4) : 3 = (9/4) x (1/3) = 9/12 = 3/4 m.`));
+
+            return db;
+        }
+
+        function makeQ(type, diff, q1, o1, a1, e1, q2, o2, a2, e2) {
+            return {
+                type: type, diff: diff,
+                p1: { q: q1, opts: o1, ans: a1, exp: e1 },
+                p2: { q: q2, opts: o2, ans: a2, exp: e2 }
+            };
+        }
+
+        const db = genDB(); // 35 questions
+
+        // App State
+        let currentSlide = 1;
+        const totalSlides = 5;
+        let s1 = { name: "S1", answers: Array(35).fill(null), times: Array(35).fill(0), score: 0 };
+        let s2 = { name: "S2", answers: Array(35).fill(null), times: Array(35).fill(0), score: 0 };
+        
+        let currentQ = 0; // 0 to 34
+        let timerInt = null;
+        let timeLeft = 180;
+        let p1Checked = false;
+        let p2Checked = false;
+
+        // --- INIT & NAV ---
+        function startApp() {
+            let n1 = document.getElementById('input-s1').value.trim();
+            let n2 = document.getElementById('input-s2').value.trim();
+            if(!n1 || !n2) return alert("Masukkan nama kalian berdua!");
+            s1.name = n1; s2.name = n2;
+            
+            document.getElementById('s1-display').innerText = s1.name;
+            document.getElementById('s2-display').innerText = s2.name;
+            document.getElementById('student-badges').classList.remove('hidden');
+            document.getElementById('student-badges').classList.add('flex');
+            
+            document.getElementById('btn-prev').disabled = false;
+            document.getElementById('btn-next').disabled = false;
+            
+            navSlide(1);
+        }
+
+        function navSlide(step) {
+            let next = currentSlide + step;
+            if(next < 1 || next > totalSlides) return;
+            
+            document.querySelectorAll('.slide').forEach(e => e.classList.remove('active'));
+            document.getElementById('slide-'+next).classList.add('active');
+            currentSlide = next;
+            
+            document.getElementById('slide-indicator').innerText = `${next}/${totalSlides}`;
+            document.getElementById('btn-prev').disabled = (next === 1);
+            document.getElementById('btn-next').disabled = (next === totalSlides);
+
+            if(next === 3) initQuiz();
+            if(next === 4) generateStats();
+        }
+
+        // --- SLIDE 3: QUIZ ENGINE ---
+        function initQuiz() {
+            const container = document.getElementById('q-nav-container');
+            container.innerHTML = '';
+            for(let i=0; i<35; i++) {
+                let btn = document.createElement('button');
+                btn.className = 'q-nav-btn';
+                btn.innerText = i+1;
+                btn.id = `qnav-${i}`;
+                btn.onclick = () => loadQuestion(i);
+                container.appendChild(btn);
+            }
+            loadQuestion(0);
+        }
+
+        function loadQuestion(idx) {
+            currentQ = idx;
+            p1Checked = s1.answers[idx] !== null;
+            p2Checked = s2.answers[idx] !== null;
+            
+            // Nav styling
+            document.querySelectorAll('.q-nav-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById(`qnav-${idx}`).classList.add('active');
+
+            const qD = db[idx];
+            
+            // Headers
+            document.getElementById('s1-panel-name').innerText = s1.name;
+            document.getElementById('s2-panel-name').innerText = s2.name;
+            document.getElementById('s1-diff').innerText = `No.${idx+1} (${qD.diff.toUpperCase()})`;
+            document.getElementById('s2-diff').innerText = `No.${idx+1} (${qD.diff.toUpperCase()})`;
+
+            // Questions
+            document.getElementById('s1-q-text').innerHTML = qD.p1.q;
+            document.getElementById('s2-q-text').innerHTML = qD.p2.q;
+
+            renderOptions(1, qD.type, qD.p1, p1Checked);
+            renderOptions(2, qD.type, qD.p2, p2Checked);
+
+            // Reset UI States
+            updatePlayerUI(1, p1Checked);
+            updatePlayerUI(2, p2Checked);
+
+            // Timer
+            clearInterval(timerInt);
+            if(p1Checked && p2Checked) {
+                document.getElementById('timer-display').innerText = "SELESAI";
+                document.getElementById('btn-timer').disabled = true;
+            } else {
+                timeLeft = 180;
+                document.getElementById('timer-display').innerText = "03:00";
+                document.getElementById('btn-timer').disabled = false;
+                document.getElementById('btn-timer').innerText = "Start";
+            }
+        }
+
+        function renderOptions(pNum, type, data, isChecked) {
+            const container = document.getElementById(`s${pNum}-opts`);
+            container.innerHTML = '';
+            
+            const prevAns = pNum === 1 ? s1.answers[currentQ] : s2.answers[currentQ];
+
+            data.opts.forEach((opt, i) => {
+                let lbl = document.createElement('label');
+                lbl.className = 'opt-label';
+                
+                let inp = document.createElement('input');
+                inp.type = type === 'pg' ? 'radio' : 'checkbox';
+                inp.name = `s${pNum}-q${currentQ}`;
+                inp.value = i;
+                inp.className = 'w-4 h-4 accent-indigo-600';
+                
+                if(isChecked) {
+                    inp.disabled = true;
+                    // Restore checked state
+                    if(type === 'pg' && prevAns === i) inp.checked = true;
+                    if(type === 'pgk' && prevAns.includes(i)) inp.checked = true;
+                    
+                    // Show correct/wrong colors
+                    const isAnsCorrect = type === 'pg' ? (i === data.ans) : data.ans.includes(i);
+                    if(isAnsCorrect) lbl.classList.add('correct');
+                    else if(inp.checked) lbl.classList.add('wrong'); // user picked wrong
+                }
+
+                let span = document.createElement('span');
+                span.innerHTML = opt;
+                
+                lbl.appendChild(inp);
+                lbl.appendChild(span);
+                container.appendChild(lbl);
+            });
+        }
+
+        function updatePlayerUI(pNum, isChecked) {
+            document.getElementById(`s${pNum}-btn-cek`).disabled = isChecked;
+            document.getElementById(`s${pNum}-btn-cek`).style.display = isChecked ? 'none' : 'block';
+            document.getElementById(`s${pNum}-btn-disc`).style.display = isChecked ? 'block' : 'none';
+            document.getElementById(`s${pNum}-disc-text`).classList.add('hidden');
+            
+            let fb = document.getElementById(`s${pNum}-fb`);
+            if(!isChecked) fb.innerHTML = '';
+            else {
+                const s = pNum===1 ? s1 : s2;
+                const timeStr = s.times[currentQ] + "s";
+                // simple check logic
+                const qD = db[currentQ];
+                const d = pNum===1 ? qD.p1 : qD.p2;
+                const ans = s.answers[currentQ];
+                let isCorrect = false;
+                if(qD.type === 'pg') isCorrect = (ans === d.ans);
+                else {
+                    isCorrect = (ans.length === d.ans.length && ans.every(v => d.ans.includes(v)));
+                }
+
+                if(isCorrect) fb.innerHTML = `<span class="text-emerald-500"><i class="fa-solid fa-check"></i> Benar! (${timeStr})</span>`;
+                else fb.innerHTML = `<span class="text-rose-500"><i class="fa-solid fa-xmark"></i> Salah! (${timeStr})</span>`;
+            }
+        }
+
+        // --- TIMER ---
+        function startTimer() {
+            if(p1Checked && p2Checked) return;
+            document.getElementById('btn-timer').innerText = "Run...";
+            document.getElementById('btn-timer').disabled = true;
+            
+            clearInterval(timerInt);
+            timerInt = setInterval(() => {
+                timeLeft--;
+                let m = Math.floor(timeLeft/60).toString().padStart(2,'0');
+                let s = (timeLeft%60).toString().padStart(2,'0');
+                document.getElementById('timer-display').innerText = `${m}:${s}`;
+                
+                if(timeLeft <= 0) {
+                    clearInterval(timerInt);
+                    if(!p1Checked) checkAnswer(1, true);
+                    if(!p2Checked) checkAnswer(2, true);
+                }
+            }, 1000);
+        }
+
+        function addTime() { timeLeft += 15; }
+
+        // --- CHECKING ---
+        function checkAnswer(pNum, autoFail = false) {
+            const qD = db[currentQ];
+            const d = pNum === 1 ? qD.p1 : qD.p2;
+            const container = document.getElementById(`s${pNum}-opts`);
+            let inputs = container.querySelectorAll('input');
+            
+            let userAns;
+            if(autoFail) {
+                userAns = qD.type === 'pg' ? -1 : [];
+            } else {
+                if(qD.type === 'pg') {
+                    let sel = Array.from(inputs).find(i => i.checked);
+                    if(!sel) return alert("Pilih jawaban dulu!");
+                    userAns = parseInt(sel.value);
+                } else {
+                    userAns = Array.from(inputs).filter(i => i.checked).map(i => parseInt(i.value));
+                    if(userAns.length === 0) return alert("Pilih jawaban dulu!");
+                }
+            }
+
+            // Save state
+            const student = pNum === 1 ? s1 : s2;
+            student.answers[currentQ] = userAns;
+            student.times[currentQ] = 180 - timeLeft;
+
+            // Mark correct
+            let isCorrect = false;
+            if(qD.type === 'pg') isCorrect = (userAns === d.ans);
+            else isCorrect = (userAns.length === d.ans.length && userAns.every(v => d.ans.includes(v)));
+
+            if(isCorrect) student.score++;
+
+            if(pNum === 1) p1Checked = true;
+            if(pNum === 2) p2Checked = true;
+
+            updatePlayerUI(pNum, true);
+            renderOptions(pNum, qD.type, d, true); // re-render to lock and show colors
+
+            // Check if both done to color nav button
+            if(p1Checked && p2Checked) {
+                clearInterval(timerInt);
+                document.getElementById(`qnav-${currentQ}`).classList.add('done');
+                document.getElementById('timer-display').innerText = "SELESAI";
+            }
+        }
+
+        function showDisc(pNum) {
+            const d = pNum === 1 ? db[currentQ].p1 : db[currentQ].p2;
+            const panel = document.getElementById(`s${pNum}-disc-text`);
+            panel.innerHTML = "<b>Pembahasan:</b> " + d.exp;
+            panel.classList.toggle('hidden');
+        }
+
+        // --- SLIDE 4: STATS ---
+        function generateStats() {
+            // S1
+            document.getElementById('stat-s1-name').innerText = s1.name;
+            let s1Score = Math.round((s1.score / 35) * 100);
+            document.getElementById('stat-s1-score').innerHTML = `${s1Score} <span class="text-lg text-sky-400">/ 100</span>`;
+            let s1Avg = s1.times.reduce((a,b)=>a+b,0) / 35;
+            document.getElementById('stat-s1-avg').innerText = s1Avg.toFixed(1) + "s";
+
+            // S2
+            document.getElementById('stat-s2-name').innerText = s2.name;
+            let s2Score = Math.round((s2.score / 35) * 100);
+            document.getElementById('stat-s2-score').innerHTML = `${s2Score} <span class="text-lg text-rose-400">/ 100</span>`;
+            let s2Avg = s2.times.reduce((a,b)=>a+b,0) / 35;
+            document.getElementById('stat-s2-avg').innerText = s2Avg.toFixed(1) + "s";
+
+            // Table
+            const tbody = document.getElementById('stat-table-body');
+            tbody.innerHTML = '';
+            for(let i=0; i<35; i++) {
+                // S1 Eval
+                let q1 = db[i].p1, q2 = db[i].p2;
+                let is1C = false, is2C = false;
+                if(s1.answers[i] !== null) {
+                    if(db[i].type === 'pg') is1C = s1.answers[i] === q1.ans;
+                    else is1C = (s1.answers[i].length === q1.ans.length && s1.answers[i].every(v => q1.ans.includes(v)));
+                }
+                if(s2.answers[i] !== null) {
+                    if(db[i].type === 'pg') is2C = s2.answers[i] === q2.ans;
+                    else is2C = (s2.answers[i].length === q2.ans.length && s2.answers[i].every(v => q2.ans.includes(v)));
+                }
+
+                let s1St = s1.answers[i]===null ? '-' : (is1C ? '✅ Benar' : '❌ Salah');
+                let s2St = s2.answers[i]===null ? '-' : (is2C ? '✅ Benar' : '❌ Salah');
+
+                tbody.innerHTML += `
+                    <tr>
+                        <td class="p-3 border-b border-slate-200 text-center">${i+1}</td>
+                        <td class="p-3 border-b border-slate-200 text-center ${is1C?'text-emerald-500':'text-rose-500'}">${s1St}</td>
+                        <td class="p-3 border-b border-slate-200 text-center font-mono">${s1.answers[i]!==null ? s1.times[i]+'s' : '-'}</td>
+                        <td class="p-3 border-b border-slate-200 text-center ${is2C?'text-emerald-500':'text-rose-500'}">${s2St}</td>
+                        <td class="p-3 border-b border-slate-200 text-center font-mono">${s2.answers[i]!==null ? s2.times[i]+'s' : '-'}</td>
+                    </tr>
+                `;
+            }
+        }
+
+    </script>
+</body>
+</html>
