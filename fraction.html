@@ -1,0 +1,1167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fabulous Fractions! - Grade 5 Math Adventure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Nunito:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --pink:#FF6B9D; --pink-s:#FF8FB5; --pink-bg:rgba(255,107,157,.1);
+  --lav:#9B7FE0; --lav-s:#B8A2EE; --lav-bg:rgba(155,127,224,.1);
+  --yellow:#FFC93C; --yellow-s:#FFD970; --yellow-bg:rgba(255,201,60,.18);
+  --mint:#4ECDC4; --mint-s:#6FE0D8; --mint-bg:rgba(78,205,196,.12);
+  --bg:#FFF5F8; --bg2:#F9F0FA; --bg3:#FFEFF5;
+  --card:#FFFFFF; --text:#3D2535; --dim:#9B7E8F;
+  --border:rgba(155,127,224,.18);
+  --shadow:0 12px 40px rgba(255,107,157,.12);
+  --shadow-lg:0 20px 60px rgba(155,127,224,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden;font-family:'Nunito',sans-serif;background:linear-gradient(135deg,#FFF5F8 0%,#F9F0FA 100%);color:var(--text);line-height:1.5}
+.display{font-family:'Fredoka',sans-serif;font-weight:700;letter-spacing:-.01em}
+
+.bg-layer{position:fixed;inset:0;z-index:-2;overflow:hidden;
+  background:
+    radial-gradient(ellipse 80% 60% at 15% 20%,rgba(255,107,157,.18) 0%,transparent 60%),
+    radial-gradient(ellipse 70% 70% at 85% 80%,rgba(155,127,224,.18) 0%,transparent 60%),
+    linear-gradient(135deg,#FFF5F8 0%,#F9F0FA 100%);
+}
+.float-sym{position:absolute;font-family:'Fredoka',sans-serif;font-weight:600;opacity:.15;user-select:none;pointer-events:none;animation:float 18s infinite ease-in-out}
+@keyframes float{0%,100%{transform:translate(0,0) rotate(0deg)}50%{transform:translate(20px,-30px) rotate(8deg)}}
+
+.top-nav{position:fixed;top:1rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1rem;background:rgba(255,255,255,.85);backdrop-filter:blur(20px);padding:.55rem 1rem;border-radius:100px;border:1.5px solid var(--border);z-index:100;box-shadow:0 8px 32px rgba(255,107,157,.15)}
+.nav-btn{background:var(--pink-bg);border:1.5px solid var(--border);color:var(--pink);width:34px;height:34px;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;font-size:1.1rem;font-weight:700;font-family:'Fredoka',sans-serif}
+.nav-btn:hover:not(:disabled){background:var(--pink);color:#fff;transform:scale(1.1)}
+.nav-btn:disabled{opacity:.3;cursor:not-allowed}
+.progress-info{font-size:.85rem;color:var(--dim);font-weight:700;min-width:48px;text-align:center;font-family:'Fredoka',sans-serif}
+.dots{display:flex;gap:.35rem}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--border);border:none;cursor:pointer;transition:all .3s;padding:0}
+.dot.active{background:var(--pink);width:28px;border-radius:5px}
+.dot:hover:not(.active){background:var(--lav-s)}
+
+.slide{position:fixed;inset:0;padding:4.5rem 2.5rem 2rem;overflow-y:auto;display:none;flex-direction:column;animation:slideIn .5s ease}
+.slide.active{display:flex}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+.slide::-webkit-scrollbar{width:10px}
+.slide::-webkit-scrollbar-track{background:transparent}
+.slide::-webkit-scrollbar-thumb{background:var(--pink-bg);border-radius:5px}
+
+.badge{display:inline-flex;align-items:center;gap:.4rem;padding:.45rem 1rem;background:var(--pink-bg);color:var(--pink);border-radius:100px;font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;border:1.5px solid rgba(255,107,157,.25);font-family:'Fredoka',sans-serif}
+.btn{background:linear-gradient(135deg,var(--pink) 0%,var(--pink-s) 100%);color:#fff;border:none;padding:.9rem 2rem;font-size:1rem;font-weight:700;border-radius:100px;cursor:pointer;transition:all .3s;font-family:'Fredoka',sans-serif;box-shadow:0 8px 24px rgba(255,107,157,.35)}
+.btn:hover:not(:disabled){transform:translateY(-3px);box-shadow:0 14px 32px rgba(255,107,157,.5)}
+.btn-ghost{background:#fff;color:var(--lav);border:1.5px solid var(--border);box-shadow:0 4px 12px rgba(155,127,224,.1)}
+.btn-ghost:hover:not(:disabled){background:var(--lav-bg);color:var(--lav);border-color:var(--lav-s)}
+.btn-sm{padding:.5rem 1rem;font-size:.85rem}
+
+.slide-header{max-width:1100px;margin:0 auto 1.5rem;width:100%}
+.slide-title{font-size:clamp(2rem,4.5vw,3rem);margin:.5rem 0;color:var(--text)}
+.slide-sub{color:var(--dim);font-size:1.05rem;max-width:700px}
+
+.card{background:rgba(255,255,255,.8);border:1.5px solid var(--border);border-radius:20px;padding:1.5rem;backdrop-filter:blur(10px);box-shadow:var(--shadow);margin-bottom:1rem}
+.card h3{font-family:'Fredoka',sans-serif;color:var(--lav);margin-bottom:.5rem;display:flex;align-items:center;gap:.5rem}
+
+.input-box{background:#fff;border:2px solid var(--border);border-radius:12px;padding:.6rem .8rem;font-family:'Fredoka',sans-serif;font-weight:600;color:var(--text);outline:none;transition:border-color .2s;text-align:center;width:80px;font-size:1.1rem}
+.input-box:focus{border-color:var(--pink)}
+.input-box.correct{border-color:var(--mint);background:var(--mint-bg);color:var(--mint)}
+.input-box.wrong{border-color:var(--pink);background:var(--pink-bg);color:var(--pink)}
+
+.ex-row{display:flex;align-items:center;gap:.8rem;margin-bottom:.8rem;font-weight:600;font-family:'Fredoka',sans-serif;font-size:1.05rem;flex-wrap:wrap}
+.ex-row span{flex:1}
+
+.tab-btn{background:#fff;border:1.5px solid var(--border);color:var(--dim);padding:.6rem 1.2rem;border-radius:100px;cursor:pointer;font-family:'Fredoka',sans-serif;font-weight:600;transition:all .2s;font-size:.95rem}
+.tab-btn.active{background:linear-gradient(135deg,var(--pink),var(--pink-s));color:#fff;border-color:transparent;box-shadow:0 4px 12px rgba(255,107,157,.3)}
+.tab-btn:hover:not(.active){border-color:var(--pink-s);color:var(--pink)}
+
+/* Fractions Visuals */
+.frac-vert { display: inline-flex; flex-direction: column; text-align: center; vertical-align: middle; justify-content: center; margin: 0 4px; font-family: 'Fredoka', sans-serif; }
+.frac-vert .fv-top { padding: 0 6px; border-bottom: 2.5px solid var(--text); line-height: 1.2; }
+.frac-vert .fv-bot { padding: 2px 6px; line-height: 1.2; }
+.frac-vert.compact .fv-top { padding: 0 4px; font-size: 0.95em; border-bottom-width: 2px; }
+.frac-vert.compact .fv-bot { padding: 1px 4px; font-size: 0.95em; }
+.frac-vert.large { font-size: 1.8rem; }
+.frac-vert.large .fv-top { border-bottom-width: 3px; }
+
+.input-frac { display: inline-flex; flex-direction: column; align-items: center; vertical-align: middle; }
+.input-frac.has-whole { flex-direction: row; align-items: center; }
+.frac-vert-wrap { display: flex; flex-direction: column; align-items: center; }
+.frac-vert-wrap input { width: 45px; height: 38px; text-align: center; font-family: 'Fredoka',sans-serif; font-weight: 600; font-size: 1.1rem; border: 2px solid var(--border); outline: none; background: #fff;}
+.frac-vert-wrap .frac-line { width: 100%; height: 2.5px; background: var(--text); }
+.frac-vert-wrap input:first-child { border-radius: 8px 8px 0 0; border-bottom: none; }
+.frac-vert-wrap input:last-child { border-radius: 0 0 8px 8px; border-top: none; }
+.input-frac .whole-input { width: 35px; height: 78px; margin-right: 2px; border-radius: 8px; border: 2px solid var(--border); border-right: none; border-top-right-radius: 0; border-bottom-right-radius: 0; text-align: center; font-family: 'Fredoka',sans-serif; font-size: 1.1rem; font-weight: 600; outline: none; background: #fff; }
+.input-frac.has-whole .frac-vert-wrap input:first-child { border-left: none; border-top-left-radius: 0; }
+.input-frac.has-whole .frac-vert-wrap input:last-child { border-left: none; border-bottom-left-radius: 0; }
+.input-frac.has-whole .frac-vert-wrap .frac-line { margin-left: -2px; width: calc(100% + 2px); }
+.input-frac input:focus { border-color: var(--pink); }
+.input-frac input.correct { border-color: var(--mint); color: var(--mint); background: var(--mint-bg); }
+.input-frac input.wrong { border-color: var(--pink); color: var(--pink); background: var(--pink-bg); }
+
+/* Slide 1 Cover */
+.cover-content{flex:1;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;max-width:900px;margin:0 auto;width:100%}
+.cover-title{font-size:clamp(2.5rem,7vw,5rem);line-height:.95;margin:1rem 0 .5rem;background:linear-gradient(135deg,var(--pink) 0%,var(--lav) 50%,var(--yellow) 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;filter:drop-shadow(0 8px 30px rgba(255,107,157,.2))}
+.cover-sub{font-size:1.15rem;color:var(--dim);margin-bottom:2.2rem;max-width:600px}
+.name-box{background:rgba(255,255,255,.7);border:2px solid var(--border);border-radius:24px;padding:1.5rem 2rem;box-shadow:var(--shadow);margin-bottom:2rem;width:100%;max-width:400px}
+.name-label{font-family:'Fredoka',sans-serif;color:var(--lav);font-weight:600;margin-bottom:.5rem;display:block}
+.name-input{width:100%;background:transparent;border:none;border-bottom:2px solid var(--border);color:var(--text);font-size:1.5rem;font-family:'Fredoka',sans-serif;font-weight:600;padding:.4rem 0;outline:none;text-align:center}
+.name-input:focus{border-color:var(--pink)}
+
+/* Slide 2 Trigger */
+.trigger-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:1.5rem;max-width:1000px;margin:0 auto;width:100%}
+.trigger-card{background:rgba(255,255,255,.8);border:1.5px solid var(--border);border-radius:24px;padding:2rem;text-align:center;transition:all .3s;box-shadow:var(--shadow)}
+.trigger-card:hover{transform:translateY(-8px);box-shadow:var(--shadow-lg)}
+.trigger-icon{font-size:4rem;margin-bottom:1rem}
+.trigger-card h3{font-family:'Fredoka',sans-serif;color:var(--pink);margin-bottom:.5rem;font-size:1.3rem;justify-content:center}
+.trigger-card p{color:var(--dim)}
+
+/* Slide 4 Forming A */
+.shape-grid{display:grid;gap:4px;background:var(--border);padding:4px;border-radius:12px;margin:1rem auto;max-width:500px}
+.shape-cell{background:#fff;border-radius:8px;transition:background .3s;min-height:60px}
+.shape-cell.colored{background:linear-gradient(135deg,var(--pink),var(--lav));}
+
+/* Slide 6 Memory Game */
+.mem-board{display:grid;grid-template-columns:repeat(4,1fr);gap:.8rem;max-width:500px;margin:1rem auto}
+.mem-card{aspect-ratio:3/4;perspective:1000px;cursor:pointer}
+.mem-card-inner{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.mem-card.flipped .mem-card-inner,.mem-card.matched .mem-card-inner{transform:rotateY(180deg)}
+.mem-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.8rem}
+.mem-front{background:linear-gradient(135deg,var(--pink),var(--lav));color:#fff;font-size:2rem;border:2px solid #fff}
+.mem-back{background:#fff;border:2px solid var(--border);transform:rotateY(180deg);color:var(--text)}
+.mem-card.matched .mem-back{background:var(--mint-bg);border-color:var(--mint);color:var(--mint)}
+
+/* Visualizer */
+.vis-bar{display:grid;gap:2px;background:var(--border);padding:2px;border-radius:8px;margin:.5rem 0;height:40px}
+.bar-cell{background:#fff;border-radius:4px;height:100%}
+.bar-cell.filled-pink{background:var(--pink)}
+.bar-cell.filled-lav{background:var(--lav)}
+.bar-cell.filled-mint{background:var(--mint)}
+.bar-cell.filled-yellow{background:var(--yellow)}
+
+.area-model{display:grid;gap:2px;background:var(--border);padding:2px;border-radius:8px;width:200px;height:200px;margin:1rem auto}
+.area-cell{background:#fff;border-radius:4px;transition:background .3s}
+.area-cell.row-active{background:var(--pink-bg)}
+.area-cell.col-active{background:var(--lav-bg)}
+.area-cell.intersect{background:var(--pink)}
+
+/* Word Problems */
+.wp-card{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:1.2rem;margin-bottom:1rem;box-shadow:0 4px 12px rgba(0,0,0,.05)}
+.wp-en{font-weight:600;margin-bottom:.5rem;color:var(--text)}
+.wp-id{color:var(--lav);font-style:italic;margin-bottom:.8rem;display:none}
+.wp-id.show{display:block}
+.wp-exp{background:var(--mint-bg);border-left:4px solid var(--mint);padding:.8rem;border-radius:8px;margin-top:.8rem;font-size:.9rem;color:var(--text);display:none}
+.wp-exp.show{display:block}
+
+/* Ordering */
+.order-set{background:#fff;border:1.5px solid var(--border);border-radius:16px;padding:1.5rem;margin-bottom:1rem;text-align:center}
+.frac-row{display:flex;justify-content:space-around;align-items:center;margin-bottom:1.5rem;flex-wrap:wrap;gap:1rem}
+.frac-box{font-family:'Fredoka',sans-serif;font-size:1.8rem;font-weight:700;color:var(--lav);background:var(--bg3);padding:.5rem 1.2rem;border-radius:12px}
+.order-inputs{display:flex;justify-content:space-around;flex-wrap:wrap;gap:1rem}
+.order-input{width:50px;height:50px;border:2px solid var(--border);border-radius:12px;text-align:center;font-family:'Fredoka',sans-serif;font-size:1.2rem;font-weight:700;color:var(--text);outline:none}
+.order-input:focus{border-color:var(--pink)}
+.order-input.correct{border-color:var(--mint);background:var(--mint-bg);color:var(--mint)}
+.order-input.wrong{border-color:var(--pink);background:var(--pink-bg);color:var(--pink)}
+
+.toast{position:fixed;bottom:2rem;left:50%;transform:translateX(-50%) translateY(120%);background:#fff;border:2px solid var(--pink);color:var(--pink);padding:.8rem 1.5rem;border-radius:100px;font-size:.9rem;font-weight:700;box-shadow:var(--shadow-lg);z-index:200;transition:transform .4s cubic-bezier(.34,1.56,.64,1);font-family:'Fredoka',sans-serif}
+.toast.show{transform:translateX(-50%) translateY(0)}
+
+@media (max-width:768px){
+  .slide{padding:4rem 1rem 1.5rem}
+  .ex-row{flex-direction:column;align-items:flex-start;gap:.2rem}
+}
+</style>
+</head>
+<body>
+<div class="bg-layer">
+  <div class="float-sym" style="top:8%;left:6%;font-size:5rem;color:var(--pink);">♥</div>
+  <div class="float-sym" style="top:55%;left:12%;font-size:4rem;color:var(--lav);animation-delay:2s">✦</div>
+  <div class="float-sym" style="top:15%;right:8%;font-size:5.5rem;color:var(--yellow);animation-delay:1s">✿</div>
+  <div class="float-sym" style="bottom:12%;right:12%;font-size:4.5rem;color:var(--pink);animation-delay:3s">♥</div>
+</div>
+
+<nav class="top-nav">
+  <button class="nav-btn" id="prevBtn" onclick="navigate(-1)">‹</button>
+  <div class="dots" id="dots"></div>
+  <span class="progress-info" id="progress">1 / 13</span>
+  <button class="nav-btn" id="nextBtn" onclick="navigate(1)">›</button>
+</nav>
+
+<!-- SLIDE 1: COVER -->
+<section class="slide active" id="slide1">
+  <div class="cover-content">
+    <span class="badge">★ Grade 5 Cambridge Math</span>
+    <h1 class="display cover-title">Fabulous Fractions!</h1>
+    <p class="cover-sub">A magical journey through the world of fractions. Let's learn, play, and become a Fraction Master!</p>
+    <div class="name-box">
+      <label class="name-label">✿ What is your name? ✿</label>
+      <input type="text" class="name-input" id="studentName" placeholder="Type your name here..." maxlength="20">
+    </div>
+    <button class="btn" onclick="startAdventure()">Start Adventure →</button>
+  </div>
+</section>
+
+<!-- SLIDE 2: TRIGGER -->
+<section class="slide" id="slide2">
+  <div class="slide-header">
+    <span class="badge">Trigger Question</span>
+    <h2 class="display slide-title">Where do we use fractions?</h2>
+    <p class="slide-sub">Have you ever wondered why we need numbers like 1/2 or 3/4? Look around!</p>
+  </div>
+  <div class="trigger-grid">
+    <div class="trigger-card">
+      <div class="trigger-icon">🍕</div>
+      <h3>Sharing Pizza</h3>
+      <p>If you cut a pizza into 8 slices and eat 3, you ate 3/8 of the pizza!</p>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-icon">🍫</div>
+      <h3>Chocolate Bars</h3>
+      <p>A chocolate bar has 12 pieces. If you eat 4, you ate 4/12 (or 1/3) of the bar!</p>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-icon">⏰</div>
+      <h3>Telling Time</h3>
+      <p>Half an hour is 1/2 of an hour. A quarter past is 1/4 of an hour!</p>
+    </div>
+    <div class="trigger-card">
+      <div class="trigger-icon">💰</div>
+      <h3>Shopping</h3>
+      <p>"Half price" means you only pay 1/2 of the original cost. Fractions save money!</p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: OBJECTIVES -->
+<section class="slide" id="slide3">
+  <div class="slide-header">
+    <span class="badge">Learning Goals</span>
+    <h2 class="display slide-title">What will we master today?</h2>
+  </div>
+  <div class="trigger-grid">
+    <div class="trigger-card"><div class="trigger-icon" style="font-size:2.5rem">🎨</div><h3>Forming Fractions</h3><p>Understand how fractions are made from shapes and stories.</p></div>
+    <div class="trigger-card"><div class="trigger-icon" style="font-size:2.5rem">👯</div><h3>Equivalent Fractions</h3><p>Find fractions that are equal in value.</p></div>
+    <div class="trigger-card"><div class="trigger-icon" style="font-size:2.5rem">🔢</div><h3>Mixed & Improper</h3><p>Convert between mixed numbers and improper fractions.</p></div>
+    <div class="trigger-card"><div class="trigger-icon" style="font-size:2.5rem">⚖️</div><h3>Compare & Order</h3><p>Use visuals to compare and order fractions.</p></div>
+    <div class="trigger-card"><div class="trigger-icon" style="font-size:2.5rem">✨</div><h3>Operations</h3><p>Add, subtract, multiply, and divide fractions.</p></div>
+    <div class="trigger-card"><div class="trigger-icon" style="font-size:2.5rem">📚</div><h3>Word Problems</h3><p>Solve real-life fraction problems!</p></div>
+  </div>
+</section>
+
+<!-- SLIDE 4: NOTATION & FORMING A -->
+<section class="slide" id="slide4">
+  <div class="slide-header">
+    <span class="badge">Part 1a: Forming Fractions</span>
+    <h2 class="display slide-title">Fraction Notation & Shapes</h2>
+    <p class="slide-sub">A fraction has a <strong style="color:var(--pink)">Numerator</strong> (top) and <strong style="color:var(--lav)">Denominator</strong> (bottom).</p>
+  </div>
+  <div class="card">
+    <h3>🎨 Interactive Shape Generator</h3>
+    <p>Tutor: Set the total parts and colored parts. Student: Write the fraction!</p>
+    <div style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap;margin-bottom:1rem">
+      <div><label>Total Parts:</label> <input type="number" class="input-box" id="shape_total" value="6" min="1" max="20"></div>
+      <div><label>Colored Parts:</label> <input type="number" class="input-box" id="shape_colored" value="2" min="0"></div>
+      <button class="btn btn-sm" onclick="generateShape()">Generate Shape</button>
+    </div>
+    <div id="shape_output"></div>
+    <div style="margin-top:1.5rem;display:flex;gap:1rem;align-items:center;flex-wrap:wrap;justify-content:center">
+      <label style="font-weight:bold">Student Fraction:</label>
+      <div class="input-frac" id="student_ans_shape">
+        <div class="frac-vert-wrap">
+          <input type="number" id="shape_num" placeholder="N">
+          <div class="frac-line"></div>
+          <input type="number" id="shape_den" placeholder="D">
+        </div>
+      </div>
+      <button class="btn btn-sm" onclick="checkShape()">Check Answer</button>
+      <span id="shape_result" style="font-weight:bold;font-family:'Fredoka',sans-serif"></span>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: FORMING B -->
+<section class="slide" id="slide5">
+  <div class="slide-header">
+    <span class="badge">Part 1b: Fractions from Stories</span>
+    <h2 class="display slide-title">Story Problems</h2>
+    <p class="slide-sub">Read the story and write the fraction that is formed.</p>
+  </div>
+  <div class="card" id="story_list"></div>
+  <button class="btn" onclick="checkStories()" style="margin-top:1rem">Check All Stories</button>
+</section>
+
+<!-- SLIDE 6: EQUIVALENT & MEMORY -->
+<section class="slide" id="slide6">
+  <div class="slide-header">
+    <span class="badge">Part 2: Equivalent Fractions</span>
+    <h2 class="display slide-title">What are Equivalent Fractions?</h2>
+    <p class="slide-sub">Equivalent fractions have the same value. They might look different, but they represent the same amount! You can find them by multiplying or dividing the top and bottom by the same number.</p>
+  </div>
+  <div class="card">
+    <h3> Interactive Visualizer</h3>
+    <div style="display:flex;gap:1.5rem;align-items:center;justify-content:center;flex-wrap:wrap;margin-bottom:1rem">
+      <div class="frac-vert large"><span class="fv-top" id="eq_n1">1</span><span class="fv-bot" id="eq_d1">2</span></div>
+      <div style="display:flex;flex-direction:column;gap:.5rem">
+        <button class="btn btn-sm" onclick="eqMult(2)">Multiply by 2/2</button>
+        <button class="btn btn-sm" onclick="eqMult(3)">Multiply by 3/3</button>
+        <button class="btn btn-ghost btn-sm" onclick="eqDivide(2)">Divide by 2/2</button>
+        <button class="btn btn-ghost btn-sm" onclick="eqReset()">Reset</button>
+      </div>
+      <div style="font-size:2rem">=</div>
+      <div class="frac-vert large"><span class="fv-top" id="eq_n2">2</span><span class="fv-bot" id="eq_d2">4</span></div>
+    </div>
+    <div id="eq_bars"></div>
+  </div>
+  <div class="card" style="text-align:center">
+    <h3> Memory Match Game!</h3>
+    <p>Find the pairs of equivalent fractions. You have 10 seconds to memorize!</p>
+    <div style="display:flex;justify-content:center;gap:1rem;margin-bottom:1rem;flex-wrap:wrap">
+      <div>Round: <span id="mem_round" style="font-weight:bold;color:var(--pink);font-family:'Fredoka'">1</span>/5</div>
+      <div>Score: <span id="mem_score" style="font-weight:bold;color:var(--lav);font-family:'Fredoka'">0</span></div>
+    </div>
+    <div id="mem_status" style="margin-bottom:1rem"><button class="btn" onclick="startMemRound()">Start Round 1</button></div>
+    <div class="mem-board" id="mem_board"></div>
+  </div>
+</section>
+
+<!-- SLIDE 7: MIXED FRACTIONS -->
+<section class="slide" id="slide7">
+  <div class="slide-header">
+    <span class="badge">Part 3: Mixed Fractions</span>
+    <h2 class="display slide-title">Mixed & Improper Fractions</h2>
+    <p class="slide-sub">Improper fractions have a larger numerator. Mixed numbers have a whole number and a fraction.</p>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+    <div class="card">
+      <h3>➡️ Improper to Mixed</h3>
+      <div id="impToList"></div>
+    </div>
+    <div class="card">
+      <h3>⬅️ Mixed to Improper</h3>
+      <div id="mixToImpList"></div>
+    </div>
+  </div>
+  <button class="btn" onclick="checkMixed()" style="margin-top:1rem;display:block;margin:1rem auto 0">Check All Answers</button>
+</section>
+
+<!-- SLIDE 8: WHOLE & RECIPROCAL -->
+<section class="slide" id="slide8">
+  <div class="slide-header">
+    <span class="badge">Part 4 & 5: Reciprocals & Whole Numbers</span>
+    <h2 class="display slide-title">Flipping & Converting</h2>
+    <p class="slide-sub"><strong>Reciprocal:</strong> Just flip the fraction! (e.g., 3/4 ➡️ 4/3). <br><strong>Whole to Fraction:</strong> Multiply whole number by the denominator. (e.g., 5 with den 3 = 15/3).</p>
+  </div>
+  <div class="card">
+    <h3>Whole Numbers to Fractions</h3>
+    <div id="wholeList"></div>
+  </div>
+  <button class="btn" onclick="checkWhole()" style="margin-top:1rem">Check All Answers</button>
+</section>
+
+<!-- SLIDE 9: COMPARING -->
+<section class="slide" id="slide9">
+  <div class="slide-header">
+    <span class="badge">Part 6: Comparing Fractions</span>
+    <h2 class="display slide-title">Greater or Less?</h2>
+    <p class="slide-sub">If denominators are the same, compare numerators. If different, find a common denominator or use the visualizer!</p>
+  </div>
+  <div class="card">
+    <h3>Interactive Comparer</h3>
+    <div style="display:flex;gap:1rem;align-items:center;justify-content:center;flex-wrap:wrap">
+      <div class="input-frac">
+        <div class="frac-vert-wrap">
+          <input type="number" id="cmp_n1" value="2">
+          <div class="frac-line"></div>
+          <input type="number" id="cmp_d1" value="3">
+        </div>
+      </div>
+      <span id="cmp_symbol" style="font-size:2rem;font-weight:bold;color:var(--pink)">?</span>
+      <div class="input-frac">
+        <div class="frac-vert-wrap">
+          <input type="number" id="cmp_n2" value="3">
+          <div class="frac-line"></div>
+          <input type="number" id="cmp_d2" value="4">
+        </div>
+      </div>
+      <button class="btn btn-sm" onclick="compareVis()">Compare!</button>
+    </div>
+    <div id="cmp_bars" style="margin-top:1rem"></div>
+  </div>
+  <div class="card">
+    <h3>20 Practice Problems</h3>
+    <div id="compareList"></div>
+  </div>
+  <button class="btn" onclick="checkComparing()" style="margin-top:1rem">Check All Answers</button>
+</section>
+
+<!-- SLIDE 10: ORDERING -->
+<section class="slide" id="slide10">
+  <div class="slide-header">
+    <span class="badge">Part 7: Ordering Fractions</span>
+    <h2 class="display slide-title">Sort the Fractions!</h2>
+    <p class="slide-sub">Make denominators the same, then order them. Tutor: select the sort type. Student: type 1 to 5 in the boxes below.</p>
+  </div>
+  <div class="card" style="display:flex;justify-content:center;gap:1rem;align-items:center;margin-bottom:1rem">
+    <span style="font-weight:bold">Sort Type:</span>
+    <button class="tab-btn active" id="btn_asc" onclick="setOrderMode('asc')">Smallest to Highest</button>
+    <button class="tab-btn" id="btn_desc" onclick="setOrderMode('desc')">Highest to Smallest</button>
+  </div>
+  <div id="orderList"></div>
+</section>
+
+<!-- SLIDE 11: OPERATIONS -->
+<section class="slide" id="slide11">
+  <div class="slide-header">
+    <span class="badge">Part 8: Fraction Operations</span>
+    <h2 class="display slide-title">Let's Calculate!</h2>
+    <p class="slide-sub">Add/Subtract (same denominators), Multiply (top x top, bottom x bottom), Divide (keep, change, flip).</p>
+  </div>
+  <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+    <button class="tab-btn active" onclick="switchOpTab('add', this)">Add (+)</button>
+    <button class="tab-btn" onclick="switchOpTab('sub', this)">Subtract (-)</button>
+    <button class="tab-btn" onclick="switchOpTab('mul', this)">Multiply (×)</button>
+    <button class="tab-btn" onclick="switchOpTab('div', this)">Divide (÷)</button>
+  </div>
+  <div class="card">
+    <h3 id="op_tutorial_title">Adding Fractions</h3>
+    <p id="op_tutorial_text">If denominators are the same, just add the numerators! Example: 1/4 + 2/4 = 3/4.</p>
+    <div style="margin-top:1rem">
+      <div style="display:flex;gap:1rem;align-items:center;justify-content:center;flex-wrap:wrap">
+        <div class="input-frac">
+          <div class="frac-vert-wrap">
+            <input type="number" id="op_n1" value="1">
+            <div class="frac-line"></div>
+            <input type="number" id="op_d1" value="4">
+          </div>
+        </div>
+        <span id="op_sym" style="font-size:1.5rem;font-weight:bold">+</span>
+        <div class="input-frac">
+          <div class="frac-vert-wrap">
+            <input type="number" id="op_n2" value="2">
+            <div class="frac-line"></div>
+            <input type="number" id="op_d2" value="4">
+          </div>
+        </div>
+        <button class="btn btn-sm" onclick="drawOpVis()">Visualize</button>
+      </div>
+      <div id="op_vis" style="margin-top:1rem"></div>
+    </div>
+  </div>
+  <div class="card">
+    <h3>10 Practice Problems</h3>
+    <div id="opList"></div>
+  </div>
+  <button class="btn" onclick="checkOps()" style="margin-top:1rem">Check All Answers</button>
+</section>
+
+<!-- SLIDE 12: WORD PROBLEMS -->
+<section class="slide" id="slide12">
+  <div class="slide-header">
+    <span class="badge">Part 9: Word Problems</span>
+    <h2 class="display slide-title">Real Life Fractions</h2>
+    <p class="slide-sub">Read carefully! You can translate to Indonesian if you need help. Explanations are in Indonesian.</p>
+  </div>
+  <div style="display:flex;justify-content:center;gap:.5rem;margin-bottom:1rem;flex-wrap:wrap">
+    <button class="tab-btn active" onclick="switchWPTab('add', this)">Addition</button>
+    <button class="tab-btn" onclick="switchWPTab('sub', this)">Subtraction</button>
+    <button class="tab-btn" onclick="switchWPTab('mul', this)">Multiplication</button>
+    <button class="tab-btn" onclick="switchWPTab('div', this)">Division</button>
+  </div>
+  <div id="wpList"></div>
+</section>
+
+<!-- SLIDE 13: CONCLUSION -->
+<section class="slide" id="slide13">
+  <div class="cover-content">
+    <span class="badge">Conclusion</span>
+    <h1 class="display cover-title" style="font-size:clamp(2rem,5vw,3.5rem)">You did it!</h1>
+    <p class="cover-sub">You are now a Fabulous Fraction Master!</p>
+    <div class="card" style="width:100%;max-width:600px;margin-top:1rem">
+      <h3>✍️ Reflection Time</h3>
+      <p style="margin-bottom:.5rem">What was your favorite part of today's lesson?</p>
+      <textarea class="input-box input-wide" style="width:100%;height:60px;font-family:'Nunito';font-weight:400" placeholder="Type here..."></textarea>
+      <p style="margin:1rem 0 .5rem">What was the trickiest part?</p>
+      <textarea class="input-box input-wide" style="width:100%;height:60px;font-family:'Nunito';font-weight:400" placeholder="Type here..."></textarea>
+    </div>
+    <button class="btn" style="margin-top:1.5rem" onclick="showToast('Thank you for today! ♥')">Finish Lesson</button>
+  </div>
+</section>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// ============ MATH HELPERS ============
+function rand(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+function gcd(a, b) { return b === 0 ? a : gcd(b, a % b); }
+function lcm(a, b) { return (a * b) / gcd(a, b); }
+function parseFrac(str) {
+  if (!str) return [NaN, NaN];
+  str = str.trim();
+  if (str.includes(' ')) {
+    let parts = str.split(/\s+/);
+    let w = parseInt(parts[0]);
+    let f = parts[1].split('/');
+    if(isNaN(w) || isNaN(f[0]) || isNaN(f[1])) return [NaN, NaN];
+    return [w * parseInt(f[1]) + parseInt(f[0]), parseInt(f[1])];
+  } else if (str.includes('/')) {
+    let f = str.split('/');
+    if(isNaN(f[0]) || isNaN(f[1])) return [NaN, NaN];
+    return [parseInt(f[0]), parseInt(f[1])];
+  } else {
+    let n = parseInt(str);
+    return [n, 1];
+  }
+}
+function compareFrac(a, b) {
+  if(!a || !b) return false;
+  let p1 = parseFrac(a), p2 = parseFrac(b);
+  if (isNaN(p1[0]) || isNaN(p2[0])) return false;
+  return p1[0] * p2[1] === p2[0] * p1[1];
+}
+function createFracHTML(n, d, cls='') {
+  return `<div class="frac-vert ${cls}"><span class="fv-top">${n}</span><span class="fv-bot">${d}</span></div>`;
+}
+function createInputFracHTML(hasWhole=false) {
+  let html = '<div class="input-frac' + (hasWhole ? ' has-whole' : '') + '">';
+  if(hasWhole) html += '<input type="number" class="whole-input" placeholder="W">';
+  html += `<div class="frac-vert-wrap">
+             <input type="number" class="mix-n" placeholder="N">
+             <div class="frac-line"></div>
+             <input type="number" class="mix-d" placeholder="D">
+           </div>
+         </div>`;
+  return html;
+}
+
+// ============ NAVIGATION ============
+const TOTAL_SLIDES = 13;
+let currentSlide = 1;
+function buildDots(){
+  const d = document.getElementById('dots');
+  d.innerHTML='';
+  for(let i=1;i<=TOTAL_SLIDES;i++){
+    const b=document.createElement('button');
+    b.className='dot'+(i===1?' active':'');
+    b.onclick=()=>goToSlide(i);
+    d.appendChild(b);
+  }
+}
+function goToSlide(n){
+  if(n<1||n>TOTAL_SLIDES) return;
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+  document.getElementById('slide'+n).classList.add('active');
+  currentSlide=n;
+  document.getElementById('progress').textContent=`${n} / ${TOTAL_SLIDES}`;
+  document.querySelectorAll('.dot').forEach((d,i)=>d.classList.toggle('active',i+1===n));
+  document.getElementById('prevBtn').disabled = n===1;
+  document.getElementById('nextBtn').disabled = n===TOTAL_SLIDES;
+  if(n===4) generateShape();
+  if(n===5) renderStories();
+  if(n===6) { updateEqVis(); initMemory(); }
+  if(n===7) renderMixed();
+  if(n===8) renderWhole();
+  if(n===9) { renderComparing(); }
+  if(n===10) genOrdering();
+  if(n===11) renderOps('add');
+  if(n===12) renderWP('add');
+  window.scrollTo(0,0);
+}
+function navigate(dir){ goToSlide(currentSlide+dir); }
+document.getElementById('studentName')?.addEventListener('keydown', e=>{ if(e.key==='Enter') startAdventure(); });
+
+function startAdventure(){
+  const name = document.getElementById('studentName').value.trim();
+  if(!name){ showToast('Please type your name!'); return; }
+  showToast('Welcome, ' + name + '! ♥');
+  goToSlide(2);
+}
+
+function showToast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.className = 'toast show';
+  clearTimeout(t._tm);
+  t._tm = setTimeout(()=>t.classList.remove('show'), 3000);
+}
+
+// ============ SLIDE 4: FORMING A ============
+function generateShape(){
+  let total = parseInt(document.getElementById('shape_total').value);
+  let colored = parseInt(document.getElementById('shape_colored').value);
+  if(colored > total) { showToast('Colored cannot exceed total!'); return; }
+  let html = `<div class="shape-grid" style="grid-template-columns:repeat(${total},1fr)">`;
+  for(let i=0; i<total; i++){
+    html += `<div class="shape-cell ${i < colored ? 'colored' : ''}"></div>`;
+  }
+  html += `</div>`;
+  document.getElementById('shape_output').innerHTML = html;
+  document.getElementById('shape_result').textContent = '';
+}
+function checkShape(){
+  let total = parseInt(document.getElementById('shape_total').value);
+  let colored = parseInt(document.getElementById('shape_colored').value);
+  let n = parseInt(document.getElementById('shape_num').value);
+  let d = parseInt(document.getElementById('shape_den').value);
+  let res = document.getElementById('shape_result');
+  if(n === colored && d === total){
+    res.textContent = '✓ Correct! Great job!';
+    res.style.color = 'var(--mint)';
+  } else {
+    res.textContent = '✗ Try again!';
+    res.style.color = 'var(--pink)';
+  }
+}
+
+// ============ SLIDE 5: FORMING B ============
+const stories = [
+  {q: "Maya has 5 balloons. 2 are red. What fraction is red?", a: "2/5"},
+  {q: "A pizza is cut into 8 slices. John eats 3. What fraction did he eat?", a: "3/8"},
+  {q: "There are 10 flowers in a vase. 4 are roses. What fraction are roses?", a: "4/10"},
+  {q: "Tim read 7 pages of a 12-page book. What fraction did he read?", a: "7/12"},
+  {q: "A box has 15 candies. 5 are chocolate. What fraction is chocolate?", a: "5/15"},
+  {q: "Lily sliced a cake into 6 pieces. She served 2. What fraction was served?", a: "2/6"},
+  {q: "A team won 9 out of 11 games. What fraction did they win?", a: "9/11"},
+  {q: "In a class of 20, 9 are boys. What fraction are boys?", a: "9/20"},
+  {q: "Sam poured 3 liters of water into a 10-liter tank. What fraction is full?", a: "3/10"},
+  {q: "A chocolate bar has 16 squares. Emma broke off 7. What fraction did she break?", a: "7/16"}
+];
+function renderStories(){
+  let html = '';
+  stories.forEach((s, i) => {
+    html += `<div class="ex-row story-item">
+      <span>${i+1}. ${s.q}</span>
+      ${createInputFracHTML()}
+    </div>`;
+  });
+  document.getElementById('story_list').innerHTML = html;
+}
+function checkStories(){
+  document.querySelectorAll('#story_list .story-item').forEach((item, i) => {
+    let ans = stories[i].a;
+    let n = item.querySelector('.mix-n').value;
+    let d = item.querySelector('.mix-d').value;
+    let val = n && d ? n+'/'+d : '';
+    let correct = compareFrac(val, ans);
+    item.querySelectorAll('input').forEach(inp => {
+      inp.classList.remove('correct', 'wrong');
+      inp.classList.add(correct ? 'correct' : 'wrong');
+    });
+  });
+}
+
+// ============ SLIDE 6: EQUIVALENT & MEMORY ============
+let eqState = {n1:1, d1:2, n2:2, d2:4};
+function updateEqVis(){
+  document.getElementById('eq_n1').textContent = eqState.n1;
+  document.getElementById('eq_d1').textContent = eqState.d1;
+  document.getElementById('eq_n2').textContent = eqState.n2;
+  document.getElementById('eq_d2').textContent = eqState.d2;
+  let html = drawBar(eqState.n1, eqState.d1, 'pink');
+  html += drawBar(eqState.n2, eqState.d2, 'lav');
+  document.getElementById('eq_bars').innerHTML = html;
+}
+function eqMult(v){
+  eqState.n2 = eqState.n1 * v;
+  eqState.d2 = eqState.d1 * v;
+  updateEqVis();
+}
+function eqDivide(v){
+  if(eqState.n1 % v === 0 && eqState.d1 % v === 0){
+    eqState.n1 = eqState.n1 / v;
+    eqState.d1 = eqState.d1 / v;
+    eqState.n2 = eqState.n1;
+    eqState.d2 = eqState.d1;
+    updateEqVis();
+  } else {
+    showToast("Cannot divide evenly!");
+  }
+}
+function eqReset(){
+  eqState = {n1:1, d1:2, n2:2, d2:4};
+  updateEqVis();
+}
+
+let memPool = [
+  {a: '1/2', b: '2/4'}, {a: '1/3', b: '2/6'}, {a: '2/3', b: '4/6'},
+  {a: '1/4', b: '2/8'}, {a: '3/4', b: '6/8'}, {a: '2/5', b: '4/10'},
+  {a: '3/5', b: '6/10'}, {a: '1/5', b: '2/10'}, {a: '1/6', b: '2/12'}, {a: '5/6', b: '10/12'}
+];
+let memState = { round: 1, score: 0, flipped: [], matched: 0, locked: false };
+function initMemory(){
+  memState = { round: 1, score: 0, flipped: [], matched: 0, locked: false };
+  document.getElementById('mem_round').textContent = 1;
+  document.getElementById('mem_score').textContent = 0;
+  document.getElementById('mem_status').innerHTML = `<button class="btn" onclick="startMemRound()">Start Round 1</button>`;
+  document.getElementById('mem_board').innerHTML = '';
+}
+function startMemRound(){
+  if(memState.round > 5){ showToast('Game Over! You are a champion!'); return; }
+  memState.flipped = []; memState.matched = 0; memState.locked = true;
+  let pairs = [...memPool].sort(() => Math.random() - 0.5).slice(0, 6);
+  let cards = [];
+  pairs.forEach((p, i) => {
+    cards.push({id: i*2, pair: i, text: p.a});
+    cards.push({id: i*2+1, pair: i, text: p.b});
+  });
+  cards.sort(() => Math.random() - 0.5);
+  let html = '';
+  cards.forEach(c => {
+    let parts = c.text.split('/');
+    let fHtml = `<div class="frac-vert"><span class="fv-top">${parts[0]}</span><span class="fv-bot">${parts[1]}</span></div>`;
+    html += `<div class="mem-card flipped" data-id="${c.id}" data-pair="${c.pair}" onclick="flipMemCard(${c.id})">
+      <div class="mem-card-inner">
+        <div class="mem-face mem-front">?</div>
+        <div class="mem-face mem-back">${fHtml}</div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('mem_board').innerHTML = html;
+  document.getElementById('mem_status').textContent = `Memorize! Round ${memState.round}`;
+  setTimeout(() => {
+    document.querySelectorAll('.mem-card').forEach(c => c.classList.remove('flipped'));
+    memState.locked = false;
+    document.getElementById('mem_status').textContent = `Find the pairs! Round ${memState.round}`;
+  }, 10000);
+}
+function flipMemCard(id){
+  if(memState.locked) return;
+  let el = document.querySelector(`.mem-card[data-id="${id}"]`);
+  if(el.classList.contains('flipped') || el.classList.contains('matched')) return;
+  el.classList.add('flipped');
+  memState.flipped.push(el);
+  if(memState.flipped.length === 2){
+    memState.locked = true;
+    setTimeout(checkMemMatch, 800);
+  }
+}
+function checkMemMatch(){
+  let [c1, c2] = memState.flipped;
+  if(c1.dataset.pair === c2.dataset.pair){
+    c1.classList.add('matched'); c2.classList.add('matched');
+    memState.score += 10; memState.matched += 2;
+    document.getElementById('mem_score').textContent = memState.score;
+    if(memState.matched === 12){
+      memState.round++;
+      if(memState.round > 5){
+        document.getElementById('mem_status').textContent = 'Game Over! Final Score: ' + memState.score;
+      } else {
+        document.getElementById('mem_round').textContent = memState.round;
+        document.getElementById('mem_status').innerHTML = `<button class="btn" onclick="startMemRound()">Start Round ${memState.round}</button>`;
+      }
+    }
+  } else {
+    c1.classList.remove('flipped'); c2.classList.remove('flipped');
+  }
+  memState.flipped = []; memState.locked = false;
+}
+
+// ============ SLIDE 7: MIXED FRACTIONS ============
+let impToMix = [], mixToImp = [];
+for(let i=0; i<20; i++){
+  let d = rand(2, 9), n = rand(d, d*5);
+  let w = Math.floor(n/d), rem = n%d;
+  impToMix.push({q: {n, d}, a: rem === 0 ? `${w}` : `${w} ${rem}/${d}`, hasWhole: rem !== 0});
+}
+for(let i=0; i<20; i++){
+  let w = rand(1, 5), d = rand(2, 9), n = rand(1, d-1);
+  mixToImp.push({q: {w, n, d}, a: `${(w*d)+n}/${d}`, hasWholeInput: true});
+}
+function renderMixed(){
+  let htmlL = '', htmlR = '';
+  impToMix.forEach((p, i) => {
+    let qHtml = createFracHTML(p.q.n, p.q.d, 'large');
+    htmlL += `<div class="ex-row">
+      <span style="flex:none;width:30px">${i+1}.</span>
+      <div style="display:flex;align-items:center;gap:1rem;flex:1">
+        ${qHtml}
+        <span>=</span>
+        <div class="input-frac-wrap" data-ans="${p.a}">
+          ${createInputFracHTML(p.hasWhole)}
+        </div>
+      </div>
+    </div>`;
+  });
+  mixToImp.forEach((p, i) => {
+    let qHtml = `<div style="display:flex;align-items:center;font-family:'Fredoka';font-size:1.8rem;font-weight:bold">
+      <span>${p.q.w}</span>
+      ${createFracHTML(p.q.n, p.q.d, 'large')}
+    </div>`;
+    htmlR += `<div class="ex-row">
+      <span style="flex:none;width:30px">${i+1}.</span>
+      <div style="display:flex;align-items:center;gap:1rem;flex:1">
+        ${qHtml}
+        <span>=</span>
+        <div class="input-frac-wrap" data-ans="${p.a}">
+          ${createInputFracHTML(false)}
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('impToList').innerHTML = htmlL;
+  document.getElementById('mixToImpList').innerHTML = htmlR;
+}
+function checkMixed(){
+  document.querySelectorAll('.input-frac-wrap').forEach(wrap => {
+    let ans = wrap.dataset.ans;
+    let w = wrap.querySelector('.whole-input')?.value || '';
+    let n = wrap.querySelector('.mix-n')?.value || '';
+    let d = wrap.querySelector('.mix-d')?.value || '';
+    let val = '';
+    if(w) val += w + ' ';
+    if(n && d) val += n + '/' + d;
+    let correct = compareFrac(val, ans);
+    wrap.querySelectorAll('input').forEach(inp => {
+      inp.classList.remove('correct', 'wrong');
+      inp.classList.add(correct ? 'correct' : 'wrong');
+    });
+  });
+}
+
+// ============ SLIDE 8: WHOLE NUMBERS ============
+let wholeList = [];
+for(let i=0; i<20; i++){
+  let w = rand(2, 10), d = rand(2, 9);
+  wholeList.push({q: `Convert ${w} to a fraction with denominator ${d}`, a: `${w*d}/${d}`});
+}
+function renderWhole(){
+  let html = '';
+  wholeList.forEach((p, i) => { 
+    html += `<div class="ex-row">
+      <span>${i+1}. ${p.q} = </span>
+      <div class="input-frac-wrap" data-ans="${p.a}">
+        ${createInputFracHTML(false)}
+      </div>
+    </div>`;
+  });
+  document.getElementById('wholeList').innerHTML = html;
+}
+function checkWhole(){
+  document.querySelectorAll('#wholeList .input-frac-wrap').forEach(wrap => {
+    let ans = wrap.dataset.ans;
+    let n = wrap.querySelector('.mix-n').value;
+    let d = wrap.querySelector('.mix-d').value;
+    let val = n && d ? n+'/'+d : '';
+    let correct = compareFrac(val, ans);
+    wrap.querySelectorAll('input').forEach(inp => {
+      inp.classList.remove('correct', 'wrong');
+      inp.classList.add(correct ? 'correct' : 'wrong');
+    });
+  });
+}
+
+// ============ SLIDE 9: COMPARING ============
+function compareVis(){
+  let n1 = parseInt(document.getElementById('cmp_n1').value);
+  let d1 = parseInt(document.getElementById('cmp_d1').value);
+  let n2 = parseInt(document.getElementById('cmp_n2').value);
+  let d2 = parseInt(document.getElementById('cmp_d2').value);
+  let val1 = n1/d1, val2 = n2/d2;
+  let sym = val1 > val2 ? '>' : (val1 < val2 ? '<' : '=');
+  document.getElementById('cmp_symbol').textContent = sym;
+  let html = drawBar(n1, d1, 'pink');
+  html += drawBar(n2, d2, 'lav');
+  document.getElementById('cmp_bars').innerHTML = html;
+}
+let compareProblems = [];
+for(let i=0; i<20; i++){
+  let n1 = rand(1, 5), d1 = rand(2, 9), n2 = rand(1, 5), d2 = rand(2, 9);
+  let ans = n1/d1 > n2/d2 ? '>' : (n1/d1 < n2/d2 ? '<' : '=');
+  compareProblems.push({n1, d1, n2, d2, a: ans});
+}
+function renderComparing(){
+  let html = '';
+  compareProblems.forEach((p, i) => {
+    let qHtml = `${createFracHTML(p.n1, p.d1, 'compact')} <span style="margin:0 1rem">?</span> ${createFracHTML(p.n2, p.d2, 'compact')}`;
+    html += `<div class="ex-row">
+      <span>${i+1}. ${qHtml}</span>
+      <select class="input-box" data-ans="${p.a}">
+        <option value="">?</option>
+        <option value=">">&gt;</option>
+        <option value="<">&lt;</option>
+        <option value="=">=</option>
+      </select>
+    </div>`;
+  });
+  document.getElementById('compareList').innerHTML = html;
+}
+function checkComparing(){
+  document.querySelectorAll('#compareList select').forEach(sel => {
+    let correct = sel.value === sel.dataset.ans;
+    sel.classList.remove('correct', 'wrong');
+    sel.classList.add(correct ? 'correct' : 'wrong');
+  });
+}
+
+// ============ SLIDE 10: ORDERING ============
+let orderState = { idx: 0, mode: 'asc' };
+let orderingProblems = [];
+function setOrderMode(m){
+  orderState.mode = m;
+  document.getElementById('btn_asc').classList.toggle('active', m === 'asc');
+  document.getElementById('btn_desc').classList.toggle('active', m === 'desc');
+  renderOrdering(); // re-render to clear input states
+}
+function genOrdering(){
+  orderingProblems = [];
+  for(let i=0; i<20; i++){
+    let fracs = [];
+    let vals = new Set();
+    while(fracs.length < 5){
+      let d = rand(2, 9), n = rand(1, d-1);
+      let val = n/d;
+      // Ensure unique values and simple fractions
+      if(!vals.has(val)){
+        vals.add(val);
+        fracs.push({n, d, val});
+      }
+    }
+    orderingProblems.push(fracs);
+  }
+  orderState.idx = 0;
+  renderOrdering();
+}
+function renderOrdering(){
+  if(orderState.idx >= 20) {
+    document.getElementById('orderList').innerHTML = `<div class="order-set"><h3>🎉 All Ordering Questions Complete!</h3></div>`;
+    return;
+  }
+  let p = orderingProblems[orderState.idx];
+  let fracHtml = '';
+  p.forEach(f => {
+    fracHtml += `<div class="frac-box">${createFracHTML(f.n, f.d, '')}</div>`;
+  });
+  let inpHtml = '';
+  for(let j=0; j<5; j++){ inpHtml += `<input type="number" class="order-input" min="1" max="5">`; }
+  
+  document.getElementById('orderList').innerHTML = `
+    <div class="order-set" id="order_set">
+      <div style="font-weight:bold;margin-bottom:1rem;color:var(--lav)">Question ${orderState.idx+1} of 20</div>
+      <div class="frac-row">${fracHtml}</div>
+      <div class="order-inputs">${inpHtml}</div>
+      <div style="text-align:center;margin-top:1.5rem;display:flex;gap:1rem;justify-content:center">
+        <button class="btn" onclick="checkOrdering()">Check Answer</button>
+        <button class="btn btn-ghost" id="next_q_btn" style="display:none" onclick="nextOrdering()">Next Question →</button>
+      </div>
+      <div id="order_feedback" style="text-align:center;margin-top:1rem;font-weight:bold;font-family:'Fredoka',sans-serif"></div>
+    </div>
+  `;
+}
+function checkOrdering(){
+  let p = orderingProblems[orderState.idx];
+  let vals = p.map(f => f.val);
+  let sortedIndices = vals.map((v, i) => i).sort((a, b) => orderState.mode === 'asc' ? vals[a] - vals[b] : vals[b] - vals[a]);
+  let inputs = document.querySelectorAll('.order-input');
+  let correct = true;
+  inputs.forEach((inp, i) => {
+    let expectedRank = sortedIndices.indexOf(i) + 1;
+    if(parseInt(inp.value) !== expectedRank) correct = false;
+    inp.classList.remove('correct', 'wrong');
+    inp.classList.add(parseInt(inp.value) === expectedRank ? 'correct' : 'wrong');
+  });
+  
+  let fb = document.getElementById('order_feedback');
+  let nextBtn = document.getElementById('next_q_btn');
+  if(correct){
+    fb.textContent = '✓ Correct! Great job!';
+    fb.style.color = 'var(--mint)';
+    nextBtn.style.display = 'inline-block';
+    if(orderState.idx === 19) nextBtn.textContent = 'Finish';
+  } else {
+    fb.textContent = '✗ Not quite. Try again!';
+    fb.style.color = 'var(--pink)';
+    nextBtn.style.display = 'none';
+  }
+}
+function nextOrdering(){
+  if(orderState.idx < 19){
+    orderState.idx++;
+    renderOrdering();
+  } else {
+    showToast('You finished all ordering questions! 🎉');
+  }
+}
+
+// ============ SLIDE 11: OPERATIONS ============
+function genFrac(maxDen=9){ let d=rand(2,maxDen), n=rand(1,d-1); return {n,d,str:`${n}/${d}`}; }
+let opProblems = {add:[],sub:[],mul:[],div:[]};
+for(let i=0;i<10;i++){
+  let a=genFrac(), b=genFrac();
+  opProblems.add.push({a, b, ans:`${a.n*b.d + b.n*a.d}/${a.d*b.d}`});
+  if(a.n/a.d < b.n/b.d) [a,b] = [b,a];
+  opProblems.sub.push({a, b, ans:`${a.n*b.d - b.n*a.d}/${a.d*b.d}`});
+  let c=genFrac(), d=genFrac();
+  opProblems.mul.push({a:c, b:d, ans:`${c.n*d.n}/${c.d*d.d}`});
+  opProblems.div.push({a:c, b:d, ans:`${c.n*d.d}/${c.d*d.n}`});
+}
+let currentOp = 'add';
+function switchOpTab(op, btn){
+  document.querySelectorAll('#slide11 .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  currentOp = op;
+  renderOps(op);
+  let sym = op==='add'?'+':op==='sub'?'-':op==='mul'?'×':'÷';
+  document.getElementById('op_sym').textContent = sym;
+  let tut = {add:"If denominators are the same, just add the numerators! Example: 1/4 + 2/4 = 3/4.", sub:"If denominators are the same, just subtract the numerators! Example: 3/4 - 1/4 = 2/4.", mul:"Multiply top with top, bottom with bottom! Example: 1/2 × 2/3 = 2/6 (simplify to 1/3).", div:"Keep the first, change ÷ to ×, flip the second! Example: 1/2 ÷ 1/4 = 1/2 × 4/1 = 4/2."};
+  document.getElementById('op_tutorial_title').textContent = op.charAt(0).toUpperCase()+op.slice(1)+"ing Fractions";
+  document.getElementById('op_tutorial_text').textContent = tut[op];
+}
+function renderOps(op){
+  let html = '';
+  opProblems[op].forEach((p, i) => {
+    let sym = op==='add'?'+':op==='sub'?'-':op==='mul'?'×':'÷';
+    let qHtml = `${createFracHTML(p.a.n, p.a.d, 'compact')} <span style="margin:0 .5rem">${sym}</span> ${createFracHTML(p.b.n, p.b.d, 'compact')}`;
+    html += `<div class="ex-row">
+      <span style="flex:none;width:30px">${i+1}.</span>
+      <div style="display:flex;align-items:center;gap:1rem;flex:1">
+        ${qHtml}
+        <span>=</span>
+        <div class="input-frac-wrap" data-ans="${p.ans}">
+          ${createInputFracHTML(false)}
+        </div>
+      </div>
+    </div>`;
+  });
+  document.getElementById('opList').innerHTML = html;
+}
+function checkOps(){
+  document.querySelectorAll('#opList .input-frac-wrap').forEach(wrap => {
+    let ans = wrap.dataset.ans;
+    let n = wrap.querySelector('.mix-n').value;
+    let d = wrap.querySelector('.mix-d').value;
+    let val = n && d ? n+'/'+d : '';
+    let correct = compareFrac(val, ans);
+    wrap.querySelectorAll('input').forEach(inp => {
+      inp.classList.remove('correct', 'wrong');
+      inp.classList.add(correct ? 'correct' : 'wrong');
+    });
+  });
+}
+function drawOpVis(){
+  let n1=parseInt(document.getElementById('op_n1').value), d1=parseInt(document.getElementById('op_d1').value);
+  let n2=parseInt(document.getElementById('op_n2').value), d2=parseInt(document.getElementById('op_d2').value);
+  let html = '';
+  if(currentOp === 'add' || currentOp === 'sub'){
+    let l = lcm(d1, d2), nn1 = n1*(l/d1), nn2 = n2*(l/d2);
+    html += drawBar(nn1, l, 'pink');
+    html += drawBar(nn2, l, 'lav');
+    let res_n = currentOp === 'add' ? nn1+nn2 : nn1-nn2;
+    html += `<div style="text-align:center;font-size:1.5rem;margin:.5rem">=</div>`;
+    html += drawBar(res_n, l, 'mint');
+  } else if(currentOp === 'mul'){
+    html += `<div class="area-model" style="grid-template-columns:repeat(${d1},1fr);grid-template-rows:repeat(${d2},1fr)">`;
+    for(let r=0; r<d2; r++){
+      for(let c=0; c<d1; c++){
+        let cls = '';
+        if(r < n2) cls += 'row-active ';
+        if(c < n1) cls += 'col-active ';
+        if(r < n2 && c < n1) cls += 'intersect ';
+        html += `<div class="area-cell ${cls}"></div>`;
+      }
+    }
+    html += `</div><p style="text-align:center">Intersection is the answer: ${n1*n2}/${d1*d2}</p>`;
+  } else if(currentOp === 'div'){
+    html += `<p>Keep ${n1}/${d1}, change to ×, flip to ${d2}/${n2}</p>`;
+    html += drawBar(n1*d2, d1*n2, 'yellow');
+  }
+  document.getElementById('op_vis').innerHTML = html;
+}
+function drawBar(n, d, color){
+  let html = `<div class="vis-bar" style="grid-template-columns:repeat(${d},1fr)">`;
+  for(let i=0; i<d; i++) html += `<div class="bar-cell ${i<n?'filled-'+color:''}"></div>`;
+  return html + `</div>`;
+}
+
+// ============ SLIDE 12: WORD PROBLEMS ============
+const wpData = {
+  add: [
+    {en:"Emma ate 1/4 of a pizza and Liam ate 2/4. How much did they eat together?", id:"Emma makan 1/4 pizza dan Liam makan 2/4. Berapa total yang mereka makan?", ans:"3/4", exp:"Penjumlahan pecahan dengan penyebut sama. Langkahnya: 1/4 + 2/4 = (1+2)/4 = 3/4."},
+    {en:"A bottle has 2/5 liters of juice. We add 1/5 liters more. Total juice?", id:"Botol berisi 2/5 liter jus. Kita tambah 1/5 liter lagi. Total jus?", ans:"3/5", exp:"Penjumlahan pecahan penyebut sama. 2/5 + 1/5 = (2+1)/5 = 3/5."},
+    {en:"John walked 3/8 km to school and 2/8 km to the library. Total distance?", id:"John berjalan 3/8 km ke sekolah dan 2/8 km ke perpustakaan. Total jarak?", ans:"5/8", exp:"Penjumlahan pecahan. 3/8 + 2/8 = 5/8."},
+    {en:"A recipe needs 1/3 cup of sugar and 1/3 cup of flour. Total cups?", id:"Resep butuh 1/3 cangkir gula dan 1/3 cangkir tepung. Total cangkir?", ans:"2/3", exp:"Penjumlahan pecahan. 1/3 + 1/3 = 2/3."},
+    {en:"Mary read 1/2 of a book on Monday and 1/4 on Tuesday. Total read?", id:"Mary membaca 1/2 buku hari Senin dan 1/4 hari Selasa. Total dibaca?", ans:"3/4", exp:"Samakan penyebut: 1/2 = 2/4. Lalu 2/4 + 1/4 = 3/4."},
+    {en:"It rained 1/6 inch on Monday and 2/6 inch on Tuesday. Total rain?", id:"Hujan 1/6 inci Senin dan 2/6 inci Selasa. Total hujan?", ans:"3/6", exp:"Penjumlahan pecahan. 1/6 + 2/6 = 3/6 (atau 1/2)."},
+    {en:"A tank has 4/10 of water. We add 3/10 more. Total water?", id:"Tangki berisi 4/10 air. Tambah 3/10 lagi. Total air?", ans:"7/10", exp:"Penjumlahan pecahan. 4/10 + 3/10 = 7/10."},
+    {en:"Sam spent 2/7 of his allowance on toys and 3/7 on food. Total spent?", id:"Sam habiskan 2/7 uang jajan untuk mainan dan 3/7 untuk makanan. Total dihabiskan?", ans:"5/7", exp:"Penjumlahan pecahan. 2/7 + 3/7 = 5/7."},
+    {en:"A cake has 5/12 eaten. Then 2/12 more is eaten. Total eaten?", id:"Kue yang dimakan 5/12. Lalu 2/12 lagi dimakan. Total dimakan?", ans:"7/12", exp:"Penjumlahan pecahan. 5/12 + 2/12 = 7/12."},
+    {en:"A plant grew 1/9 cm in week 1 and 4/9 cm in week 2. Total growth?", id:"Tanaman tumbuh 1/9 cm minggu 1 dan 4/9 cm minggu 2. Total pertumbuhan?", ans:"5/9", exp:"Penjumlahan pecahan. 1/9 + 4/9 = 5/9."}
+  ],
+  sub: [
+    {en:"A chocolate bar is 3/4. Maya eats 1/4. How much is left?", id:"Sebatang coklat 3/4. Maya makan 1/4. Berapa sisanya?", ans:"2/4", exp:"Pengurangan pecahan. 3/4 - 1/4 = 2/4 (atau 1/2)."},
+    {en:"A bottle has 5/6 liters. We drink 2/6. How much is left?", id:"Botol berisi 5/6 liter. Kita minum 2/6. Berapa sisanya?", ans:"3/6", exp:"Pengurangan pecahan. 5/6 - 2/6 = 3/6 (atau 1/2)."},
+    {en:"A string is 7/8 meters. We cut 3/8. How much is left?", id:"Tali 7/8 meter. Dipotong 3/8. Berapa sisanya?", ans:"4/8", exp:"Pengurangan pecahan. 7/8 - 3/8 = 4/8 (atau 1/2)."},
+    {en:"A pizza has 8/9. We eat 5/9. How much is left?", id:"Pizza 8/9. Dimakan 5/9. Berapa sisanya?", ans:"3/9", exp:"Pengurangan pecahan. 8/9 - 5/9 = 3/9 (atau 1/3)."},
+    {en:"A bag has 6/10 kg of rice. We use 2/10. How much is left?", id:"Kantong berisi 6/10 kg beras. Dipakai 2/10. Berapa sisanya?", ans:"4/10", exp:"Pengurangan pecahan. 6/10 - 2/10 = 4/10 (atau 2/5)."},
+    {en:"A tank has 5/7 of water. 1/7 leaks out. How much is left?", id:"Tangki berisi 5/7 air. 1/7 bocor. Berapa sisanya?", ans:"4/7", exp:"Pengurangan pecahan. 5/7 - 1/7 = 4/7."},
+    {en:"A path is 9/12 km long. 4/12 is paved. How much is unpaved?", id:"Jalan 9/12 km. 4/12 diaspal. Berapa yang belum diaspal?", ans:"5/12", exp:"Pengurangan pecahan. 9/12 - 4/12 = 5/12."},
+    {en:"A cake has 3/5. We eat 1/5. How much is left?", id:"Kue 3/5. Dimakan 1/5. Berapa sisanya?", ans:"2/5", exp:"Pengurangan pecahan. 3/5 - 1/5 = 2/5."},
+    {en:"A book has 10/11 pages read. 3/11 are re-read. How many new pages?", id:"Buku 10/11 halaman dibaca. 3/11 dibaca ulang. Berapa halaman baru?", ans:"7/11", exp:"Pengurangan pecahan. 10/11 - 3/11 = 7/11."},
+    {en:"A ribbon is 7/10 m. We cut 3/10. How much is left?", id:"Pita 7/10 m. Dipotong 3/10. Berapa sisanya?", ans:"4/10", exp:"Pengurangan pecahan. 7/10 - 3/10 = 4/10 (atau 2/5)."}
+  ],
+  mul: [
+    {en:"A recipe needs 1/2 of a 1/4 cup of salt. How much salt?", id:"Resep butuh 1/2 dari 1/4 cangkir garam. Berapa garamnya?", ans:"1/8", exp:"Perkalian pecahan. Kalikan pembilang dan penyebut. (1x1)/(2x4) = 1/8."},
+    {en:"1/3 of a 1/3 meter ribbon is cut. How long is the piece?", id:"1/3 dari pita 1/3 meter dipotong. Berapa panjangnya?", ans:"1/9", exp:"Perkalian pecahan. (1x1)/(3x3) = 1/9."},
+    {en:"John runs 1/4 of a 2/5 km track. How far did he run?", id:"John berlari 1/4 dari lintasan 2/5 km. Seberapa jauh?", ans:"2/20", exp:"Perkalian pecahan. (1x2)/(4x5) = 2/20 (atau 1/10)."},
+    {en:"A garden is 3/4 m wide and 1/2 m long. What is the area?", id:"Kebun lebar 3/4 m dan panjang 1/2 m. Berapa luasnya?", ans:"3/8", exp:"Luas = panjang x lebar. (3x1)/(4x2) = 3/8."},
+    {en:"Sara ate 1/2 of 2/3 of a cake. How much did she eat?", id:"Sara makan 1/2 dari 2/3 kue. Berapa yang dia makan?", ans:"2/6", exp:"Perkalian pecahan. (1x2)/(2x3) = 2/6 (atau 1/3)."},
+    {en:"A bottle is 3/5 full. We pour out 1/2 of that. How much poured?", id:"Botol terisi 3/5. Dituang 1/2 dari itu. Berapa dituang?", ans:"3/10", exp:"Perkalian pecahan. (3x1)/(5x2) = 3/10."},
+    {en:"2/3 of a 1/4 pizza is eaten. How much is eaten?", id:"2/3 dari 1/4 pizza dimakan. Berapa yang dimakan?", ans:"2/12", exp:"Perkalian pecahan. (2x1)/(3x4) = 2/12 (atau 1/6)."},
+    {en:"A box weighs 4/5 kg. 1/2 of the box is candy. Candy weight?", id:"Kotak beratnya 4/5 kg. 1/2 dari kotak adalah permen. Berapa berat permen?", ans:"4/10", exp:"Perkalian pecahan. (4x1)/(5x2) = 4/10 (atau 2/5)."},
+    {en:"1/4 of a 3/8 liter juice is spilled. How much spilled?", id:"1/4 dari jus 3/8 liter tumpah. Berapa yang tumpah?", ans:"3/32", exp:"Perkalian pecahan. (1x3)/(4x8) = 3/32."},
+    {en:"A plank is 5/6 m. 2/3 of it is painted. Painted length?", id:"Papan 5/6 m. 2/3 dari itu dicat. Berapa panjang yang dicat?", ans:"10/18", exp:"Perkalian pecahan. (5x2)/(6x3) = 10/18 (atau 5/9)."}
+  ],
+  div: [
+    {en:"3/4 of a pizza is divided by 2 people. How much each?", id:"3/4 pizza dibagi 2 orang. Berapa masing-masing?", ans:"3/8", exp:"Pembagian pecahan dengan bulat. 3/4 ÷ 2 = 3/4 x 1/2 = 3/8."},
+    {en:"1/2 liter of juice poured into 1/4 liter cups. How many cups?", id:"1/2 liter jus dituang ke cangkir 1/4 liter. Berapa cangkir?", ans:"2", exp:"Pembagian pecahan. 1/2 ÷ 1/4 = 1/2 x 4/1 = 4/2 = 2."},
+    {en:"5/6 meter ribbon cut into 1/3 m pieces. How many pieces?", id:"Pita 5/6 meter dipotong 1/3 m. Berapa potong?", ans:"5/2", exp:"Pembagian pecahan. 5/6 ÷ 1/3 = 5/6 x 3/1 = 15/6 = 5/2."},
+    {en:"4/5 kg of sugar divided into 1/5 kg bags. How many bags?", id:"4/5 kg gula dibagi ke kantong 1/5 kg. Berapa kantong?", ans:"4", exp:"Pembagian pecahan. 4/5 ÷ 1/5 = 4/5 x 5/1 = 20/5 = 4."},
+    {en:"2/3 of a cake divided by 4 people. How much each?", id:"2/3 kue dibagi 4 orang. Berapa masing-masing?", ans:"2/12", exp:"Pembagian pecahan dengan bulat. 2/3 ÷ 4 = 2/3 x 1/4 = 2/12 (atau 1/6)."},
+    {en:"3/4 pizza divided by 3 people. How much each?", id:"3/4 pizza dibagi 3 orang. Berapa masing-masing?", ans:"3/12", exp:"Pembagian pecahan dengan bulat. 3/4 ÷ 3 = 3/4 x 1/3 = 3/12 (atau 1/4)."},
+    {en:"7/8 m wire cut into 1/8 m pieces. How many?", id:"Kawat 7/8 m dipotong 1/8 m. Berapa potong?", ans:"7", exp:"Pembagian pecahan. 7/8 ÷ 1/8 = 7/8 x 8/1 = 56/8 = 7."},
+    {en:"1/2 liter milk divided by 1/8 liter glasses. How many?", id:"1/2 liter susu dibagi gelas 1/8 liter. Berapa gelas?", ans:"4", exp:"Pembagian pecahan. 1/2 ÷ 1/8 = 1/2 x 8/1 = 8/2 = 4."},
+    {en:"5/6 kg flour divided by 1/3 kg. How many?", id:"5/6 kg tepung dibagi 1/3 kg. Berapa?", ans:"5/2", exp:"Pembagian pecahan. 5/6 ÷ 1/3 = 5/6 x 3/1 = 15/6 = 5/2."},
+    {en:"6/8 m cloth cut into 1/4 m. How many?", id:"Kain 6/8 m dipotong 1/4 m. Berapa potong?", ans:"3", exp:"Pembagian pecahan. 6/8 ÷ 1/4 = 6/8 x 4/1 = 24/8 = 3."}
+  ]
+};
+function renderWP(op){
+  let html = '';
+  wpData[op].forEach((p, i) => {
+    html += `<div class="wp-card">
+      <p class="wp-en">${i+1}. ${p.en}</p>
+      <button class="btn btn-ghost btn-sm" onclick="document.getElementById('wp_id_${i}').classList.toggle('show')">Translate to Indonesian</button>
+      <p class="wp-id" id="wp_id_${i}">${p.id}</p>
+      <div class="ex-row" style="margin-top:.5rem">
+        <span style="flex:none">Answer:</span>
+        <div class="input-frac-wrap" id="wp_ans_${i}" data-ans="${p.ans}">
+          ${createInputFracHTML(false)}
+        </div>
+        <button class="btn btn-sm" style="flex:none" onclick="checkWP(${i})">Check</button>
+      </div>
+      <div class="wp-exp" id="wp_exp_${i}"><strong>Pembahasan:</strong> ${p.exp}</div>
+    </div>`;
+  });
+  document.getElementById('wpList').innerHTML = html;
+}
+function checkWP(i){
+  let wrap = document.getElementById('wp_ans_'+i);
+  let exp = document.getElementById('wp_exp_'+i);
+  let n = wrap.querySelector('.mix-n').value;
+  let d = wrap.querySelector('.mix-d').value;
+  let val = n && d ? n+'/'+d : '';
+  let correct = compareFrac(val, wrap.dataset.ans);
+  wrap.querySelectorAll('input').forEach(inp => {
+    inp.classList.remove('correct', 'wrong');
+    inp.classList.add(correct ? 'correct' : 'wrong');
+  });
+  exp.classList.add('show');
+}
+function switchWPTab(op, btn){
+  document.querySelectorAll('#slide12 .tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderWP(op);
+}
+
+// ============ INIT ============
+buildDots();
+</script>
+</body>
+</html>
