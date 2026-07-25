@@ -1,0 +1,996 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fractions Adventure ✨ Interactive Practice</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@300..700&family=Pacifico&family=Quicksand:wght@400..700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+:root {
+  --pink-50:#FFF0F5; --pink-100:#FFE0EC; --pink-200:#FFC9DC; --pink-300:#FFB0CC;
+  --pink-400:#FF8FB1; --pink-500:#FF6B95; --pink-600:#FF4D8D; --pink-700:#E6397C;
+  --lav-100:#F0E6FF; --lav-200:#DCCEFF; --lav-300:#C8B6FF; --lav-400:#B8A1FF; --lav-500:#9F8BFF;
+  --mint:#B8E6D1; --mint-deep:#7FD3B0;
+  --gold:#FFD56B; --gold-deep:#F4B942;
+  --red:#FF6B6B; --red-deep:#E63946;
+  --text-dark:#5A3E5E; --text-mid:#8B6B8E; --text-light:#B89BB8;
+  --shadow-pink:0 8px 24px rgba(255,77,141,.18);
+  --shadow-lav:0 8px 24px rgba(159,139,255,.18);
+  --shadow-soft:0 4px 16px rgba(90,62,94,.08);
+}
+*{-webkit-tap-highlight-color:transparent;box-sizing:border-box;}
+html,body{height:100%;margin:0;}
+body{
+  font-family:'Quicksand',sans-serif;
+  background:linear-gradient(135deg,#FFE0EC 0%,#F0E6FF 50%,#FFE0EC 100%);
+  background-attachment:fixed;color:var(--text-dark);overflow:hidden;
+}
+.font-display{font-family:'Pacifico',cursive;}
+.font-cute{font-family:'Fredoka',sans-serif;}
+.bg-decorations{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bg-decorations .deco{position:absolute;font-size:1.5rem;opacity:.4;animation:floatUp linear infinite;}
+@keyframes floatUp{0%{transform:translateY(110vh) rotate(0deg);}100%{transform:translateY(-20vh) rotate(360deg);}}
+@keyframes wiggle{0%,100%{transform:rotate(-3deg);}50%{transform:rotate(3deg);}}
+@keyframes heartbeat{0%,100%{transform:scale(1);}25%{transform:scale(1.15);}50%{transform:scale(1);}75%{transform:scale(1.1);}}
+@keyframes pop-in{0%{transform:scale(.5);opacity:0;}60%{transform:scale(1.1);opacity:1;}100%{transform:scale(1);}}
+@keyframes bounce-soft{0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);}}
+@keyframes pulse-timer{0%{box-shadow:0 0 0 0 rgba(255,107,107,.5);}70%{box-shadow:0 0 0 10px rgba(255,107,107,0);}100%{box-shadow:0 0 0 0 rgba(255,107,107,0);}}
+@keyframes slideUp{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+
+/* Custom Fraction Styling */
+.frac {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  vertical-align: middle;
+  margin: 0 4px;
+  line-height: 1.1;
+  position: relative;
+  top: -2px;
+}
+.frac .num, .frac .den {
+  padding: 0 4px;
+  font-size: 0.85em;
+  font-family: 'Fredoka', sans-serif;
+}
+.frac .num {
+  border-bottom: 1.5px solid currentColor;
+}
+
+.app-shell{position:relative;width:100vw;height:100vh;z-index:1;}
+.slide{position:absolute;inset:0;display:none;flex-direction:column;overflow-y:auto;padding:1.5rem 2rem 5rem;}
+.slide.active{display:flex;animation:slideUp .55s cubic-bezier(.22,1,.36,1) both;}
+.slide::-webkit-scrollbar{width:8px;}
+.slide::-webkit-scrollbar-track{background:transparent;}
+.slide::-webkit-scrollbar-thumb{background:var(--pink-300);border-radius:4px;}
+.slide::-webkit-scrollbar-thumb:hover{background:var(--pink-500);}
+.slide-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:.8rem;flex-shrink:0;flex-wrap:wrap;gap:.5rem;}
+.slide-tag{display:inline-flex;align-items:center;gap:.5rem;background:white;padding:.4rem 1rem;border-radius:999px;font-weight:600;font-size:.85rem;color:var(--pink-700);box-shadow:var(--shadow-soft);}
+.slide-num{background:linear-gradient(135deg,var(--pink-500),var(--lav-400));color:white;width:36px;height:36px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-family:'Fredoka';}
+.nav-bar{position:fixed;bottom:1.2rem;left:50%;transform:translateX(-50%);display:flex;align-items:center;gap:1rem;background:white;padding:.5rem 1rem;border-radius:999px;box-shadow:0 8px 24px rgba(255,77,141,.2);z-index:50;}
+.nav-btn{background:linear-gradient(135deg,var(--pink-500),var(--lav-400));color:white;border:none;width:38px;height:38px;border-radius:50%;cursor:pointer;font-size:.95rem;display:inline-flex;align-items:center;justify-content:center;transition:all .3s ease;}
+.nav-btn:hover{transform:scale(1.1);box-shadow:0 4px 12px rgba(255,77,141,.4);}
+.nav-btn:disabled{background:#DDD;cursor:not-allowed;transform:none;box-shadow:none;}
+.dots{display:flex;gap:.4rem;max-width:200px;overflow-x:auto;scrollbar-width:none;}
+.dots::-webkit-scrollbar{display:none;}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--pink-200);cursor:pointer;transition:all .3s ease;flex-shrink:0;}
+.dot.active{background:var(--pink-600);width:24px;border-radius:999px;}
+.dot.completed{background:var(--mint-deep);}
+.card{background:white;border-radius:24px;padding:1.3rem;box-shadow:var(--shadow-soft);border:2px solid var(--pink-100);}
+.card-pink{background:linear-gradient(135deg,#FFE0EC 0%,#FFF5F8 100%);border-color:var(--pink-200);}
+.card-lav{background:linear-gradient(135deg,#F0E6FF 0%,#F8F5FF 100%);border-color:var(--lav-200);}
+.btn-cute{background:linear-gradient(135deg,var(--pink-500),var(--pink-600));color:white;border:none;padding:.65rem 1.4rem;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:500;cursor:pointer;transition:all .3s ease;box-shadow:var(--shadow-pink);font-size:.9rem;display:inline-flex;align-items:center;gap:.5rem;justify-content:center;}
+.btn-cute:hover{transform:translateY(-2px) scale(1.03);box-shadow:0 10px 24px rgba(255,77,141,.35);}
+.btn-cute:active{transform:translateY(0) scale(.98);}
+.btn-cute.lav{background:linear-gradient(135deg,var(--lav-400),var(--lav-500));box-shadow:var(--shadow-lav);}
+.btn-cute.mint{background:linear-gradient(135deg,var(--mint),var(--mint-deep));color:#2D6B5A;}
+.btn-cute.gold{background:linear-gradient(135deg,var(--gold),var(--gold-deep));color:#5A3E00;}
+.btn-cute.red{background:linear-gradient(135deg,var(--red),var(--red-deep));}
+.btn-cute.outline{background:white;color:var(--pink-600);border:2px solid var(--pink-300);box-shadow:none;}
+.btn-cute.outline:hover{background:var(--pink-50);}
+.btn-cute:disabled{opacity:.5;cursor:not-allowed;transform:none;}
+.input-cute{background:white;border:2px solid var(--pink-200);border-radius:16px;padding:.7rem 1rem;font-family:'Quicksand';font-size:.95rem;color:var(--text-dark);transition:all .3s ease;width:100%;}
+.input-cute:focus{outline:none;border-color:var(--pink-500);box-shadow:0 0 0 4px rgba(255,107,149,.2);}
+.opt-btn{background:white;border:2px solid var(--pink-200);color:var(--text-dark);padding:.7rem 1rem;border-radius:14px;font-family:'Quicksand';font-weight:600;cursor:pointer;transition:all .2s ease;text-align:left;width:100%;display:flex;align-items:center;gap:.6rem;font-size:.92rem;}
+.opt-btn:hover{border-color:var(--pink-400);background:var(--pink-50);}
+.opt-btn.selected{background:linear-gradient(135deg,var(--pink-100),var(--lav-100));border-color:var(--pink-500);}
+.opt-btn.correct{background:linear-gradient(135deg,#B8E6D1,#7FD3B0);border-color:var(--mint-deep);color:#2D6B5A;}
+.opt-btn.wrong{background:linear-gradient(135deg,#FFB0C0,#FF8FA3);border-color:var(--red-deep);color:#8B1F3F;}
+.opt-letter{background:var(--pink-100);color:var(--pink-600);width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-weight:700;font-family:'Fredoka';flex-shrink:0;font-size:.85rem;}
+.opt-btn.selected .opt-letter{background:var(--pink-500);color:white;}
+.opt-btn.correct .opt-letter{background:#7FD3B0;color:white;}
+.opt-btn.wrong .opt-letter{background:var(--red-deep);color:white;}
+.tf-btn{background:white;border:2px solid var(--pink-200);color:var(--text-dark);padding:.8rem 2rem;border-radius:14px;font-family:'Fredoka';font-weight:500;cursor:pointer;transition:all .2s ease;font-size:1rem;flex:1;display:flex;align-items:center;justify-content:center;gap:.5rem;}
+.tf-btn:hover{border-color:var(--pink-400);background:var(--pink-50);}
+.tf-btn.selected{background:linear-gradient(135deg,var(--pink-100),var(--lav-100));border-color:var(--pink-500);color:var(--pink-700);}
+.tf-btn.correct{background:linear-gradient(135deg,#B8E6D1,#7FD3B0);border-color:var(--mint-deep);color:#2D6B5A;}
+.tf-btn.wrong{background:linear-gradient(135deg,#FFB0C0,#FF8FA3);border-color:var(--red-deep);color:#8B1F3F;}
+.fill-input{background:white;border:2px solid var(--pink-200);border-radius:14px;padding:.8rem 1.2rem;font-family:'Fredoka';font-weight:600;font-size:1.1rem;width:100%;text-align:center;color:var(--text-dark);transition:all .3s ease;}
+.fill-input:focus{outline:none;border-color:var(--pink-500);box-shadow:0 0 0 4px rgba(255,107,149,.2);}
+.fill-input.correct{background:#B8E6D1;border-color:var(--mint-deep);color:#2D6B5A;}
+.fill-input.wrong{background:#FFB0C0;border-color:var(--red-deep);color:#8B1F3F;}
+.sparkle{position:absolute;color:var(--gold);font-size:1.2rem;animation:wiggle 3s ease-in-out infinite;pointer-events:none;}
+.title-gradient{background:linear-gradient(135deg,var(--pink-600),var(--lav-500));-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;}
+.confetti{position:fixed;width:10px;height:10px;pointer-events:none;animation:confettiFall 3s ease-out forwards;z-index:200;}
+@keyframes confettiFall{0%{transform:translateY(-100vh) rotate(0deg);opacity:1;}100%{transform:translateY(100vh) rotate(720deg);opacity:0;}}
+.toast{position:fixed;top:1.5rem;left:50%;transform:translateX(-50%) translateY(-100px);background:white;padding:.8rem 1.5rem;border-radius:999px;box-shadow:0 8px 24px rgba(0,0,0,.15);font-weight:600;color:var(--text-dark);z-index:100;transition:transform .4s ease;max-width:90vw;display:flex;align-items:center;gap:.5rem;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.success{background:linear-gradient(135deg,#B8E6D1,#7FD3B0);color:#2D6B5A;}
+.toast.error{background:linear-gradient(135deg,#FFB0C0,#FF8FA3);color:#8B1F3F;}
+.toast.info{background:linear-gradient(135deg,var(--lav-300),var(--lav-400));color:white;}
+.timer-display{font-family:'Fredoka';font-weight:600;font-size:1.3rem;display:inline-flex;align-items:center;gap:.4rem;padding:.3rem .8rem;border-radius:999px;transition:all .3s ease;}
+.timer-display.normal{background:var(--mint);color:#2D6B5A;}
+.timer-display.warning{background:var(--gold);color:#5A3E00;animation:pulse-timer 1s infinite;}
+.timer-display.danger{background:var(--red);color:white;animation:pulse-timer .5s infinite;}
+.timer-display.stopped{background:#DDD;color:#999;}
+.timer-bar-bg{background:var(--pink-100);height:8px;border-radius:4px;overflow:hidden;}
+.timer-bar-fill{height:100%;background:linear-gradient(90deg,var(--mint-deep),var(--mint));border-radius:4px;transition:width .5s linear,background .3s ease;}
+.timer-bar-fill.warning{background:linear-gradient(90deg,var(--gold-deep),var(--gold));}
+.timer-bar-fill.danger{background:linear-gradient(90deg,var(--red-deep),var(--red));}
+.q-card{border:2px solid var(--pink-200);border-radius:20px;padding:1.3rem;margin-bottom:1rem;background:white;transition:all .3s;}
+.q-card.answered{border-color:var(--pink-300);}
+.q-card.correct{background:linear-gradient(135deg,#E0F5EB,#F0FAF5);border-color:var(--mint-deep);}
+.q-card.wrong{background:linear-gradient(135deg,#FFE0EC,#FFF5F8);border-color:var(--pink-400);}
+.q-type-badge{display:inline-block;padding:.15rem .6rem;border-radius:999px;font-size:.7rem;font-weight:700;font-family:'Fredoka';text-transform:uppercase;letter-spacing:.05em;}
+.q-type-badge.mc{background:var(--pink-100);color:var(--pink-600);}
+.q-type-badge.tf{background:var(--lav-100);color:var(--lav-500);}
+.q-type-badge.complex{background:#FFF4D6;color:var(--gold-deep);}
+.q-type-badge.fill{background:#E0F5EB;color:var(--mint-deep);}
+.q-type-badge.computation{background:#FFE0E6;color:var(--red-deep);}
+.translate-toggle{display:inline-flex;align-items:center;gap:.3rem;background:var(--lav-100);color:var(--lav-500);padding:.2rem .6rem;border-radius:999px;font-size:.75rem;cursor:pointer;font-weight:600;border:1.5px solid var(--lav-200);transition:all .2s ease;}
+.translate-toggle:hover{background:var(--lav-200);}
+.translate-toggle.active{background:var(--lav-500);color:white;border-color:transparent;}
+.disc-box{background:var(--pink-50);border-left:3px solid var(--pink-400);padding:.6rem .8rem;border-radius:8px;font-size:.85rem;color:var(--text-mid);margin-top:.6rem;display:none;}
+.disc-box.show{display:block;animation:slideUp .3s ease;}
+.disc-box.id{background:var(--lav-100);border-color:var(--lav-400);}
+.q-nav-grid{display:grid;grid-template-columns:repeat(10,1fr);gap:.3rem;max-width:400px;margin:0 auto;}
+.q-nav-cell{aspect-ratio:1;background:var(--pink-100);border:2px solid transparent;border-radius:8px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka';font-weight:600;font-size:.75rem;cursor:pointer;transition:all .2s ease;color:var(--text-mid);}
+.q-nav-cell:hover{border-color:var(--pink-400);transform:scale(1.1);}
+.q-nav-cell.current{background:var(--pink-500);color:white;border-color:var(--pink-700);transform:scale(1.1);}
+.q-nav-cell.answered{background:var(--mint);}
+.q-nav-cell.correct{background:var(--mint-deep);color:white;}
+.q-nav-cell.wrong{background:var(--red);color:white;}
+.result-row{display:flex;align-items:center;gap:.6rem;padding:.6rem .8rem;border-radius:12px;transition:all .2s ease;border:2px solid transparent;}
+.result-row:nth-child(odd){background:var(--pink-50);}
+.result-row.correct{background:linear-gradient(90deg,#E0F5EB,#F0FAF5);}
+.result-row.wrong{background:linear-gradient(90deg,#FFE0EC,#FFF5F8);}
+.result-num{font-family:'Fredoka';font-weight:700;width:28px;height:28px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:.8rem;flex-shrink:0;}
+.result-num.correct{background:var(--mint-deep);color:white;}
+.result-num.wrong{background:var(--red);color:white;}
+.result-num.skipped{background:#DDD;color:#888;}
+.result-icon{font-size:1.1rem;}
+.result-time{margin-left:auto;font-size:.78rem;color:var(--text-mid);font-family:'Fredoka';white-space:nowrap;}
+.stat-card{background:white;border-radius:20px;padding:1.2rem;text-align:center;box-shadow:var(--shadow-soft);border:2px solid var(--pink-100);transition:all .3s ease;}
+.stat-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-pink);}
+.stat-value{font-family:'Fredoka';font-weight:700;font-size:2.2rem;line-height:1;}
+.stat-label{font-size:.75rem;color:var(--text-mid);margin-top:.3rem;text-transform:uppercase;letter-spacing:.05em;}
+.stars{display:inline-flex;gap:.2rem;}
+.star{color:#DDD;font-size:1.6rem;cursor:pointer;transition:transform .2s,color .2s;}
+.star:hover{transform:scale(1.2);}
+.star.active{color:var(--gold);}
+@media(max-width:768px){
+  .slide{padding:1rem 1rem 5rem;}
+  .q-nav-grid{grid-template-columns:repeat(7,1fr);}
+}
+</style>
+</head>
+<body>
+<div class="bg-decorations" id="bgDecor"></div>
+
+<div class="app-shell" id="appShell">
+
+<!-- =================== SLIDE 1: COVER =================== -->
+<section class="slide active" data-slide="1">
+  <div class="flex-1 flex flex-col items-center justify-center text-center relative">
+    <div class="sparkle" style="top:8%;left:12%;">✨</div>
+    <div class="sparkle" style="top:14%;right:15%;animation-delay:.5s;">⭐</div>
+    <div class="sparkle" style="top:55%;left:5%;animation-delay:1s;">💖</div>
+    <div class="sparkle" style="bottom:18%;right:8%;animation-delay:1.5s;">🌸</div>
+    <div class="sparkle" style="top:30%;right:5%;animation-delay:2s;">🦄</div>
+    <div class="sparkle" style="bottom:30%;left:8%;animation-delay:2.5s;">🍰</div>
+
+    <div class="text-sm font-cute tracking-[.3em] text-pink-500 mb-3">✦ FRACTIONS ADVENTURE ✦</div>
+    <h1 class="font-display text-5xl md:text-7xl mb-3 title-gradient" style="line-height:1.1;">Fraction Stories</h1>
+    <div class="text-pink-400 text-lg md:text-xl mb-8 font-cute">Year 5 Practice · Cambridge Curriculum 💕</div>
+
+    <div class="card max-w-md w-full" style="background:linear-gradient(135deg,#FFF5F8 0%,#F8F0FF 100%);">
+      <div class="text-pink-600 font-cute font-semibold mb-4 flex items-center justify-center gap-2 text-lg">
+        <i class="fas fa-heart" style="animation:heartbeat 1.5s infinite;"></i> What's your name?
+      </div>
+      <input type="text" id="studentName" class="input-cute text-center" placeholder="Type your name here..." maxlength="25" style="font-size:1.05rem;">
+      <button id="startBtn" class="btn-cute mt-5 mx-auto block" style="font-size:1.05rem;padding:.8rem 2.5rem;">
+        <i class="fas fa-rocket"></i> Start Adventure!
+      </button>
+    </div>
+    <div class="mt-6 grid grid-cols-3 gap-4 max-w-lg text-center">
+      <div><div class="text-2xl">📖</div><div class="text-xs text-pink-400 font-cute mt-1">Word Problems</div></div>
+      <div><div class="text-2xl">🧮</div><div class="text-xs text-pink-400 font-cute mt-1">Computation</div></div>
+      <div><div class="text-2xl">⏱️</div><div class="text-xs text-pink-400 font-cute mt-1">2 min per question</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SLIDE 2: QUESTIONS =================== -->
+<section class="slide" data-slide="2" style="overflow:hidden;">
+  <div class="slide-header">
+    <div class="slide-tag"><span class="slide-num">2</span> Questions</div>
+    <div class="flex items-center gap-3 flex-wrap">
+      <div class="timer-display normal" id="timerDisplay">
+        <i class="fas fa-clock"></i> <span id="timerText">2:00</span>
+      </div>
+      <button class="btn-cute gold" onclick="addTime15()" style="padding:.4rem .9rem;font-size:.8rem;"><i class="fas fa-plus"></i> 15s</button>
+      <div class="text-xs text-pink-500 font-cute">Q <span id="qCurrent">1</span>/<span id="qTotal">60</span></div>
+    </div>
+  </div>
+  
+  <div class="timer-bar-bg mb-3"><div class="timer-bar-fill" id="timerBar" style="width:100%;"></div></div>
+
+  <div class="flex gap-3 flex-1 min-h-0">
+    <!-- Main question area -->
+    <div class="flex-1 overflow-y-auto pr-2" id="qScroll">
+      <div id="questionArea"></div>
+      
+      <div class="flex flex-wrap gap-2 mt-4 mb-4 sticky bottom-0 bg-white/90 backdrop-blur p-3 rounded-2xl border-2 border-pink-100" style="position:sticky;">
+        <button class="btn-cute" onclick="checkAnswer()"><i class="fas fa-check-double"></i> Check Answer</button>
+        <button class="btn-cute outline" onclick="toggleDiscussion()"><i class="fas fa-book-open"></i> Explanation</button>
+        <button class="btn-cute lav" onclick="prevQuestion()"><i class="fas fa-chevron-left"></i> Prev</button>
+        <button class="btn-cute lav" onclick="nextQuestion()"><i class="fas fa-chevron-right"></i> Next</button>
+        <button class="btn-cute red" onclick="finishQuiz()"><i class="fas fa-flag-checkered"></i> Finish</button>
+      </div>
+    </div>
+
+    <!-- Question navigator -->
+    <div class="w-64 flex-shrink-0 hidden md:block">
+      <div class="card card-pink sticky top-0">
+        <div class="text-xs font-cute text-pink-500 mb-2 text-center">QUESTION NAVIGATOR</div>
+        <div class="q-nav-grid" id="qNavGrid"></div>
+        <div class="mt-3 text-xs space-y-1">
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded bg-pink-500"></div><span class="text-pink-400">Current</span></div>
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded" style="background:var(--mint);"></div><span class="text-pink-400">Answered</span></div>
+          <div class="flex items-center gap-2"><div class="w-3 h-3 rounded" style="background:var(--pink-100);"></div><span class="text-pink-400">Unanswered</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SLIDE 3: RESULTS =================== -->
+<section class="slide" data-slide="3">
+  <div class="slide-header">
+    <div class="slide-tag"><span class="slide-num">3</span> Results</div>
+    <div class="text-pink-400 text-sm font-cute"><i class="fas fa-trophy"></i> Well done!</div>
+  </div>
+  <div class="flex-1 flex flex-col items-center">
+    <h2 class="font-display text-4xl mb-2 title-gradient text-center">Your Results 🏆</h2>
+    <p class="text-pink-400 mb-4 font-cute text-center">Great job, <span id="resultName" class="font-semibold text-pink-600">Student</span>! Here's how you did:</p>
+    
+    <div class="grid grid-cols-2 md:grid-cols-5 gap-3 max-w-4xl w-full mb-4">
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--mint-deep);" id="statCorrect">0</div>
+        <div class="stat-label">Correct ✓</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--red);" id="statWrong">0</div>
+        <div class="stat-label">Wrong ✗</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value title-gradient" id="statScore">0</div>
+        <div class="stat-label">Score (×2)</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--lav-500);" id="statAvgTime">0s</div>
+        <div class="stat-label">Avg Time</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-value" style="color:var(--gold-deep);" id="statTotalTime">0s</div>
+        <div class="stat-label">Total Time</div>
+      </div>
+    </div>
+
+    <div class="card max-w-4xl w-full">
+      <h3 class="font-cute text-lg text-pink-600 mb-3 flex items-center gap-2"><i class="fas fa-list-check"></i> Detailed Results</h3>
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-1 max-h-96 overflow-y-auto pr-2" id="resultsDetail"></div>
+    </div>
+
+    <div class="flex gap-2 mt-4">
+      <button class="btn-cute" onclick="goToSlide(4)"><i class="fas fa-arrow-right"></i> See Conclusion</button>
+      <button class="btn-cute outline" onclick="reviewAnswers()"><i class="fas fa-rotate-left"></i> Review Answers</button>
+    </div>
+  </div>
+</section>
+
+<!-- =================== SLIDE 4: CONCLUSION =================== -->
+<section class="slide" data-slide="4">
+  <div class="slide-header">
+    <div class="slide-tag"><span class="slide-num">4</span> Conclusion</div>
+    <div class="text-pink-400 text-sm font-cute"><i class="fas fa-heart"></i> Thank you!</div>
+  </div>
+  <div class="flex-1 flex flex-col items-center justify-center text-center">
+    <div class="sparkle" style="top:10%;left:10%;">✨</div>
+    <div class="sparkle" style="top:15%;right:12%;animation-delay:.7s;">💖</div>
+    <div class="sparkle" style="bottom:20%;left:8%;animation-delay:1.4s;">🌸</div>
+    <div class="sparkle" style="bottom:25%;right:10%;animation-delay:2.1s;">⭐</div>
+
+    <h2 class="font-display text-4xl md:text-5xl mb-4 title-gradient">What We Learned 🌟</h2>
+    
+    <div class="grid md:grid-cols-4 gap-3 max-w-4xl w-full mb-6">
+      <div class="card card-pink" style="animation:bounce-soft 3s ease-in-out infinite;">
+        <div class="text-3xl mb-1">➕</div>
+        <h3 class="font-cute font-semibold text-pink-600">Addition</h3>
+        <p class="text-xs mt-1">Find a common denominator, then add numerators.</p>
+      </div>
+      <div class="card card-lav" style="animation:bounce-soft 3s ease-in-out infinite .3s;">
+        <div class="text-3xl mb-1">➖</div>
+        <h3 class="font-cute font-semibold text-lav-500">Subtraction</h3>
+        <p class="text-xs mt-1">Same denominators: subtract numerators. Different: find LCD first!</p>
+      </div>
+      <div class="card card-pink" style="animation:bounce-soft 3s ease-in-out infinite .6s;">
+        <div class="text-3xl mb-1">✖️</div>
+        <h3 class="font-cute font-semibold text-pink-600">Multiplication</h3>
+        <p class="text-xs mt-1">Multiply tops, multiply bottoms. Simplify if needed.</p>
+      </div>
+      <div class="card card-lav" style="animation:bounce-soft 3s ease-in-out infinite .9s;">
+        <div class="text-3xl mb-1">➗</div>
+        <h3 class="font-cute font-semibold text-lav-500">Division</h3>
+        <p class="text-xs mt-1">Flip the second fraction, then multiply!</p>
+      </div>
+    </div>
+
+    <div class="card max-w-2xl w-full mb-4">
+      <h3 class="font-cute font-semibold text-pink-600 text-lg mb-3">💭 Reflection: How do you feel?</h3>
+      <div class="stars flex justify-center gap-1 mb-3" id="refleksiStars">
+        <span class="star" data-r="1">★</span>
+        <span class="star" data-r="2">★</span>
+        <span class="star" data-r="3">★</span>
+        <span class="star" data-r="4">★</span>
+        <span class="star" data-r="5">★</span>
+      </div>
+      <textarea id="refleksiText" class="input-cute" rows="2" placeholder="Share your thoughts about fractions today..." style="font-size:.9rem;"></textarea>
+    </div>
+
+    <div class="text-center">
+      <h3 class="font-display text-3xl md:text-4xl title-gradient mb-2">Thank You For Today! 💕</h3>
+      <p class="text-pink-500 font-cute mb-3">Amazing work, <span id="tyName" class="font-semibold">friend</span>!</p>
+      <p class="text-pink-400 text-xs font-cute mb-4">You're a fractions superstar! Keep practicing and shining bright ✨</p>
+      <button class="btn-cute gold" onclick="celebrate()"><i class="fas fa-sparkles"></i> Celebrate!</button>
+      <button class="btn-cute outline ml-2" onclick="restart()"><i class="fas fa-rotate-left"></i> Start Again</button>
+    </div>
+  </div>
+</section>
+
+</div>
+
+<div class="nav-bar" id="navBar" style="display:none;">
+  <button class="nav-btn" id="prevBtn"><i class="fas fa-chevron-left"></i></button>
+  <div class="dots" id="dots"></div>
+  <button class="nav-btn" id="nextBtn"><i class="fas fa-chevron-right"></i></button>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+/* ============= FRACTION PARSER ============= */
+function parseFracs(text) {
+  if (!text) return '';
+  return text
+    .replace(/(\d+)\s*_\s*(\d+)\s*\/\s*(\d+)/g, '$1&nbsp;<span class="frac"><span class="num">$2</span><span class="den">$3</span></span>')
+    .replace(/(\d+)\s*\/\s*(\d+)/g, '<span class="frac"><span class="num">$1</span><span class="den">$2</span></span>');
+}
+
+function evalFrac(str) {
+  if (str === null || str === undefined) return NaN;
+  str = str.toString().trim().replace(/\s+/g, '_');
+  let m = str.match(/^(\d+)?_?(\d+)\/(\d+)$/);
+  if (m) {
+    let w = parseInt(m[1] || 0);
+    let n = parseInt(m[2]);
+    let d = parseInt(m[3]);
+    return w + (n / d);
+  }
+  m = str.match(/^(\d+)$/);
+  if (m) return parseInt(m[1]);
+  return NaN;
+}
+
+/* ============= QUESTIONS DATA ============= */
+const questions = [
+  // ===== 1-35: WORD PROBLEMS =====
+  {type:'mc', cat:'word', q_en:"Emma ate 1/4 of a pizza and her brother ate 2/8 of the same pizza. What fraction of the pizza did they eat altogether?", q_id:"Emma memakan 1/4 pizza dan kakaknya memakan 2/8 pizza yang sama. Berapa pecahan pizza yang mereka makan bersama?", opts:["3/8","1/2","3/4","1/3"], correct:[1], e:"1/4 + 2/8 = 1/4 + 1/4 = 2/4 = 1/2."},
+  {type:'tf', cat:'word', q_en:"True or False: 1/3 + 1/6 equals 1/2.", q_id:"Benar atau Salah: 1/3 + 1/6 sama dengan 1/2.", correct:true, e:"1/3 + 1/6 = 2/6 + 1/6 = 3/6 = 1/2. BENAR."},
+  {type:'fill', cat:'word', q_en:"Lily has 3/5 m of ribbon. She bought 2/5 m more. How many meters of ribbon does she have now? (Write as a fraction or whole number)", q_id:"Lily memiliki 3/5 m pita. Dia membeli 2/5 m lagi. Berapa meter pita yang dimilikinya sekarang? (Tulis sebagai pecahan atau bilangan bulat)", correct:["1","5/5"], e:"3/5 + 2/5 = 5/5 = 1."},
+  {type:'mc', cat:'word', q_en:"Tom drank 2/3 L of water in the morning and 1/6 L in the afternoon. How much water did he drink altogether?", q_id:"Tom minum 2/3 L air di pagi hari dan 1/6 L di sore hari. Berapa banyak air yang ia minum semuanya?", opts:["5/6","3/9","1/2","7/6"], correct:[0], e:"2/3 + 1/6 = 4/6 + 1/6 = 5/6."},
+  {type:'complex', cat:'word', q_en:"Which of the following sums equal 3/4? Select ALL that apply.", q_id:"Manakah dari jumlah berikut yang sama dengan 3/4? Pilih SEMUA yang benar.", opts:["1/4 + 1/2","1/3 + 1/3","1/8 + 5/8","3/8 + 3/8","1/4 + 1/4"], correct:[0,2,3], e:"1/4+1/2=3/4 ✓ | 1/8+5/8=6/8=3/4 ✓ | 3/8+3/8=6/8=3/4 ✓."},
+  {type:'mc', cat:'word', q_en:"A cake was cut into 12 equal slices. Anna took 1/3 and Ben took 1/4 of the cake. How many slices are left?", q_id:"Sebuah kue dipotong menjadi 12 bagian sama besar. Anna mengambil 1/3 dan Ben mengambil 1/4 dari kue. Berapa potong yang tersisa?", opts:["5","7","6","4"], correct:[0], e:"Anna: 1/3 × 12 = 4. Ben: 1/4 × 12 = 3. Total: 7. Sisa: 12-7=5."},
+  {type:'fill', cat:'word', q_en:"Sarah walked 2/7 km to school and 3/7 km to the library. How far did she walk in total? (Write as a fraction)", q_id:"Sarah berjalan 2/7 km ke sekolah dan 3/7 km ke perpustakaan. Berapa jauh ia berjalan total? (Tulis sebagai pecahan)", correct:["5/7"], e:"2/7 + 3/7 = 5/7."},
+  {type:'mc', cat:'word', q_en:"A bottle contains 5/6 L of juice. Mia drank 1/3 L. How much juice is left?", q_id:"Sebotol berisi 5/6 L jus. Mia minum 1/3 L. Berapa jus yang tersisa?", opts:["1/2","4/3","2/3","5/18"], correct:[0], e:"5/6 - 1/3 = 5/6 - 2/6 = 3/6 = 1/2."},
+  {type:'tf', cat:'word', q_en:"True or False: 7/8 - 3/4 equals 1/8.", q_id:"Benar atau Salah: 7/8 - 3/4 sama dengan 1/8.", correct:true, e:"7/8 - 3/4 = 7/8 - 6/8 = 1/8. BENAR."},
+  {type:'fill', cat:'word', q_en:"A ribbon is 7/10 m long. After cutting 3/10 m, how long is the remaining ribbon? (Write as a fraction)", q_id:"Sebuah pita panjangnya 7/10 m. Setelah memotong 3/10 m, berapa panjang pita yang tersisa? (Tulis sebagai pecahan)", correct:["4/10","2/5"], e:"7/10 - 3/10 = 4/10 = 2/5."},
+  {type:'mc', cat:'word', q_en:"David had 3/4 kg of flour. He used 2/5 kg to bake cookies. How much flour is left?", q_id:"David memiliki 3/4 kg tepung. Ia menggunakan 2/5 kg untuk membuat kue. Berapa tepung yang tersisa?", opts:["7/20","1/20","5/20","13/20"], correct:[0], e:"3/4 - 2/5 = 15/20 - 8/20 = 7/20."},
+  {type:'complex', cat:'word', q_en:"Which subtraction results equal 1/4? Select ALL that apply.", q_id:"Manakah hasil pengurangan yang sama dengan 1/4? Pilih SEMUA yang benar.", opts:["1/2 - 1/4","3/4 - 1/2","3/8 - 1/8","5/8 - 3/8","1/2 - 1/3"], correct:[0,1,2,3], e:"4 pertama sama dengan 1/4."},
+  {type:'mc', cat:'word', q_en:"A water tank is 5/8 full. After using some water, it is 1/4 full. What fraction of the tank was used?", q_id:"Sebuah tangki air terisi 5/8 penuh. Setelah menggunakan sebagian air, tersisa 1/4 penuh. Berapa pecahan tangki yang digunakan?", opts:["3/8","4/8","2/8","6/8"], correct:[0], e:"5/8 - 1/4 = 5/8 - 2/8 = 3/8."},
+  {type:'fill', cat:'word', q_en:"From a 1/2 m wire, 1/3 m was cut. What fraction of the wire remains? (Write as a fraction)", q_id:"Dari kawat sepanjang 1/2 m, dipotong 1/3 m. Berapa pecahan kawat yang tersisa? (Tulis sebagai pecahan)", correct:["1/6"], e:"1/2 - 1/3 = 3/6 - 2/6 = 1/6."},
+  {type:'mc', cat:'word', q_en:"A recipe needs 2_1/2 cups of sugar. How much sugar is needed for 3 batches?", q_id:"Resep membutuhkan 2 1/2 cangkir gula. Berapa gula yang dibutuhkan untuk 3 batch?", opts:["7_1/2","6","5_1/2","6_1/2"], correct:[0], e:"2_1/2 × 3 = 5/2 × 3 = 15/2 = 7_1/2."},
+  {type:'tf', cat:'word', q_en:"True or False: 3/4 × 2/5 equals 6/20.", q_id:"Benar atau Salah: 3/4 × 2/5 sama dengan 6/20.", correct:true, e:"3/4 × 2/5 = 6/20. BENAR."},
+  {type:'fill', cat:'word', q_en:"What is 2/3 of 9? (Write as a whole number)", q_id:"Berapa 2/3 dari 9? (Tulis sebagai bilangan bulat)", correct:["6"], e:"2/3 × 9 = 18/3 = 6."},
+  {type:'mc', cat:'word', q_en:"A pizza has 8 slices. If 3/4 of the pizza is eaten, how many slices are eaten?", q_id:"Sebuah pizza memiliki 8 potong. Jika 3/4 dari pizza dimakan, berapa potong yang dimakan?", opts:["6","4","3","8"], correct:[0], e:"3/4 × 8 = 24/4 = 6."},
+  {type:'complex', cat:'word', q_en:"Which products equal 1/2? Select ALL that apply.", q_id:"Manakah hasil perkalian yang sama dengan 1/2? Pilih SEMUA yang benar.", opts:["1/2 × 1","1/4 × 2","1/3 × 3/2","2/3 × 3/4","1/5 × 2"], correct:[0,1,2,3], e:"4 pertama sama dengan 1/2."},
+  {type:'mc', cat:'word', q_en:"A garden is 4_1/2 m wide and 2_1/5 m long. What is the area of the garden?", q_id:"Kebun lebar 4 1/2 m dan panjang 2 1/5 m. Berapa luas kebun tersebut?", opts:["9_9/10","8_1/2","10_1/2","9_1/5"], correct:[0], e:"4_1/2 × 2_1/5 = 9/2 × 11/5 = 99/10 = 9_9/10."},
+  {type:'fill', cat:'word', q_en:"What is 1/2 × 1/4? (Write as a simplified fraction)", q_id:"Berapa 1/2 × 1/4? (Tulis sebagai pecahan yang disederhanakan)", correct:["1/8"], e:"1/2 × 1/4 = 1/8."},
+  {type:'mc', cat:'word', q_en:"How many 1/4 kg portions are in 3_1/2 kg of rice?", q_id:"Berapa porsi 1/4 kg yang ada dalam 3 1/2 kg beras?", opts:["14","12","8","16"], correct:[0], e:"3_1/2 ÷ 1/4 = 7/2 × 4 = 28/2 = 14."},
+  {type:'tf', cat:'word', q_en:"True or False: 2/3 ÷ 1/6 equals 4.", q_id:"Benar atau Salah: 2/3 ÷ 1/6 sama dengan 4.", correct:true, e:"2/3 ÷ 1/6 = 2/3 × 6 = 12/3 = 4. BENAR."},
+  {type:'fill', cat:'word', q_en:"Divide 3/4 by 1/8. What is the result? (Write as a whole number)", q_id:"Bagi 3/4 dengan 1/8. Berapa hasilnya? (Tulis sebagai bilangan bulat)", correct:["6"], e:"3/4 ÷ 1/8 = 3/4 × 8 = 24/4 = 6."},
+  {type:'mc', cat:'word', q_en:"A rope of 5/6 m is cut into pieces of 1/12 m each. How many pieces are there?", q_id:"Tali sepanjang 5/6 m dipotong menjadi potongan 1/12 m masing-masing. Berapa banyak potongannya?", opts:["10","5","6","12"], correct:[0], e:"5/6 ÷ 1/12 = 5/6 × 12 = 60/6 = 10."},
+  {type:'complex', cat:'word', q_en:"Which division results equal 2? Select ALL that apply.", q_id:"Manakah hasil pembagian yang sama dengan 2? Pilih SEMUA yang benar.", opts:["4 ÷ 2","1/2 ÷ 1/4","2/3 ÷ 1/3","3/4 ÷ 3/8","1/3 ÷ 1/2"], correct:[0,1,2,3], e:"4 pertama sama dengan 2."},
+  {type:'mc', cat:'word', q_en:"Sophia has 2/3 L of paint. She uses 1/6 L per project. How many projects can she complete?", q_id:"Sophia memiliki 2/3 L cat. Ia menggunakan 1/6 L per proyek. Berapa proyek yang dapat ia selesaikan?", opts:["4","3","2","6"], correct:[0], e:"2/3 ÷ 1/6 = 2/3 × 6 = 12/3 = 4."},
+  {type:'fill', cat:'word', q_en:"What is 5/6 ÷ 5/6? (Write as a whole number)", q_id:"Berapa 5/6 ÷ 5/6? (Tulis sebagai bilangan bulat)", correct:["1"], e:"5/6 ÷ 5/6 = 1."},
+  {type:'mc', cat:'word', q_en:"Lily had 3_1/4 kg of sugar. She used 1_1/2 kg, then bought 2_1/2 kg more. How much sugar does she have now?", q_id:"Lily memiliki 3 1/4 kg gula. Ia menggunakan 1 1/2 kg, lalu membeli 2 1/2 kg lagi. Berapa gula yang dimilikinya sekarang?", opts:["4_1/4","4_1/2","5","3_1/2"], correct:[0], e:"3_1/4 - 1_1/2 + 2_1/2 = 13/4 - 6/4 + 10/4 = 17/4 = 4_1/4."},
+  {type:'tf', cat:'word', q_en:"True or False: (1/2 + 1/4) × 2 equals 3.", q_id:"Benar atau Salah: (1/2 + 1/4) × 2 sama dengan 3.", correct:false, e:"(1/2 + 1/4) × 2 = (2/4 + 1/4) × 2 = 3/4 × 2 = 6/4 = 3/2. SALAH."},
+  {type:'fill', cat:'word', q_en:"A tank holds 15 L. It is 3/5 full. If 2_1/2 L is used, how many liters are left? (Write as mixed number like 6_1/2)", q_id:"Tangki menampung 15 L. Terisi 3/5 penuh. Jika 2 1/2 L digunakan, berapa liter yang tersisa? (Tulis sebagai campuran seperti 6_1/2)", correct:["6_1/2","13/2"], e:"Air awal: 3/5 × 15 = 9 L. Sisa: 9 - 2_1/2 = 6_1/2 L."},
+  {type:'mc', cat:'word', q_en:"A pizza is cut into 12 equal slices. Tom ate 1/4 and Jerry ate 1/3. How many slices are left?", q_id:"Pizza dipotong menjadi 12 bagian sama. Tom memakan 1/4 dan Jerry memakan 1/3. Berapa potong yang tersisa?", opts:["5","7","6","4"], correct:[0], e:"Tom: 3, Jerry: 4. Total: 7. Sisa: 5."},
+  {type:'complex', cat:'word', q_en:"Which of the following equal 1/2? Select ALL that apply.", q_id:"Manakah dari berikut ini yang sama dengan 1/2? Pilih SEMUA yang benar.", opts:["1/4 + 1/4","1 - 1/2","1/2 × 1","1/3 ÷ 2/3","2/3 - 1/6"], correct:[0,1,2,3,4], e:"Semua pernyataan bernilai 1/2."},
+  {type:'mc', cat:'word', q_en:"Emma baked 24 cookies. She gave 1/3 to friends and 1/4 to her sister. How many cookies remain?", q_id:"Emma membuat 24 kue. Ia memberikan 1/3 ke teman dan 1/4 ke kakaknya. Berapa kue yang tersisa?", opts:["10","8","12","6"], correct:[0], e:"Teman: 8, Kakak: 6. Diberikan: 14. Sisa: 10."},
+  {type:'fill', cat:'word', q_en:"A recipe uses 2_3/4 cups of flour per cake. If you make 2 cakes and need 1_1/2 cups for frosting, what is the total flour needed? (Write as mixed number like 7)", q_id:"Resep menggunakan 2 3/4 cangkir tepung per kue. Jika membuat 2 kue dan membutuhkan 1 1/2 cangkir untuk frosting, berapa total tepung? (Tulis sebagai campuran seperti 7)", correct:["7","7_0/2"], e:"Kue: 2_3/4 × 2 = 11/4 × 2 = 22/4 = 5_1/2. Frosting: 1_1/2. Total: 5_1/2 + 1_1/2 = 7."},
+  {type:'mc', cat:'word', q_en:"A board is 4_1/2 m long. It is cut into 3 equal pieces. How long is each piece?", q_id:"Papan sepanjang 4 1/2 m dipotong menjadi 3 bagian sama. Berapa panjang setiap potongan?", opts:["1_1/2","1_1/3","1_3/4","1_1/4"], correct:[0], e:"4_1/2 ÷ 3 = 9/2 × 1/3 = 9/6 = 3/2 = 1_1/2 m."},
+
+  // ===== 36-45: BASIC COMPUTATION =====
+  {type:'mc', cat:'computation', q_en:"Calculate: 1/3 + 2/3 = ?", q_id:"Hitung: 1/3 + 2/3 = ?", opts:["1","3/6","2/3","1/3"], correct:[0], e:"1/3 + 2/3 = 3/3 = 1."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 5/8 - 1/4 = ? (Write as a simplified fraction)", q_id:"Hitung: 5/8 - 1/4 = ? (Tulis sebagai pecahan disederhanakan)", correct:["3/8"], e:"5/8 - 2/8 = 3/8."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 2/5 × 3/4 = ? (Write as a simplified fraction)", q_id:"Hitung: 2/5 × 3/4 = ? (Tulis sebagai pecahan disederhanakan)", correct:["3/10","6/20"], e:"2/5 × 3/4 = 6/20 = 3/10."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 3/4 ÷ 1/2 = ? (Write as a fraction or mixed number)", q_id:"Hitung: 3/4 ÷ 1/2 = ? (Tulis sebagai pecahan atau campuran)", correct:["3/2","1_1/2"], e:"3/4 × 2/1 = 6/4 = 3/2."},
+  {type:'mc', cat:'computation', q_en:"Calculate: 1/2 + 1/3 + 1/6 = ?", q_id:"Hitung: 1/2 + 1/3 + 1/6 = ?", opts:["1","3/6","5/6","1/3"], correct:[0], e:"KPK 6. 3/6 + 2/6 + 1/6 = 6/6 = 1."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 7/10 - 2/5 = ? (Write as a simplified fraction)", q_id:"Hitung: 7/10 - 2/5 = ? (Tulis sebagai pecahan disederhanakan)", correct:["3/10"], e:"7/10 - 4/10 = 3/10."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 5/6 × 2/3 = ? (Write as a simplified fraction)", q_id:"Hitung: 5/6 × 2/3 = ? (Tulis sebagai pecahan disederhanakan)", correct:["5/9","10/18"], e:"5/6 × 2/3 = 10/18 = 5/9."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 3_1/4 + 2_1/2 = ? (Write as mixed number)", q_id:"Hitung: 3 1/4 + 2 1/2 = ? (Tulis sebagai campuran)", correct:["5_3/4","23/4"], e:"13/4 + 10/4 = 23/4 = 5_3/4."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 5_1/2 - 2_3/4 = ? (Write as mixed number)", q_id:"Hitung: 5 1/2 - 2 3/4 = ? (Tulis sebagai campuran)", correct:["2_3/4","11/4"], e:"22/4 - 11/4 = 11/4 = 2_3/4."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 1_1/2 × 2_2/3 = ? (Write as a whole number)", q_id:"Hitung: 1 1/2 × 2 2/3 = ? (Tulis sebagai bilangan bulat)", correct:["4","4_0/1"], e:"3/2 × 8/3 = 24/6 = 4."},
+
+  // ===== 46-60: MIXED COMPUTATION =====
+  {type:'fill', cat:'computation', q_en:"Calculate: 1/2 + 1/4 - 1/8 = ? (Write as a fraction)", q_id:"Hitung: 1/2 + 1/4 - 1/8 = ? (Tulis sebagai pecahan)", correct:["5/8"], e:"4/8 + 2/8 - 1/8 = 5/8."},
+  {type:'fill', cat:'computation', q_en:"Calculate: (2/3 + 1/6) × 1/2 = ? (Write as a simplified fraction)", q_id:"Hitung: (2/3 + 1/6) × 1/2 = ? (Tulis sebagai pecahan disederhanakan)", correct:["5/12"], e:"5/6 × 1/2 = 5/12."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 3/4 ÷ 1/2 + 1/3 = ? (Write as a fraction or mixed number)", q_id:"Hitung: 3/4 ÷ 1/2 + 1/3 = ? (Tulis sebagai pecahan atau campuran)", correct:["11/6","1_5/6"], e:"3/4 ÷ 1/2 = 3/2. 3/2 + 1/3 = 9/6 + 2/6 = 11/6."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 1 - 1/2 × 1/3 = ? (Write as a fraction)", q_id:"Hitung: 1 - 1/2 × 1/3 = ? (Tulis sebagai pecahan)", correct:["5/6"], e:"1/2 × 1/3 = 1/6. 1 - 1/6 = 5/6."},
+  {type:'mc', cat:'computation', q_en:"Calculate: 2/5 of 15 ÷ 3 = ?", q_id:"Hitung: 2/5 dari 15 ÷ 3 = ?", opts:["2","3","5","6"], correct:[0], e:"2/5 × 15 = 6. 6 ÷ 3 = 2."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 1/3 × 3/4 ÷ 1/2 = ? (Write as a simplified fraction)", q_id:"Hitung: 1/3 × 3/4 ÷ 1/2 = ? (Tulis sebagai pecahan disederhanakan)", correct:["1/2"], e:"1/3 × 3/4 = 1/4. 1/4 ÷ 1/2 = 1/4 × 2 = 2/4 = 1/2."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 7/12 - 1/4 + 1/3 = ? (Write as a simplified fraction)", q_id:"Hitung: 7/12 - 1/4 + 1/3 = ? (Tulis sebagai pecahan disederhanakan)", correct:["2/3","8/12"], e:"KPK 12. 7/12 - 3/12 + 4/12 = 8/12 = 2/3."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 3 × 1/4 ÷ 1/2 = ? (Write as a simplified fraction)", q_id:"Hitung: 3 × 1/4 ÷ 1/2 = ? (Tulis sebagai pecahan disederhanakan)", correct:["3/2","1_1/2"], e:"3 × 1/4 = 3/4. 3/4 ÷ 1/2 = 3/4 × 2 = 6/4 = 3/2."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 4_1/2 ÷ 1_1/2 = ? (Write as a whole number)", q_id:"Hitung: 4 1/2 ÷ 1 1/2 = ? (Tulis sebagai bilangan bulat)", correct:["3"], e:"9/2 ÷ 3/2 = 9/2 × 2/3 = 18/6 = 3."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 6_2/3 × 3/4 = ? (Write as a simplified fraction or mixed number)", q_id:"Hitung: 6 2/3 × 3/4 = ? (Tulis sebagai pecahan disederhanakan atau campuran)", correct:["5","5_0/1"], e:"20/3 × 3/4 = 60/12 = 5."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 3_1/5 ÷ 2/5 = ? (Write as a whole number)", q_id:"Hitung: 3 1/5 ÷ 2/5 = ? (Tulis sebagai bilangan bulat)", correct:["8"], e:"16/5 ÷ 2/5 = 16/5 × 5/2 = 80/10 = 8."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 2_1/3 + 1_1/6 = ? (Write as mixed number)", q_id:"Hitung: 2 1/3 + 1 1/6 = ? (Tulis sebagai campuran)", correct:["3_1/2","7/2"], e:"14/6 + 7/6 = 21/6 = 7/2 = 3_1/2."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 5_1/4 - 2_1/2 = ? (Write as mixed number)", q_id:"Hitung: 5 1/4 - 2 1/2 = ? (Tulis sebagai campuran)", correct:["2_3/4","11/4"], e:"21/4 - 10/4 = 11/4 = 2_3/4."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 1_3/8 + 2_1/4 = ? (Write as mixed number)", q_id:"Hitung: 1 3/8 + 2 1/4 = ? (Tulis sebagai campuran)", correct:["3_5/8","29/8"], e:"11/8 + 18/8 = 29/8 = 3_5/8."},
+  {type:'fill', cat:'computation', q_en:"Calculate: 5_1/3 - 2_5/6 = ? (Write as mixed number)", q_id:"Hitung: 5 1/3 - 2 5/6 = ? (Tulis sebagai campuran)", correct:["2_1/2","5/2"], e:"32/6 - 17/6 = 15/6 = 5/2 = 2_1/2."}
+];
+
+/* ============= STATE ============= */
+let currentSlide = 1;
+const totalSlides = 4;
+let studentName = '';
+let currentQ = 0;
+let translateMode = false;
+let timerInterval = null;
+let timeLeft = 120;
+let timerRunning = false;
+let qStartTime = 0;
+let showDiscussion = false;
+let answers = {}; // {qIndex: {answer, correct, timeSpent, checked}}
+
+/* ============= UTILS ============= */
+function $(s){return document.querySelector(s);}
+function $$(s){return document.querySelectorAll(s);}
+function randInt(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+
+function showToast(msg, type='info', duration=2200){
+  const t = $('#toast');
+  t.className = 'toast ' + type;
+  let icon = 'ℹ️';
+  if(type==='success') icon='✅';
+  if(type==='error') icon='⚠️';
+  t.innerHTML = `<span style="font-size:1.2rem">${icon}</span> <span>${msg}</span>`;
+  t.classList.add('show');
+  clearTimeout(t._timeout);
+  t._timeout = setTimeout(()=>t.classList.remove('show'), duration);
+}
+
+function launchConfetti(){
+  const colors=['#FF6B95','#FFD56B','#C8B6FF','#7FD3B0','#FF8FB1','#FFB0CC'];
+  for(let i=0;i<60;i++){
+    const c=document.createElement('div');
+    c.className='confetti';
+    c.style.left=randInt(0,100)+'vw';
+    c.style.background=colors[randInt(0,colors.length-1)];
+    c.style.borderRadius=Math.random()>.5?'50%':'2px';
+    c.style.animationDelay=Math.random()*.5+'s';
+    c.style.animationDuration=(2+Math.random()*2)+'s';
+    document.body.appendChild(c);
+    setTimeout(()=>c.remove(),4000);
+  }
+}
+
+function speak(text){
+  try{
+    if('speechSynthesis' in window){
+      speechSynthesis.cancel();
+      const u = new SpeechSynthesisUtterance(text);
+      u.lang='en-US'; u.rate=1.0; u.pitch=1.2;
+      speechSynthesis.speak(u);
+    }
+  }catch(e){}
+}
+
+function formatTime(seconds){
+  const m = Math.floor(seconds/60);
+  const s = seconds%60;
+  return `${m}:${s.toString().padStart(2,'0')}`;
+}
+
+/* ============= BG DECOR ============= */
+function initBgDecor(){
+  const deco = $('#bgDecor');
+  const chars = ['💖','🌸','✨','⭐','🦄','🍰','🎀','💕','🌟'];
+  for(let i=0;i<14;i++){
+    const d=document.createElement('div');
+    d.className='deco';
+    d.textContent=chars[randInt(0,chars.length-1)];
+    d.style.left=randInt(0,100)+'vw';
+    d.style.fontSize=(1+Math.random()*1.5)+'rem';
+    d.style.animationDuration=(12+Math.random()*15)+'s';
+    d.style.animationDelay=(-Math.random()*15)+'s';
+    deco.appendChild(d);
+  }
+}
+
+/* ============= NAVIGATION ============= */
+function initDots(){
+  const dots = $('#dots');
+  dots.innerHTML='';
+  for(let i=1;i<=totalSlides;i++){
+    const d=document.createElement('div');
+    d.className='dot'+(i===1?' active':'');
+    d.onclick=()=>goToSlide(i);
+    dots.appendChild(d);
+  }
+}
+
+function goToSlide(n){
+  if(n<1||n>totalSlides) return;
+  if(currentSlide===2 && n!==2) stopTimer();
+  $$('.slide').forEach(s=>s.classList.remove('active'));
+  const slide = document.querySelector(`.slide[data-slide="${n}"]`);
+  if(slide) slide.classList.add('active');
+  $$('.dot').forEach((d,i)=>d.classList.toggle('active', i===n-1));
+  currentSlide = n;
+  $('#prevBtn').disabled = (n===1);
+  $('#nextBtn').disabled = (n===totalSlides);
+  if(n===1) $('#navBar').style.display='none';
+  else $('#navBar').style.display='flex';
+  if(n===2){
+    renderQuestion();
+    startTimer();
+  }
+  if(n===3) renderResults();
+  if(n===4) $('#tyName').textContent = studentName||'friend';
+}
+
+function nextSlide(){ if(currentSlide<totalSlides) goToSlide(currentSlide+1); }
+function prevSlide(){ if(currentSlide>1) goToSlide(currentSlide-1); }
+
+/* ============= SLIDE 1: START ============= */
+function initSlide1(){
+  $('#startBtn').onclick = ()=>{
+    const name = $('#studentName').value.trim();
+    if(!name){
+      showToast('Please enter your name first! 💕','error');
+      $('#studentName').focus();
+      return;
+    }
+    studentName = name;
+    showToast(`Welcome, ${name}! Let's start! 🌸`,'success',3000);
+    launchConfetti();
+    setTimeout(()=>goToSlide(2),800);
+  };
+  $('#studentName').addEventListener('keypress',e=>{if(e.key==='Enter')$('#startBtn').click();});
+}
+
+/* ============= TIMER ============= */
+function startTimer(){
+  if(timeLeft<=0) return;
+  if(timerRunning) return;
+  timerRunning = true;
+  qStartTime = Date.now();
+  updateTimerDisplay();
+  timerInterval = setInterval(()=>{
+    timeLeft--;
+    updateTimerDisplay();
+    if(timeLeft<=0){
+      stopTimer();
+      showToast('Time is up! Moving to next question...','error',2500);
+      setTimeout(()=>nextQuestion(),1500);
+    }
+  },1000);
+}
+
+function stopTimer(){
+  timerRunning = false;
+  clearInterval(timerInterval);
+  updateTimerDisplay();
+}
+
+function resetTimer(){
+  stopTimer();
+  timeLeft = 120;
+  updateTimerDisplay();
+  startTimer();
+}
+
+function addTime15(){
+  timeLeft += 15;
+  updateTimerDisplay();
+  showToast('+15 seconds added! ⏰','info',1500);
+}
+
+function updateTimerDisplay(){
+  const display = $('#timerDisplay');
+  const text = $('#timerText');
+  const bar = $('#timerBar');
+  
+  text.textContent = formatTime(Math.max(0,timeLeft));
+  bar.style.width = Math.max(0,(timeLeft/120*100))+'%';
+  
+  display.className = 'timer-display';
+  bar.className = 'timer-bar-fill';
+  
+  if(!timerRunning){
+    display.classList.add('stopped');
+  } else if(timeLeft<=30){
+    display.classList.add('danger');
+    bar.classList.add('danger');
+  } else if(timeLeft<=60){
+    display.classList.add('warning');
+    bar.classList.add('warning');
+  } else {
+    display.classList.add('normal');
+  }
+}
+
+/* ============= QUESTION RENDERING ============= */
+function renderQuestion(){
+  const q = questions[currentQ];
+  $('#qCurrent').textContent = currentQ+1;
+  $('#qTotal').textContent = questions.length;
+  
+  const isAnswered = answers[currentQ] && answers[currentQ].checked;
+  showDiscussion = false;
+  
+  let html = `
+    <div class="q-card ${isAnswered ? (answers[currentQ].correct ? 'correct' : 'wrong') : ''}" id="qCard">
+      <div class="flex justify-between items-start gap-2 mb-3 flex-wrap">
+        <div class="flex items-center gap-2 flex-wrap">
+          <span class="font-display text-2xl text-pink-600">Q${currentQ+1}</span>
+          <span class="q-type-badge ${q.type}">${q.type==='mc'?'Multiple Choice':q.type==='tf'?'True/False':q.type==='complex'?'Complex MC':q.type==='fill'?'Fill in':q.type}</span>
+          <span class="q-type-badge ${q.cat==='computation'?'computation':''}">${q.cat==='word'?'📖 Word Problem':'🧮 Computation'}</span>
+        </div>
+        <button class="translate-toggle ${translateMode?'active':''}" onclick="toggleTranslate()">
+          <i class="fas fa-language"></i> ${translateMode?'ID':'EN→ID'}
+        </button>
+      </div>
+      <div class="text-base md:text-lg font-semibold mb-3 leading-relaxed" id="qText">${parseFracs(q.q_en)}</div>
+      ${translateMode && q.q_id ? `<div class="text-sm text-lav-500 bg-lav-100 p-3 rounded-xl mb-3" id="qTranslation"><i class="fas fa-translate mr-1"></i> ${parseFracs(q.q_id)}</div>` : ''}
+      <div id="qAnswerArea"></div>
+      <div class="disc-box id" id="discBox">${parseFracs(q.e)}</div>
+    </div>
+  `;
+  $('#questionArea').innerHTML = html;
+  renderAnswerArea();
+  renderNavGrid();
+}
+
+function renderAnswerArea(){
+  const q = questions[currentQ];
+  const area = $('#qAnswerArea');
+  const userAnswer = answers[currentQ]?.answer;
+  const isAnswered = answers[currentQ]?.checked;
+  
+  if(q.type === 'mc' || q.type === 'complex'){
+    let html = '<div class="space-y-2">';
+    q.opts.forEach((opt,oi)=>{
+      const selected = userAnswer && userAnswer.includes(oi);
+      let cls = 'opt-btn';
+      if(selected) cls += ' selected';
+      if(isAnswered){
+        if(q.correct.includes(oi)) cls += ' correct';
+        else if(selected) cls += ' wrong';
+      }
+      html += `<button class="${cls}" onclick="selectOption(${oi})" ${isAnswered?'disabled':''}>
+        <span class="opt-letter">${String.fromCharCode(65+oi)}</span>
+        <span>${parseFracs(opt)}</span>
+      </button>`;
+    });
+    html += '</div>';
+    area.innerHTML = html;
+  } else if(q.type === 'tf'){
+    let html = '<div class="flex gap-3">';
+    [true,false].forEach(val=>{
+      const selected = userAnswer === val;
+      let cls = 'tf-btn';
+      if(selected) cls += ' selected';
+      if(isAnswered){
+        if(q.correct === val) cls += ' correct';
+        else if(selected) cls += ' wrong';
+      }
+      const label = val ? 'TRUE' : 'FALSE';
+      html += `<button class="${cls}" onclick="selectTF(${val})" ${isAnswered?'disabled':''}>
+        <i class="fas ${val?'fa-check':'fa-times'}"></i> ${label}
+      </button>`;
+    });
+    html += '</div>';
+    area.innerHTML = html;
+  } else if(q.type === 'fill'){
+    let cls = 'fill-input';
+    if(isAnswered){
+      if(answers[currentQ].correct) cls += ' correct';
+      else cls += ' wrong';
+    }
+    area.innerHTML = `<input type="text" class="${cls}" placeholder="Type your answer... (e.g., 1/2 or 1_1/2)" 
+      value="${userAnswer||''}" oninput="setFillAnswer(this.value)" 
+      ${isAnswered?'disabled':''} id="fillInput">`;
+  }
+}
+
+function toggleTranslate(){
+  translateMode = !translateMode;
+  renderQuestion();
+}
+
+function selectOption(oi){
+  if(answers[currentQ]?.checked) return;
+  const q = questions[currentQ];
+  if(q.type === 'mc'){
+    answers[currentQ] = answers[currentQ] || {};
+    answers[currentQ].answer = [oi];
+  } else if(q.type === 'complex'){
+    answers[currentQ] = answers[currentQ] || {};
+    if(!answers[currentQ].answer) answers[currentQ].answer = [];
+    const idx = answers[currentQ].answer.indexOf(oi);
+    if(idx>=0) answers[currentQ].answer.splice(idx,1);
+    else answers[currentQ].answer.push(oi);
+  }
+  renderAnswerArea();
+  renderNavGrid();
+}
+
+function selectTF(val){
+  if(answers[currentQ]?.checked) return;
+  answers[currentQ] = answers[currentQ] || {};
+  answers[currentQ].answer = val;
+  renderAnswerArea();
+  renderNavGrid();
+}
+
+function setFillAnswer(val){
+  if(answers[currentQ]?.checked) return;
+  answers[currentQ] = answers[currentQ] || {};
+  answers[currentQ].answer = val;
+  renderNavGrid();
+}
+
+function checkAnswer(){
+  const q = questions[currentQ];
+  const ans = answers[currentQ];
+  
+  if(!ans || ans.answer===undefined || ans.answer===null || ans.answer==='' || (Array.isArray(ans.answer)&&ans.answer.length===0)){
+    showToast('Please answer first! 💕','error');
+    return;
+  }
+  
+  stopTimer();
+  ans.timeSpent = (120 - timeLeft);
+  
+  let correct = false;
+  if(q.type === 'mc'){
+    correct = ans.answer[0] === q.correct[0];
+  } else if(q.type === 'tf'){
+    correct = ans.answer === q.correct;
+  } else if(q.type === 'complex'){
+    correct = ans.answer.length === q.correct.length && q.correct.every(c=>ans.answer.includes(c));
+  } else if(q.type === 'fill'){
+    const userVal = evalFrac(ans.answer);
+    const correctOptions = Array.isArray(q.correct) ? q.correct : [q.correct];
+    correct = correctOptions.some(c => {
+      const cVal = evalFrac(c);
+      return !isNaN(userVal) && !isNaN(cVal) && Math.abs(userVal - cVal) < 0.01;
+    });
+  }
+  
+  ans.correct = correct;
+  ans.checked = true;
+  
+  if(correct){
+    showToast('Correct! Well done! 🎉','success',2000);
+    launchConfetti();
+  } else {
+    showToast('Not quite right. See the explanation! 💪','error',2500);
+  }
+  
+  renderQuestion();
+  renderNavGrid();
+}
+
+function toggleDiscussion(){
+  showDiscussion = !showDiscussion;
+  $('#discBox').classList.toggle('show', showDiscussion);
+}
+
+function nextQuestion(){
+  if(currentQ < questions.length-1){
+    currentQ++;
+    resetTimer();
+    renderQuestion();
+    $('#qScroll').scrollTop = 0;
+  } else {
+    showToast('You\'ve reached the last question! Click Finish to complete. 🏁','info',2500);
+  }
+}
+
+function prevQuestion(){
+  if(currentQ > 0){
+    currentQ--;
+    resetTimer();
+    renderQuestion();
+    $('#qScroll').scrollTop = 0;
+  }
+}
+
+function goToQuestion(idx){
+  currentQ = idx;
+  resetTimer();
+  renderQuestion();
+  $('#qScroll').scrollTop = 0;
+}
+
+function finishQuiz(){
+  let unanswered = 0;
+  for(let i=0;i<questions.length;i++){
+    if(!answers[i] || !answers[i].checked) unanswered++;
+  }
+  if(unanswered>0){
+    if(confirm(`You have ${unanswered} unanswered question(s). Are you sure you want to finish?`)){
+      stopTimer();
+      goToSlide(3);
+    }
+  } else {
+    stopTimer();
+    goToSlide(3);
+  }
+}
+
+function renderNavGrid(){
+  const grid = $('#qNavGrid');
+  if(!grid) return;
+  grid.innerHTML='';
+  questions.forEach((q,i)=>{
+    const cell = document.createElement('div');
+    let cls = 'q-nav-cell';
+    if(i===currentQ) cls += ' current';
+    if(answers[i]?.checked){
+      cls += answers[i].correct ? ' correct' : ' wrong';
+    } else if(answers[i]?.answer!==undefined){
+      cls += ' answered';
+    }
+    cell.className = cls;
+    cell.textContent = i+1;
+    cell.onclick = ()=>goToQuestion(i);
+    grid.appendChild(cell);
+  });
+}
+
+/* ============= RESULTS ============= */
+function renderResults(){
+  $('#resultName').textContent = studentName||'Student';
+  
+  let correct = 0, wrong = 0, skipped = 0;
+  let totalTime = 0, answeredCount = 0;
+  let detailHtml = '';
+  
+  questions.forEach((q,i)=>{
+    const ans = answers[i];
+    let isCorrect = false;
+    let status = 'skipped';
+    let timeStr = '-';
+    
+    if(ans && ans.checked){
+      isCorrect = ans.correct;
+      status = isCorrect ? 'correct' : 'wrong';
+      if(isCorrect) correct++; else wrong++;
+      if(ans.timeSpent){
+        totalTime += ans.timeSpent;
+        answeredCount++;
+        timeStr = formatTime(ans.timeSpent);
+      }
+    } else {
+      skipped++;
+    }
+    
+    // Preview text without HTML tags
+    const rawText = (translateMode && q.q_id ? q.q_id : q.q_en).replace(/<\/?[^>]+(>|$)/g, "");
+    const qText = rawText.substring(0, 40) + '...';
+    
+    detailHtml += `
+      <div class="result-row ${status}">
+        <div class="result-num ${status}">${i+1}</div>
+        <div class="result-icon">${status==='correct'?'✅':status==='wrong'?'❌':'⏭️'}</div>
+        <div class="flex-1 text-xs truncate">${qText}</div>
+        <div class="result-time">⏱️ ${timeStr}</div>
+      </div>
+    `;
+  });
+  
+  $('#statCorrect').textContent = correct;
+  $('#statWrong').textContent = wrong + skipped;
+  $('#statScore').textContent = correct * 2;
+  $('#statTotalTime').textContent = formatTime(totalTime);
+  $('#statAvgTime').textContent = answeredCount>0 ? formatTime(Math.round(totalTime/answeredCount)) : '0:00';
+  $('#resultsDetail').innerHTML = detailHtml;
+  
+  if(correct >= 40) launchConfetti();
+}
+
+function reviewAnswers(){
+  goToSlide(2);
+}
+
+/* ============= REFLECTION ============= */
+let refleksiRating = 0;
+function initRefleksi(){
+  $$('#refleksiStars .star').forEach(s=>{
+    s.onclick = ()=>{
+      refleksiRating = parseInt(s.dataset.r);
+      $$('#refleksiStars .star').forEach(x=>{
+        x.classList.toggle('active', parseInt(x.dataset.r)<=refleksiRating);
+      });
+      if(refleksiRating>=4) launchConfetti();
+    };
+  });
+}
+
+function celebrate(){
+  launchConfetti();
+  speak('Great job! You are amazing!');
+  showToast('You are a fractions superstar! 💕','success',3000);
+}
+
+function restart(){
+  currentSlide = 1;
+  currentQ = 0;
+  translateMode = false;
+  timeLeft = 120;
+  timerRunning = false;
+  answers = {};
+  refleksiRating = 0;
+  $('#studentName').value = '';
+  $('#refleksiText').value = '';
+  $$('#refleksiStars .star').forEach(x=>x.classList.remove('active'));
+  stopTimer();
+  goToSlide(1);
+}
+
+/* ============= INIT ============= */
+window.addEventListener('DOMContentLoaded',()=>{
+  initBgDecor();
+  initDots();
+  initSlide1();
+  initRefleksi();
+  $('#prevBtn').onclick = prevSlide;
+  $('#nextBtn').onclick = nextSlide;
+  document.addEventListener('keydown',e=>{
+    if(e.key==='ArrowRight' && currentSlide>1) nextSlide();
+    if(e.key==='ArrowLeft' && currentSlide>1) prevSlide();
+  });
+});
+</script>
+</body>
+</html>
