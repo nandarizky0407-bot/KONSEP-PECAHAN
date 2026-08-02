@@ -1,0 +1,1973 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Pecahan - Kelas 3 SD</title>
+<script src="https://cdn.tailwindcss.com"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Quicksand:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#FFF5F8;--bg-2:#FFE4EC;
+  --pink:#FF3B8B;--pink-soft:#FFB6D9;--pink-light:#FFE0EC;--pink-deep:#C2185B;
+  --coral:#FF8A65;--peach:#FFD4B0;
+  --mint:#4ADE80;--mint-deep:#16A34A;
+  --lavender:#C4B5FD;
+  --yellow:#FCD34D;--gold:#F59E0B;
+  --cream:#FFF9F5;
+  --ink:#4A1942;--ink-soft:#8B5A7A;
+  --error:#EF4444;--error-bg:#FEE2E2;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0;scroll-behavior:smooth}
+body{
+  font-family:'Quicksand',sans-serif;
+  background:
+    radial-gradient(ellipse at top left,rgba(255,182,217,.5) 0%,transparent 50%),
+    radial-gradient(ellipse at bottom right,rgba(196,181,253,.4) 0%,transparent 50%),
+    radial-gradient(ellipse at center,rgba(255,212,176,.25) 0%,transparent 60%),
+    linear-gradient(135deg,#FFF5F8 0%,#FFEBF2 50%,#FFE9F0 100%);
+  background-attachment:fixed;
+  color:var(--ink);min-height:100vh;overflow-x:hidden;
+}
+.font-display{font-family:'Fredoka',sans-serif}
+
+/* Decorations */
+.bg-decorations{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden}
+.deco{position:absolute;opacity:.35;animation:floatDeco 10s ease-in-out infinite}
+@keyframes floatDeco{0%,100%{transform:translateY(0) rotate(0deg)}33%{transform:translateY(-30px) rotate(15deg)}66%{transform:translateY(20px) rotate(-10deg)}}
+@keyframes twinkleDeco{0%,100%{opacity:.2;transform:scale(.7) rotate(0deg)}50%{opacity:.7;transform:scale(1.1) rotate(180deg)}}
+@keyframes heartBeat{0%,100%{transform:scale(1)}50%{transform:scale(1.08)}}
+@keyframes popIn{0%{transform:scale(.6);opacity:0}60%{transform:scale(1.05)}100%{transform:scale(1);opacity:1}}
+@keyframes bounceIn{0%{transform:translateY(30px);opacity:0}60%{transform:translateY(-10px);opacity:1}100%{transform:translateY(0)}}
+@keyframes wiggle{0%,100%{transform:rotate(0deg)}25%{transform:rotate(-5deg)}75%{transform:rotate(5deg)}}
+@keyframes confettiFall{0%{transform:translateY(-100vh) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+@keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+@keyframes slideIn{from{opacity:0;transform:translateX(30px) scale(.98)}to{opacity:1;transform:translateX(0) scale(1)}}
+
+/* Slides */
+.slide{display:none;min-height:100vh;padding:5rem 1rem 7rem;position:relative;z-index:1}
+.slide.active{display:block;animation:slideIn .6s cubic-bezier(.34,1.56,.64,1)}
+
+/* Slide header */
+.slide-badge{display:inline-block;background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;padding:.4rem 1.2rem;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:600;font-size:.85rem;letter-spacing:1px;text-transform:uppercase;box-shadow:0 4px 12px rgba(255,59,139,.3);margin-bottom:.75rem}
+.slide-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(1.8rem,4.5vw,3rem);color:var(--ink);margin:0;line-height:1.1;text-shadow:0 2px 0 rgba(255,255,255,.5)}
+.slide-subtitle{font-size:clamp(.95rem,1.8vw,1.15rem);color:var(--ink-soft);margin-top:.5rem;font-weight:500}
+
+/* Cards */
+.cute-card{background:white;border-radius:28px;box-shadow:0 8px 32px rgba(255,59,139,.12);border:3px solid var(--pink-light);position:relative;overflow:hidden;padding:1.5rem}
+.cute-card.pink{background:linear-gradient(135deg,#FFF5F8 0%,#FFE4EC 100%);border-color:var(--pink-soft)}
+.cute-card.coral{background:linear-gradient(135deg,#FFF5F0 0%,#FFE4D6 100%);border-color:var(--peach)}
+.cute-card.mint{background:linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%);border-color:#BBF7D0}
+.cute-card.yellow{background:linear-gradient(135deg,#FEFCE8 0%,#FEF9C3 100%);border-color:#FDE68A}
+
+/* Buttons */
+.btn{font-family:'Fredoka',sans-serif;font-weight:600;padding:.7rem 1.5rem;border-radius:999px;cursor:pointer;border:none;transition:all .2s ease;font-size:.95rem;display:inline-flex;align-items:center;gap:.4rem;text-decoration:none;white-space:nowrap}
+.btn-primary{background:linear-gradient(135deg,#FF3B8B 0%,#FF6B9D 100%);color:white;box-shadow:0 5px 0 #C2185B,0 8px 20px rgba(255,59,139,.3)}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 8px 0 #C2185B,0 12px 24px rgba(255,59,139,.4)}
+.btn-primary:active{transform:translateY(3px);box-shadow:0 2px 0 #C2185B}
+.btn-secondary{background:white;color:var(--pink-deep);border:3px solid var(--pink);box-shadow:0 4px 0 var(--pink)}
+.btn-secondary:hover{background:var(--pink-light);transform:translateY(-2px);box-shadow:0 6px 0 var(--pink)}
+.btn-secondary:active{transform:translateY(2px);box-shadow:0 1px 0 var(--pink)}
+.btn-mint{background:linear-gradient(135deg,#4ADE80 0%,#6EE7B7 100%);color:white;box-shadow:0 5px 0 #16A34A,0 8px 20px rgba(74,222,128,.3)}
+.btn-mint:hover{transform:translateY(-3px)}
+.btn-mint:active{transform:translateY(3px);box-shadow:0 2px 0 #16A34A}
+.btn-coral{background:linear-gradient(135deg,#FF8A65 0%,#FFA07A 100%);color:white;box-shadow:0 5px 0 #C75B3F}
+.btn-coral:hover{transform:translateY(-3px)}
+.btn-coral:active{transform:translateY(3px);box-shadow:0 2px 0 #C75B3F}
+.btn-sm{padding:.45rem 1rem;font-size:.85rem}
+
+/* Input */
+.cute-input{font-family:'Quicksand',sans-serif;font-size:1.05rem;padding:.8rem 1.15rem;border:3px solid var(--pink-soft);border-radius:18px;background:white;color:var(--ink);outline:none;transition:all .2s;width:100%;font-weight:600}
+.cute-input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,59,139,.15)}
+.cute-input::placeholder{color:#D4A5B8}
+
+/* Sub-tabs */
+.sub-tabs{display:flex;flex-wrap:wrap;justify-content:center;gap:.4rem;margin-bottom:1.5rem}
+.sub-tab{font-family:'Fredoka',sans-serif;font-weight:600;padding:.5rem 1rem;border-radius:999px;background:white;color:var(--ink-soft);border:3px solid transparent;cursor:pointer;transition:all .2s;font-size:.85rem}
+.sub-tab:hover{border-color:var(--pink-soft);transform:translateY(-2px)}
+.sub-tab.active{background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;border-color:var(--pink-deep);box-shadow:0 4px 12px rgba(255,59,139,.3)}
+.sub-content{display:none}
+.sub-content.active{display:block;animation:slideIn .5s}
+
+/* Progress bar */
+.progress-container{position:fixed;top:0;left:0;right:0;background:rgba(255,245,248,.95);backdrop-filter:blur(10px);padding:.7rem 1rem;z-index:100;border-bottom:2px solid var(--pink-light)}
+.progress-bar{height:12px;background:var(--pink-light);border-radius:999px;overflow:hidden;position:relative}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--pink) 0%,var(--coral) 50%,var(--yellow) 100%);background-size:200% 100%;border-radius:999px;transition:width .5s ease;animation:shimmer 3s linear infinite}
+.progress-info{display:flex;justify-content:space-between;align-items:center;margin-top:.4rem;font-size:.85rem;font-weight:600;color:var(--ink-soft)}
+.student-name-tag{background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;padding:.25rem .85rem;border-radius:999px;font-family:'Fredoka',sans-serif;font-size:.8rem;box-shadow:0 2px 8px rgba(255,59,139,.3)}
+
+/* Nav dots */
+.nav-dots{display:flex;gap:.4rem;align-items:center}
+.nav-dot{width:10px;height:10px;border-radius:50%;background:var(--pink-soft);cursor:pointer;transition:all .3s;border:2px solid transparent}
+.nav-dot.active{background:var(--pink);transform:scale(1.4)}
+.nav-dot:hover{background:var(--pink)}
+
+/* Bottom nav */
+.bottom-nav{position:fixed;bottom:1rem;left:50%;transform:translateX(-50%);display:flex;gap:1rem;align-items:center;background:white;padding:.6rem .9rem;border-radius:999px;box-shadow:0 8px 24px rgba(255,59,139,.2);z-index:100;border:3px solid var(--pink-light)}
+.nav-btn{width:44px;height:44px;border-radius:50%;border:none;cursor:pointer;font-size:1.3rem;display:flex;align-items:center;justify-content:center;transition:all .2s;font-family:'Fredoka',sans-serif;font-weight:700}
+.nav-btn.prev{background:var(--pink-light);color:var(--pink-deep)}
+.nav-btn.next{background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;box-shadow:0 4px 12px rgba(255,59,139,.3)}
+.nav-btn:hover:not(:disabled){transform:scale(1.1)}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+
+/* Question card */
+.question-card{background:white;border-radius:24px;padding:1.25rem;box-shadow:0 6px 20px rgba(255,59,139,.1);border:3px solid var(--pink-light);margin-bottom:1rem;transition:all .3s}
+.question-card.correct{border-color:var(--mint);background:linear-gradient(135deg,#F0FDF4 0%,#DCFCE7 100%);animation:popIn .4s}
+.question-card.incorrect{border-color:var(--error);background:var(--error-bg);animation:wiggle .5s}
+.question-num{display:inline-flex;align-items:center;justify-content:center;background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;width:36px;height:36px;border-radius:50%;font-family:'Fredoka',sans-serif;font-weight:600;font-size:1rem;flex-shrink:0;box-shadow:0 3px 8px rgba(255,59,139,.3)}
+.difficulty-tag{display:inline-block;padding:.2rem .7rem;border-radius:999px;font-size:.7rem;font-weight:700;font-family:'Fredoka',sans-serif;text-transform:uppercase;letter-spacing:.5px}
+.diff-mudah{background:#DCFCE7;color:var(--mint-deep)}
+.diff-menengah{background:#FEF3C7;color:var(--gold)}
+.diff-hots{background:#FCE7F3;color:var(--pink-deep)}
+
+/* Fraction input */
+.fraction-input-group{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;margin:0 .3rem}
+.fraction-input{width:55px;text-align:center;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.3rem;padding:.4rem;border:3px solid var(--pink-soft);border-radius:12px;background:white;color:var(--ink);outline:none}
+.fraction-input:focus{border-color:var(--pink)}
+.fraction-line{width:65px;height:4px;background:var(--pink);margin:.2rem 0;border-radius:2px}
+
+/* Fraction display */
+.fraction-display{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.6rem;color:var(--pink-deep);margin:0 .3rem;line-height:1}
+.fraction-display .bar{width:100%;height:4px;background:var(--pink);margin:4px 0;border-radius:2px}
+
+/* MC options */
+.mc-option{display:flex;align-items:center;padding:.75rem 1rem;background:white;border:3px solid var(--pink-light);border-radius:16px;cursor:pointer;transition:all .2s;margin-bottom:.5rem;font-weight:600;font-size:.95rem}
+.mc-option:hover{border-color:var(--pink-soft);transform:translateX(4px)}
+.mc-option.selected{background:var(--pink-light);border-color:var(--pink)}
+.mc-option.correct{background:#DCFCE7;border-color:var(--mint-deep)}
+.mc-option.incorrect{background:var(--error-bg);border-color:var(--error)}
+.mc-radio{width:22px;height:22px;border:3px solid var(--pink-soft);border-radius:50%;margin-right:.75rem;flex-shrink:0;position:relative;transition:all .2s}
+.mc-checkbox{width:22px;height:22px;border:3px solid var(--pink-soft);border-radius:6px;margin-right:.75rem;flex-shrink:0;position:relative;transition:all .2s;display:flex;align-items:center;justify-content:center}
+.mc-option.selected .mc-radio{border-color:var(--pink)}
+.mc-option.selected .mc-radio::after{content:'';position:absolute;inset:4px;background:var(--pink);border-radius:50%}
+.mc-option.selected .mc-checkbox{border-color:var(--pink);background:var(--pink)}
+.mc-option.selected .mc-checkbox::after{content:'✓';color:white;font-weight:900;font-size:.9rem}
+.mc-option.correct .mc-radio,.mc-option.correct .mc-checkbox{border-color:var(--mint-deep)}
+.mc-option.correct .mc-radio::after{content:'';position:absolute;inset:4px;background:var(--mint-deep);border-radius:50%}
+.mc-option.correct .mc-checkbox{background:var(--mint-deep)}
+.mc-option.correct .mc-checkbox::after{content:'✓';color:white;font-weight:900;font-size:.9rem}
+.mc-option.incorrect .mc-radio::after,.mc-option.incorrect .mc-checkbox::after{content:'✗';color:var(--error);font-weight:900;font-size:1rem}
+
+/* Memory game */
+.memory-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:.6rem;max-width:520px;margin:0 auto}
+.memory-card{aspect-ratio:3/4;perspective:1000px;cursor:pointer}
+.memory-card-inner{position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .6s}
+.memory-card.flipped .memory-card-inner,.memory-card.matched .memory-card-inner{transform:rotateY(180deg)}
+.memory-card-face{position:absolute;inset:0;backface-visibility:hidden;border-radius:14px;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;border:3px solid;box-shadow:0 4px 12px rgba(255,59,139,.15)}
+.memory-card-cover{background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;font-size:2rem;border-color:var(--pink-deep)}
+.memory-card-cover::after{content:'';position:absolute;inset:8px;border:2px dashed rgba(255,255,255,.5);border-radius:10px}
+.memory-card-content{background:white;color:var(--ink);font-size:1.7rem;border-color:var(--pink-soft);transform:rotateY(180deg)}
+.memory-card.matched .memory-card-content{background:linear-gradient(135deg,#DCFCE7 0%,#BBF7D0 100%);border-color:var(--mint-deep);animation:popIn .4s}
+.memory-card.disabled{pointer-events:none}
+
+/* Confetti */
+.confetti{position:fixed;width:12px;height:12px;pointer-events:none;z-index:9999;animation:confettiFall 3s linear forwards}
+
+/* Toast */
+.toast{position:fixed;top:80px;left:50%;transform:translateX(-50%) translateY(-200px);background:white;padding:.85rem 1.3rem;border-radius:18px;box-shadow:0 8px 24px rgba(0,0,0,.15);z-index:1000;transition:transform .4s cubic-bezier(.34,1.56,.64,1);font-family:'Fredoka',sans-serif;font-weight:600;border:3px solid var(--pink-soft);display:flex;align-items:center;gap:.5rem;max-width:90vw}
+.toast.show{transform:translateX(-50%) translateY(0)}
+.toast.success{border-color:var(--mint);background:#F0FDF4}
+.toast.error{border-color:var(--error);background:var(--error-bg)}
+
+/* Cover */
+.cover-hero{display:flex;flex-direction:column;align-items:center;text-align:center;padding:2rem 1rem;max-width:700px;margin:0 auto}
+.cover-title{font-family:'Fredoka',sans-serif;font-weight:700;font-size:clamp(2.5rem,7vw,4.5rem);background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 50%,var(--gold) 100%);-webkit-background-clip:text;background-clip:text;color:transparent;line-height:1;margin:1rem 0 .5rem;text-shadow:0 4px 0 rgba(255,255,255,.4)}
+.cover-subtitle{font-size:clamp(1rem,2.3vw,1.3rem);color:var(--ink-soft);margin-bottom:1.5rem;font-weight:500}
+.name-card{background:white;padding:1.8rem;border-radius:32px;box-shadow:0 12px 40px rgba(255,59,139,.2);border:4px solid var(--pink-soft);width:100%;max-width:450px;position:relative;animation:bounceIn .8s}
+.name-card::before{content:'';position:absolute;top:-22px;left:50%;transform:translateX(-50%);width:55px;height:55px;background:linear-gradient(135deg,var(--yellow) 0%,var(--gold) 100%);border-radius:50%;border:4px solid white;box-shadow:0 4px 12px rgba(245,158,11,.3);z-index:1}
+.name-card::after{content:'★';position:absolute;top:-12px;left:50%;transform:translateX(-50%);color:white;font-size:1.6rem;z-index:2}
+
+/* Mascot */
+.mascot{width:160px;height:160px;animation:heartBeat 2.5s ease-in-out infinite;filter:drop-shadow(0 8px 16px rgba(255,59,139,.25))}
+
+/* Objective list */
+.objective-item{display:flex;align-items:flex-start;gap:1rem;background:white;padding:1.1rem;border-radius:20px;margin-bottom:.6rem;border:3px solid var(--pink-light);transition:all .3s;box-shadow:0 4px 12px rgba(255,59,139,.08)}
+.objective-item:hover{transform:translateX(8px);border-color:var(--pink-soft);box-shadow:0 8px 24px rgba(255,59,139,.15)}
+.objective-icon{width:46px;height:46px;background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.2rem;flex-shrink:0;box-shadow:0 4px 12px rgba(255,59,139,.3)}
+
+/* Hint */
+.hint-box{background:linear-gradient(135deg,#FEF9C3 0%,#FEF3C7 100%);border:3px dashed var(--gold);border-radius:16px;padding:.85rem;margin-top:.75rem;color:var(--ink);display:none;animation:slideIn .4s;font-size:.9rem}
+.hint-box.show{display:block}
+
+/* Explanation */
+.explanation{background:linear-gradient(135deg,#F0F9FF 0%,#E0F2FE 100%);border-left:5px solid #0EA5E9;border-radius:12px;padding:.85rem;margin-top:.75rem;display:none;animation:slideIn .4s;font-size:.9rem;line-height:1.5}
+.explanation.show{display:block}
+.explanation strong{color:var(--pink-deep)}
+
+/* Concept cards */
+.concept-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:.75rem;margin:1rem 0}
+.concept-card{background:white;border-radius:20px;padding:1rem;text-align:center;box-shadow:0 6px 18px rgba(255,59,139,.1);border:3px solid var(--pink-light);transition:all .3s}
+.concept-card:hover{transform:translateY(-5px);border-color:var(--pink-soft)}
+
+/* Tutor panel */
+.tutor-panel{background:linear-gradient(135deg,#FEF3C7 0%,#FDE68A 100%);border:3px solid var(--gold);border-radius:20px;padding:1.1rem;margin-bottom:1.25rem}
+.tutor-panel-title{font-family:'Fredoka',sans-serif;font-weight:600;color:var(--ink);margin-bottom:.85rem;display:flex;align-items:center;gap:.5rem;font-size:1.05rem}
+.tutor-control{display:flex;align-items:center;gap:.6rem;margin-bottom:.6rem;flex-wrap:wrap}
+.tutor-control label{font-weight:600;min-width:130px;color:var(--ink);font-size:.9rem}
+.tutor-control input[type="range"]{flex:1;min-width:120px;accent-color:var(--pink);height:6px}
+.tutor-control .value-display{background:white;padding:.2rem .7rem;border-radius:999px;font-family:'Fredoka',sans-serif;font-weight:700;color:var(--pink-deep);min-width:36px;text-align:center;font-size:.95rem}
+.tutor-shape-btn{padding:.4rem .8rem;border-radius:12px;border:3px solid var(--gold);background:white;font-family:'Fredoka',sans-serif;font-weight:600;font-size:.85rem;cursor:pointer;transition:all .2s}
+.tutor-shape-btn.active{background:var(--gold);color:white}
+
+/* Round indicator */
+.round-indicator{display:flex;gap:.4rem;justify-content:center;margin-bottom:1rem}
+.round-dot{width:28px;height:8px;background:var(--pink-light);border-radius:999px;transition:all .3s}
+.round-dot.active{background:var(--pink);transform:scaleY(1.5)}
+.round-dot.complete{background:var(--mint)}
+
+/* Memory overlay */
+.memory-overlay{background:linear-gradient(135deg,#FFF5F8 0%,#FFE4EC 100%);border:3px solid var(--pink-soft);border-radius:24px;padding:1.5rem;text-align:center;margin-bottom:1rem;animation:popIn .4s}
+
+/* Timer */
+.timer-display{font-family:'Fredoka',sans-serif;font-weight:700;font-size:2rem;color:var(--pink-deep);text-align:center;margin:.5rem 0}
+.timer-display.urgent{color:var(--error);animation:heartBeat .5s infinite}
+
+/* Star rating */
+.star-rating{display:inline-flex;gap:.2rem}
+.star{color:var(--gold);font-size:1.2rem}
+.star.empty{color:var(--pink-light)}
+
+/* Result card */
+.result-card{background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;border-radius:24px;padding:1.5rem;text-align:center;margin-top:1rem;box-shadow:0 8px 24px rgba(255,59,139,.3);animation:popIn .5s}
+
+/* Responsive */
+@media (max-width:640px){
+  .memory-grid{grid-template-columns:repeat(3,1fr)}
+  .objective-icon{width:38px;height:38px;font-size:1rem}
+  .fraction-input{width:48px;font-size:1.1rem}
+  .fraction-line{width:58px}
+  .btn{font-size:.85rem;padding:.6rem 1.2rem}
+  .sub-tab{font-size:.75rem;padding:.4rem .8rem}
+  .slide{padding:4.5rem 1rem 6.5rem}
+}
+
+/* Sparkles */
+.sparkle{display:inline-block;animation:twinkleDeco 2s infinite}
+
+/* Trigger cards */
+.trigger-card{background:white;border-radius:24px;padding:1.2rem;text-align:center;box-shadow:0 8px 24px rgba(255,59,139,.15);border:3px solid var(--pink-light);transition:all .3s;cursor:pointer}
+.trigger-card:hover{transform:translateY(-8px) rotate(-2deg);border-color:var(--pink);box-shadow:0 12px 32px rgba(255,59,139,.25)}
+.trigger-card .emoji{font-size:2.5rem;display:block;margin-bottom:.5rem}
+
+/* Big number circle */
+.big-num{display:inline-flex;align-items:center;justify-content:center;width:60px;height:60px;background:linear-gradient(135deg,var(--pink) 0%,var(--coral) 100%);color:white;border-radius:50%;font-family:'Fredoka',sans-serif;font-weight:700;font-size:1.8rem;box-shadow:0 6px 16px rgba(255,59,139,.3)}
+
+/* Halves & quarters illustrations container */
+.illustration-row{display:flex;flex-wrap:wrap;justify-content:center;gap:.75rem;margin:.75rem 0}
+.illustration-box{background:white;border-radius:16px;padding:.75rem;border:3px solid var(--pink-light);text-align:center}
+.illustration-box .label{font-family:'Fredoka',sans-serif;font-weight:600;color:var(--pink-deep);font-size:.85rem;margin-top:.4rem}
+
+/* Reflection textarea */
+.reflection-input{font-family:'Quicksand',sans-serif;font-size:1rem;padding:.8rem;border:3px solid var(--pink-soft);border-radius:16px;background:white;color:var(--ink);outline:none;transition:all .2s;width:100%;min-height:80px;resize:vertical}
+.reflection-input:focus{border-color:var(--pink);box-shadow:0 0 0 4px rgba(255,59,139,.15)}
+</style>
+</head>
+<body>
+
+<!-- Background decorations -->
+<div class="bg-decorations" id="bgDeco"></div>
+
+<!-- Progress bar -->
+<div class="progress-container">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:16.67%"></div></div>
+  <div class="progress-info">
+    <div class="flex items-center gap-3">
+      <span id="slideCounter">Slide 1 dari 6</span>
+      <span class="student-name-tag" id="studentNameTag" style="display:none"></span>
+    </div>
+    <div class="nav-dots" id="navDots"></div>
+  </div>
+</div>
+
+<!-- Bottom nav -->
+<div class="bottom-nav">
+  <button class="nav-btn prev" id="prevBtn" onclick="navigate(-1)">←</button>
+  <span class="font-display font-bold text-sm" id="slideInfo" style="color:var(--ink-soft)">1 / 6</span>
+  <button class="nav-btn next" id="nextBtn" onclick="navigate(1)">→</button>
+</div>
+
+<!-- Toast -->
+<div class="toast" id="toast"></div>
+
+<main>
+
+<!-- SLIDE 1: COVER -->
+<section class="slide active" id="slide-1">
+  <div class="cover-hero">
+    <div class="mascot">
+      <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+        <ellipse cx="100" cy="140" rx="62" ry="52" fill="#FFE4EC"/>
+        <circle cx="100" cy="95" r="52" fill="#FFE4EC"/>
+        <path d="M 58 62 L 70 28 L 88 58 Z" fill="#FFE4EC"/>
+        <path d="M 142 62 L 130 28 L 112 58 Z" fill="#FFE4EC"/>
+        <path d="M 64 56 L 72 38 L 82 54 Z" fill="#FFB6D9"/>
+        <path d="M 136 56 L 128 38 L 118 54 Z" fill="#FFB6D9"/>
+        <ellipse cx="84" cy="42" rx="13" ry="9" fill="#FF3B8B"/>
+        <ellipse cx="72" cy="42" rx="8" ry="6" fill="#FF3B8B"/>
+        <ellipse cx="96" cy="42" rx="8" ry="6" fill="#FF3B8B"/>
+        <circle cx="84" cy="42" r="4" fill="#FF6B9D"/>
+        <circle cx="81" cy="95" r="6" fill="#4A1942"/>
+        <circle cx="119" cy="95" r="6" fill="#4A1942"/>
+        <circle cx="83" cy="93" r="2" fill="white"/>
+        <circle cx="121" cy="93" r="2" fill="white"/>
+        <path d="M 96 105 L 100 110 L 104 105 Z" fill="#FF3B8B"/>
+        <path d="M 100 110 Q 92 118 86 114" stroke="#4A1942" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <path d="M 100 110 Q 108 118 114 114" stroke="#4A1942" stroke-width="2" fill="none" stroke-linecap="round"/>
+        <circle cx="72" cy="108" r="6" fill="#FFB6D9" opacity="0.7"/>
+        <circle cx="128" cy="108" r="6" fill="#FFB6D9" opacity="0.7"/>
+        <line x1="60" y1="103" x2="76" y2="106" stroke="#4A1942" stroke-width="1.5"/>
+        <line x1="60" y1="108" x2="76" y2="109" stroke="#4A1942" stroke-width="1.5"/>
+        <line x1="124" y1="106" x2="140" y2="103" stroke="#4A1942" stroke-width="1.5"/>
+        <line x1="124" y1="109" x2="140" y2="108" stroke="#4A1942" stroke-width="1.5"/>
+      </svg>
+    </div>
+    <div class="slide-badge">Matematika Kelas 3 SD</div>
+    <h1 class="cover-title">Petualangan<br>Pecahan!</h1>
+    <p class="cover-subtitle">Yuk bareng Pipi si Kucing Manis, belajar pecahan sambil bermain! <span class="sparkle">✨</span></p>
+    
+    <div class="name-card">
+      <div style="margin-top:1rem">
+        <label class="font-display font-semibold block mb-2 text-center" style="color:var(--ink);font-size:1.1rem">Siapa namamu, sobat?</label>
+        <input type="text" class="cute-input text-center" id="nameInput" placeholder="Tulis namamu di sini..." maxlength="20">
+        <button class="btn btn-primary w-full mt-3 justify-center" onclick="startAdventure()" style="font-size:1.1rem;padding:.85rem">
+          <span>Mulai Petualangan</span>
+          <span style="font-size:1.2rem">→</span>
+        </button>
+        <p class="text-center text-xs mt-2" style="color:var(--ink-soft)">Tekan Enter untuk mulai ✨</p>
+      </div>
+    </div>
+    
+    <div class="flex flex-wrap justify-center gap-3 mt-6 text-sm font-semibold" style="color:var(--ink-soft)">
+      <div class="flex items-center gap-1"><span style="color:var(--pink)">♥</span> 6 Slide Seru</div>
+      <div class="flex items-center gap-1"><span style="color:var(--coral)">★</span> Game Memory</div>
+      <div class="flex items-center gap-1"><span style="color:var(--gold)">✦</span> 35+ Soal Latihan</div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 2: TRIGGER QUESTION -->
+<section class="slide" id="slide-2">
+  <div class="text-center mb-6">
+    <div class="slide-badge">Pertanyaan Pemantik</div>
+    <h2 class="slide-title">Pernahkah Kamu Melihat Pecahan?</h2>
+    <p class="slide-subtitle">Coba deh pikirin, kapan sih kita pakai pecahan? <span class="sparkle">🤔</span></p>
+  </div>
+  
+  <div class="max-w-4xl mx-auto">
+    <div class="cute-card pink text-center mb-4">
+      <p class="font-display text-lg" style="color:var(--ink)">Coba klik gambar di bawah ini! 👇</p>
+    </div>
+    
+    <div class="grid grid-cols-2 md:grid-cols-4 gap-3 mb-5">
+      <div class="trigger-card" onclick="revealTrigger(this, 'pizza')">
+        <span class="emoji">🍕</span>
+        <p class="font-display font-semibold" style="color:var(--pink-deep)">Pizza</p>
+        <p class="text-xs mt-1" style="color:var(--ink-soft)">Klik aku!</p>
+      </div>
+      <div class="trigger-card" onclick="revealTrigger(this, 'cake')">
+        <span class="emoji">🎂</span>
+        <p class="font-display font-semibold" style="color:var(--pink-deep)">Kue Ulang Tahun</p>
+        <p class="text-xs mt-1" style="color:var(--ink-soft)">Klik aku!</p>
+      </div>
+      <div class="trigger-card" onclick="revealTrigger(this, 'choco')">
+        <span class="emoji">🍫</span>
+        <p class="font-display font-semibold" style="color:var(--pink-deep)">Cokelat</p>
+        <p class="text-xs mt-1" style="color:var(--ink-soft)">Klik aku!</p>
+      </div>
+      <div class="trigger-card" onclick="revealTrigger(this, 'juice')">
+        <span class="emoji">🧃</span>
+        <p class="font-display font-semibold" style="color:var(--pink-deep)">Jus</p>
+        <p class="text-xs mt-1" style="color:var(--ink-soft)">Klik aku!</p>
+      </div>
+    </div>
+    
+    <div id="triggerReveal" style="display:none">
+      <div class="cute-card mint mb-4">
+        <div class="flex items-start gap-3">
+          <div class="big-num" style="background:linear-gradient(135deg,#4ADE80 0%,#6EE7B7 100%);box-shadow:0 4px 12px rgba(74,222,128,.3)">!</div>
+          <div>
+            <h3 class="font-display font-bold text-xl mb-2" style="color:var(--mint-deep)">Ternyata Pecahan Ada Di Mana-Mana!</h3>
+            <p class="text-sm leading-relaxed" style="color:var(--ink)">
+              <strong>Pizza</strong> dipotong jadi 8 bagian sama, kita makan 3 bagian = <span class="fraction-display"><span>3</span><span class="bar"></span><span>8</span></span><br>
+              <strong>Kue ulang tahun</strong> dipotong jadi 10, teman makan 4 = <span class="fraction-display"><span>4</span><span class="bar"></span><span>10</span></span><br>
+              <strong>Cokelat</strong> 6 kotak, adik makan 2 = <span class="fraction-display"><span>2</span><span class="bar"></span><span>6</span></span><br>
+              <strong>Jus</strong> sudah diminum setengahnya = <span class="fraction-display"><span>1</span><span class="bar"></span><span>2</span></span>
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="cute-card yellow text-center">
+        <p class="font-display text-lg" style="color:var(--ink)">
+          Jadi, <strong style="color:var(--pink-deep)">pecahan</strong> adalah cara untuk menyatakan bagian dari suatu keseluruhan! <span class="sparkle">✨</span>
+        </p>
+        <p class="text-sm mt-2" style="color:var(--ink-soft)">Tanpa kita sadari, kita sering banget pakai pecahan dalam hidup sehari-hari, lho!</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 3: LEARNING OBJECTIVES -->
+<section class="slide" id="slide-3">
+  <div class="text-center mb-6">
+    <div class="slide-badge">Tujuan Pembelajaran</div>
+    <h2 class="slide-title">Apa yang Akan Kita Pelajari?</h2>
+    <p class="slide-subtitle">Yuk lihat petualangan seru yang menanti! 🌈</p>
+  </div>
+  
+  <div class="max-w-3xl mx-auto">
+    <div class="objective-item">
+      <div class="objective-icon">1</div>
+      <div>
+        <h3 class="font-display font-bold text-lg" style="color:var(--pink-deep)">Mengenal Notasi Pecahan</h3>
+        <p class="text-sm mt-1" style="color:var(--ink-soft)">Siswa dapat memahami bagian pembilang dan penyebut dalam pecahan.</p>
+      </div>
+    </div>
+    
+    <div class="objective-item">
+      <div class="objective-icon">2</div>
+      <div>
+        <h3 class="font-display font-bold text-lg" style="color:var(--pink-deep)">Membentuk Pecahan</h3>
+        <p class="text-sm mt-1" style="color:var(--ink-soft)">Siswa dapat membentuk pecahan dari gambar dan dari cerita sehari-hari.</p>
+      </div>
+    </div>
+    
+    <div class="objective-item">
+      <div class="objective-icon">3</div>
+      <div>
+        <h3 class="font-display font-bold text-lg" style="color:var(--pink-deep)">Menentukan Setengah dan Seperempat</h3>
+        <p class="text-sm mt-1" style="color:var(--ink-soft)">Siswa dapat menentukan bagian setengah (1/2) dan seperempat (1/4) dari suatu benda.</p>
+      </div>
+    </div>
+    
+    <div class="objective-item">
+      <div class="objective-icon">4</div>
+      <div>
+        <h3 class="font-display font-bold text-lg" style="color:var(--pink-deep)">Memahami Pecahan Senilai</h3>
+        <p class="text-sm mt-1" style="color:var(--ink-soft)">Siswa dapat memahami konsep pecahan senilai melalui permainan memory yang seru.</p>
+      </div>
+    </div>
+    
+    <div class="objective-item">
+      <div class="objective-icon">5</div>
+      <div>
+        <h3 class="font-display font-bold text-lg" style="color:var(--pink-deep)">Mengerjakan Soal Cerita & HOTS</h3>
+        <p class="text-sm mt-1" style="color:var(--ink-soft)">Siswa dapat menyelesaikan soal-soal pecahan dari yang mudah sampai HOTS.</p>
+      </div>
+    </div>
+    
+    <div class="cute-card coral text-center mt-5">
+      <p class="font-display text-base" style="color:var(--ink)">
+        <span style="font-size:1.3rem">🎯</span> Siap untuk petualangan pecahan? Yuk lanjut ke materi!
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 4: MATERIAL -->
+<section class="slide" id="slide-4">
+  <div class="text-center mb-4">
+    <div class="slide-badge">Materi Pecahan</div>
+    <h2 class="slide-title">Belajar Pecahan Yuk!</h2>
+    <p class="slide-subtitle">Pilih topik yang ingin dipelajari 📚</p>
+  </div>
+  
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="goToSub('sub-4-1', this)">1. Notasi</button>
+    <button class="sub-tab" onclick="goToSub('sub-4-2a', this)">2a. Membentuk</button>
+    <button class="sub-tab" onclick="goToSub('sub-4-2b', this)">2b. Cerita</button>
+    <button class="sub-tab" onclick="goToSub('sub-4-3', this)">3. ½ & ¼</button>
+    <button class="sub-tab" onclick="goToSub('sub-4-4', this)">4. Senilai</button>
+  </div>
+  
+  <!-- 4.1 Notasi Pecahan -->
+  <div class="sub-content active" id="sub-4-1">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink">
+        <h3 class="font-display font-bold text-2xl mb-3 text-center" style="color:var(--pink-deep)">Apa Itu Pecahan?</h3>
+        <p class="text-center mb-4" style="color:var(--ink)">Pecahan adalah bagian dari suatu keseluruhan. Pecahan ditulis dengan dua angka dan satu garis!</p>
+        
+        <div class="flex justify-center my-6">
+          <div class="text-center">
+            <div style="font-size:5rem;font-family:'Fredoka',sans-serif;font-weight:700;line-height:1;color:var(--pink-deep)">
+              <div>3</div>
+              <div style="height:6px;background:var(--pink);margin:.5rem 0;border-radius:3px;width:140px"></div>
+              <div>4</div>
+            </div>
+          </div>
+        </div>
+        
+        <div class="grid md:grid-cols-2 gap-3 mt-4">
+          <div class="cute-card" style="border-color:var(--pink)">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="big-num" style="width:50px;height:50px;font-size:1.4rem">↑</div>
+              <h4 class="font-display font-bold text-lg" style="color:var(--pink-deep)">Pembilang</h4>
+            </div>
+            <p class="text-sm" style="color:var(--ink)">Angka di <strong>atas</strong> garis. Menyatakan <strong>bagian yang dimaksud</strong> atau diwarnai.</p>
+            <p class="text-sm mt-2" style="color:var(--pink-deep)"><strong>Contoh:</strong> 3 bagian yang diwarnai</p>
+          </div>
+          <div class="cute-card" style="border-color:var(--coral)">
+            <div class="flex items-center gap-3 mb-2">
+              <div class="big-num" style="width:50px;height:50px;font-size:1.4rem;background:linear-gradient(135deg,var(--coral) 0%,var(--peach) 100%)">↓</div>
+              <h4 class="font-display font-bold text-lg" style="color:#C75B3F">Penyebut</h4>
+            </div>
+            <p class="text-sm" style="color:var(--ink)">Angka di <strong>bawah</strong> garis. Menyatakan <strong>jumlah seluruh bagian</strong> yang sama.</p>
+            <p class="text-sm mt-2" style="color:#C75B3F"><strong>Contoh:</strong> 4 bagian total keseluruhan</p>
+          </div>
+        </div>
+        
+        <div class="cute-card yellow mt-4 text-center">
+          <p class="font-display text-base" style="color:var(--ink)">
+            <span style="font-size:1.3rem">💡</span> Cara baca: <strong>"tiga per empat"</strong> atau <strong>"tiga perempat"</strong>
+          </p>
+          <p class="text-sm mt-1" style="color:var(--ink-soft)">Artinya: 3 bagian dari 4 bagian yang sama besar</p>
+        </div>
+        
+        <div class="mt-4 grid grid-cols-2 md:grid-cols-4 gap-3">
+          <div class="concept-card">
+            <div id="notasiShape1" class="flex justify-center"></div>
+            <p class="font-display mt-2" style="color:var(--pink-deep)"><span class="fraction-display"><span>1</span><span class="bar"></span><span>2</span></span></p>
+            <p class="text-xs" style="color:var(--ink-soft)">satu per dua</p>
+          </div>
+          <div class="concept-card">
+            <div id="notasiShape2" class="flex justify-center"></div>
+            <p class="font-display mt-2" style="color:var(--pink-deep)"><span class="fraction-display"><span>2</span><span class="bar"></span><span>3</span></span></p>
+            <p class="text-xs" style="color:var(--ink-soft)">dua per tiga</p>
+          </div>
+          <div class="concept-card">
+            <div id="notasiShape3" class="flex justify-center"></div>
+            <p class="font-display mt-2" style="color:var(--pink-deep)"><span class="fraction-display"><span>5</span><span class="bar"></span><span>8</span></span></p>
+            <p class="text-xs" style="color:var(--ink-soft)">lima per delapan</p>
+          </div>
+          <div class="concept-card">
+            <div id="notasiShape4" class="flex justify-center"></div>
+            <p class="font-display mt-2" style="color:var(--pink-deep)"><span class="fraction-display"><span>3</span><span class="bar"></span><span>4</span></span></p>
+            <p class="text-xs" style="color:var(--ink-soft)">tiga per empat</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 4.2a Membentuk Pecahan dari Gambar -->
+  <div class="sub-content" id="sub-4-2a">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink">
+        <h3 class="font-display font-bold text-2xl mb-2 text-center" style="color:var(--pink-deep)">Membentuk Pecahan dari Gambar</h3>
+        <p class="text-center mb-4" style="color:var(--ink);font-size:.95rem">Tutor atur jumlah bagian dan warna, lalu siswa tulis pecahannya!</p>
+        
+        <!-- Tutor panel -->
+        <div class="tutor-panel">
+          <div class="tutor-panel-title">
+            <span style="font-size:1.3rem">👩‍🏫</span> Panel Tutor
+          </div>
+          <div class="tutor-control">
+            <label>Jumlah Bagian:</label>
+            <input type="range" id="tutorTotal" min="2" max="10" value="6" oninput="updateTutor()">
+            <span class="value-display" id="tutorTotalVal">6</span>
+          </div>
+          <div class="tutor-control">
+            <label>Bagian Diwarnai:</label>
+            <input type="range" id="tutorColored" min="0" max="6" value="4" oninput="updateTutor()">
+            <span class="value-display" id="tutorColoredVal">4</span>
+          </div>
+          <div class="tutor-control">
+            <label>Bentuk:</label>
+            <button class="tutor-shape-btn active" onclick="setTutorShape('rect', this)">▭ Persegi</button>
+            <button class="tutor-shape-btn" onclick="setTutorShape('circle', this)">⚪ Lingkaran</button>
+            <button class="tutor-shape-btn" onclick="setTutorShape('heart', this)">💗 Hati</button>
+          </div>
+        </div>
+        
+        <!-- Display shape -->
+        <div class="text-center my-4 p-4 rounded-2xl" style="background:linear-gradient(135deg,#FFF9F5 0%,#FFE4EC 100%);border:3px dashed var(--pink-soft)">
+          <div id="tutorShapeDisplay"></div>
+        </div>
+        
+        <!-- Student answer -->
+        <div class="cute-card yellow">
+          <h4 class="font-display font-bold text-lg mb-3" style="color:var(--ink)">✏️ Tuliskan pecahan dari gambar di atas!</h4>
+          <div class="flex items-center gap-2 flex-wrap">
+            <span class="font-semibold">Jawabanku:</span>
+            <div class="fraction-input-group">
+              <input type="number" class="fraction-input" id="tutorAnsNum" min="0" placeholder="?" style="width:70px">
+              <div class="fraction-line" style="width:80px"></div>
+              <input type="number" class="fraction-input" id="tutorAnsDen" min="1" placeholder="?" style="width:70px">
+            </div>
+            <button class="btn btn-primary btn-sm" onclick="checkTutorAnswer()">Cek Jawaban</button>
+            <button class="btn btn-secondary btn-sm" onclick="showTutorHint()">💡 Petunjuk</button>
+          </div>
+          <div class="hint-box" id="tutorHint">
+            <strong>Petunjuk:</strong> Pembilang (atas) = bagian yang berwarna pink. Penyebut (bawah) = jumlah semua bagian.
+          </div>
+          <div class="explanation" id="tutorExp"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- 4.2b Membentuk Pecahan dari Cerita -->
+  <div class="sub-content" id="sub-4-2b">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink mb-4">
+        <h3 class="font-display font-bold text-2xl text-center" style="color:var(--pink-deep)">Membentuk Pecahan dari Cerita</h3>
+        <p class="text-center mt-2" style="color:var(--ink)">Baca cerita dengan teliti, lalu tentukan pecahannya!</p>
+      </div>
+      
+      <div class="cute-card yellow mb-4">
+        <div class="flex items-start gap-3">
+          <span style="font-size:2rem">📖</span>
+          <div>
+            <h4 class="font-display font-bold" style="color:var(--ink)">Contoh:</h4>
+            <p class="text-sm mt-1" style="color:var(--ink)">Ibu membawa 5 mangkuk kue. 2 di antaranya berisi donat. <strong>Pecahan mangkuk berisi donat = </strong> <span class="fraction-display"><span>2</span><span class="bar"></span><span>5</span></span></p>
+            <p class="text-xs mt-1" style="color:var(--ink-soft)">Pembilang = 2 (mangkuk berisi donat), Penyebut = 5 (semua mangkuk)</p>
+          </div>
+        </div>
+      </div>
+      
+      <div id="materiStoriesContainer"></div>
+    </div>
+  </div>
+  
+  <!-- 4.3 Setengah dan Seperempat -->
+  <div class="sub-content" id="sub-4-3">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink mb-4">
+        <h3 class="font-display font-bold text-2xl text-center" style="color:var(--pink-deep)">Setengah dan Seperempat</h3>
+        <p class="text-center mt-2" style="color:var(--ink)">Yuk kenalan dengan pecahan yang sering kita jumpai!</p>
+      </div>
+      
+      <!-- Setengah -->
+      <div class="cute-card coral mb-4">
+        <h4 class="font-display font-bold text-xl mb-2 text-center" style="color:#C75B3F">
+          <span class="fraction-display" style="font-size:2rem"><span>1</span><span class="bar"></span><span>2</span></span> = Setengah
+        </h4>
+        <p class="text-center text-sm mb-3" style="color:var(--ink)">Setengah berarti benda dibagi jadi 2 bagian sama besar, dan kita ambil 1 bagian.</p>
+        
+        <div class="illustration-row">
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <circle cx="50" cy="50" r="42" fill="#FFD4B0" stroke="#C2185B" stroke-width="3"/>
+              <path d="M 50 8 A 42 42 0 0 1 50 92 Z" fill="#FF3B8B"/>
+              <line x1="50" y1="8" x2="50" y2="92" stroke="#C2185B" stroke-width="3"/>
+              <circle cx="32" cy="38" r="4" fill="#C2185B"/>
+              <circle cx="28" cy="55" r="3" fill="#C2185B"/>
+              <circle cx="38" cy="68" r="3" fill="#C2185B"/>
+            </svg>
+            <div class="label">Pizza ½</div>
+          </div>
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <rect x="10" y="20" width="80" height="60" fill="#FFB6D9" stroke="#C2185B" stroke-width="3" rx="4"/>
+              <rect x="10" y="20" width="40" height="60" fill="#FF3B8B"/>
+              <line x1="50" y1="20" x2="50" y2="80" stroke="#C2185B" stroke-width="3"/>
+              <circle cx="25" cy="40" r="3" fill="#FCD34D"/>
+              <circle cx="70" cy="40" r="3" fill="#FCD34D"/>
+            </svg>
+            <div class="label">Kue ½</div>
+          </div>
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <path d="M 50 88 C 20 70 10 40 25 25 C 35 15 45 25 50 35 C 55 25 65 15 75 25 C 90 40 80 70 50 88 Z" fill="#FFE4EC" stroke="#C2185B" stroke-width="3"/>
+              <path d="M 50 35 L 50 88 C 35 75 25 55 30 35 Z" fill="#FF3B8B"/>
+              <line x1="50" y1="35" x2="50" y2="88" stroke="#C2185B" stroke-width="3"/>
+            </svg>
+            <div class="label">Hati ½</div>
+          </div>
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <rect x="15" y="30" width="70" height="40" fill="#FFE4EC" stroke="#C2185B" stroke-width="3" rx="4"/>
+              <rect x="15" y="30" width="35" height="40" fill="#FF3B8B"/>
+              <line x1="50" y1="30" x2="50" y2="70" stroke="#C2185B" stroke-width="3"/>
+            </svg>
+            <div class="label">Persegi ½</div>
+          </div>
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <circle cx="50" cy="50" r="42" fill="#FFE4EC" stroke="#C2185B" stroke-width="3"/>
+              <path d="M 50 8 A 42 42 0 0 1 50 92 Z" fill="#FF3B8B"/>
+              <line x1="50" y1="8" x2="50" y2="92" stroke="#C2185B" stroke-width="3"/>
+            </svg>
+            <div class="label">Lingkaran ½</div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Seperempat -->
+      <div class="cute-card mint mb-4">
+        <h4 class="font-display font-bold text-xl mb-2 text-center" style="color:var(--mint-deep)">
+          <span class="fraction-display" style="font-size:2rem;color:var(--mint-deep)"><span>1</span><span class="bar" style="background:var(--mint-deep)"></span><span>4</span></span> = Seperempat
+        </h4>
+        <p class="text-center text-sm mb-3" style="color:var(--ink)">Seperempat berarti benda dibagi jadi 4 bagian sama besar, dan kita ambil 1 bagian.</p>
+        
+        <div class="illustration-row">
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <circle cx="50" cy="50" r="42" fill="#FFD4B0" stroke="#16A34A" stroke-width="3"/>
+              <path d="M 50 50 L 50 8 A 42 42 0 0 1 92 50 Z" fill="#4ADE80"/>
+              <line x1="50" y1="8" x2="50" y2="92" stroke="#16A34A" stroke-width="3"/>
+              <line x1="8" y1="50" x2="92" y2="50" stroke="#16A34A" stroke-width="3"/>
+              <circle cx="65" cy="35" r="3" fill="#C2185B"/>
+            </svg>
+            <div class="label">Pizza ¼</div>
+          </div>
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <rect x="15" y="15" width="70" height="70" fill="#FFE4EC" stroke="#16A34A" stroke-width="3" rx="4"/>
+              <rect x="15" y="15" width="35" height="35" fill="#4ADE80"/>
+              <line x1="50" y1="15" x2="50" y2="85" stroke="#16A34A" stroke-width="3"/>
+              <line x1="15" y1="50" x2="85" y2="50" stroke="#16A34A" stroke-width="3"/>
+            </svg>
+            <div class="label">Persegi ¼</div>
+          </div>
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <rect x="15" y="20" width="70" height="60" fill="#FFB6D9" stroke="#16A34A" stroke-width="3" rx="4"/>
+              <rect x="15" y="20" width="17.5" height="30" fill="#4ADE80"/>
+              <line x1="32.5" y1="20" x2="32.5" y2="80" stroke="#16A34A" stroke-width="2"/>
+              <line x1="50" y1="20" x2="50" y2="80" stroke="#16A34A" stroke-width="2"/>
+              <line x1="67.5" y1="20" x2="67.5" y2="80" stroke="#16A34A" stroke-width="2"/>
+              <line x1="15" y1="50" x2="85" y2="50" stroke="#16A34A" stroke-width="2"/>
+            </svg>
+            <div class="label">Cokelat ¼</div>
+          </div>
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <circle cx="50" cy="50" r="42" fill="#FFE4EC" stroke="#16A34A" stroke-width="3"/>
+              <path d="M 50 50 L 50 8 A 42 42 0 0 1 92 50 Z" fill="#4ADE80"/>
+              <line x1="50" y1="8" x2="50" y2="92" stroke="#16A34A" stroke-width="3"/>
+              <line x1="8" y1="50" x2="92" y2="50" stroke="#16A34A" stroke-width="3"/>
+            </svg>
+            <div class="label">Lingkaran ¼</div>
+          </div>
+          <div class="illustration-box">
+            <svg viewBox="0 0 100 100" width="80" height="80">
+              <path d="M 50 88 C 20 70 10 40 25 25 C 35 15 45 25 50 35 C 55 25 65 15 75 25 C 90 40 80 70 50 88 Z" fill="#FFE4EC" stroke="#16A34A" stroke-width="3"/>
+              <path d="M 50 35 L 50 88 L 30 50 Z" fill="#4ADE80" opacity="0.8"/>
+              <line x1="50" y1="35" x2="50" y2="88" stroke="#16A34A" stroke-width="2"/>
+              <line x1="30" y1="50" x2="70" y2="50" stroke="#16A34A" stroke-width="2"/>
+              <line x1="50" y1="35" x2="50" y2="88" stroke="#16A34A" stroke-width="2"/>
+            </svg>
+            <div class="label">Hati ¼</div>
+          </div>
+        </div>
+      </div>
+      
+      <div class="cute-card yellow mb-4">
+        <h4 class="font-display font-bold text-lg mb-2" style="color:var(--ink)">🎯 Latihan Yuk!</h4>
+        <p class="text-sm" style="color:var(--ink)">Tulis jumlahnya pada kolom jawaban, lalu tekan "Cek Jawaban"!</p>
+      </div>
+      
+      <div id="halfQuarterContainer"></div>
+    </div>
+  </div>
+  
+  <!-- 4.4 Pecahan Senilai + Memory Game -->
+  <div class="sub-content" id="sub-4-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink mb-4">
+        <h3 class="font-display font-bold text-2xl text-center" style="color:var(--pink-deep)">Pecahan Senilai</h3>
+        <p class="text-center mt-2" style="color:var(--ink)">Pecahan senilai adalah pecahan-pecahan yang menunjukkan jumlah yang sama walau angkanya berbeda!</p>
+      </div>
+      
+      <div class="cute-card yellow mb-4">
+        <div class="flex items-start gap-3">
+          <span style="font-size:2rem">💡</span>
+          <div>
+            <h4 class="font-display font-bold" style="color:var(--ink)">Contoh Pecahan Senilai:</h4>
+            <div class="flex items-center gap-2 mt-2 flex-wrap">
+              <span class="fraction-display"><span>1</span><span class="bar"></span><span>2</span></span>
+              <span style="font-size:1.5rem;color:var(--pink)">=</span>
+              <span class="fraction-display"><span>2</span><span class="bar"></span><span>4</span></span>
+              <span style="font-size:1.5rem;color:var(--pink)">=</span>
+              <span class="fraction-display"><span>3</span><span class="bar"></span><span>6</span></span>
+              <span style="font-size:1.5rem;color:var(--pink)">=</span>
+              <span class="fraction-display"><span>4</span><span class="bar"></span><span>8</span></span>
+              <span style="font-size:1.5rem;color:var(--pink)">=</span>
+              <span class="fraction-display"><span>5</span><span class="bar"></span><span>10</span></span>
+            </div>
+            <p class="text-sm mt-2" style="color:var(--ink)">Semua pecahan di atas senilai, karena sama-sama menyatakan <strong>setengah</strong> dari keseluruhan!</p>
+          </div>
+        </div>
+      </div>
+      
+      <div class="cute-card coral mb-4">
+        <h4 class="font-display font-bold text-lg mb-2" style="color:var(--ink)">⚠️ Perhatikan!</h4>
+        <p class="text-sm" style="color:var(--ink)">Pecahan senilai <strong>tidak selalu</strong> hanya didapat dengan mengali atau membagi. Yang penting dua pecahan memiliki <strong>bentuk pecahan paling sederhana yang sama</strong>.</p>
+        <div class="mt-3 p-3 rounded-xl" style="background:white;border:2px dashed var(--coral)">
+          <p class="text-sm" style="color:var(--ink)"><strong>Contoh:</strong> <span class="fraction-display"><span>4</span><span class="bar"></span><span>6</span></span> dan <span class="fraction-display"><span>6</span><span class="bar"></span><span>9</span></span> keduanya sama dengan <span class="fraction-display"><span>2</span><span class="bar"></span><span>3</span></span> dalam bentuk paling sederhana. Jadi <span class="fraction-display"><span>4</span><span class="bar"></span><span>6</span></span> = <span class="fraction-display"><span>6</span><span class="bar"></span><span>9</span></span> (senilai)!</p>
+        </div>
+      </div>
+      
+      <!-- Memory Game -->
+      <div class="cute-card mint">
+        <h3 class="font-display font-bold text-xl mb-1 text-center" style="color:var(--mint-deep)">🎮 Game Memory: Pecahan Senilai</h3>
+        <p class="text-center text-sm mb-3" style="color:var(--ink)">Cari pasangan pecahan yang senilai! Kartu akan dibuka 10 detik, lalu tutup dan cari pasangannya!</p>
+        
+        <div class="round-indicator" id="roundIndicator"></div>
+        
+        <div id="memoryGameArea">
+          <div class="text-center">
+            <button class="btn btn-primary" onclick="startMemoryGame()" id="startMemoryBtn">
+              <span>🚀 Mulai Game Memory!</span>
+            </button>
+          </div>
+        </div>
+        
+        <div id="memoryStats" class="mt-4 text-center" style="display:none">
+          <div class="flex justify-center gap-4 flex-wrap">
+            <div class="px-4 py-2 rounded-full" style="background:var(--pink-light);color:var(--pink-deep);font-family:'Fredoka',sans-serif;font-weight:600">
+              ⭐ Skor: <span id="memoryScore">0</span>
+            </div>
+            <div class="px-4 py-2 rounded-full" style="background:#FEF3C7;color:var(--gold);font-family:'Fredoka',sans-serif;font-weight:600">
+              🃏 Pasangan: <span id="memoryPairs">0</span>/6
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 5: QUIZ -->
+<section class="slide" id="slide-5">
+  <div class="text-center mb-4">
+    <div class="slide-badge">Kuis Pecahan</div>
+    <h2 class="slide-title">Saatnya Uji Kemampuan!</h2>
+    <p class="slide-subtitle">Pilih jenis kuis di bawah ini ⭐</p>
+  </div>
+  
+  <div class="sub-tabs">
+    <button class="sub-tab active" onclick="goToSub('sub-5-1', this)">1. Soal Cerita</button>
+    <button class="sub-tab" onclick="goToSub('sub-5-2', this)">2. Soal Gambar</button>
+    <button class="sub-tab" onclick="goToSub('sub-5-3', this)">3. ½ & ¼</button>
+    <button class="sub-tab" onclick="goToSub('sub-5-4', this)">4. Senilai</button>
+  </div>
+  
+  <div class="sub-content active" id="sub-5-1">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink mb-4">
+        <h3 class="font-display font-bold text-xl text-center" style="color:var(--pink-deep)">Kuis 1: Soal Cerita Membentuk Pecahan</h3>
+        <p class="text-center text-sm mt-1" style="color:var(--ink)">Dari mudah sampai HOTS! Tulis pembilang dan penyebutnya.</p>
+      </div>
+      <div id="quiz1Container"></div>
+    </div>
+  </div>
+  
+  <div class="sub-content" id="sub-5-2">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink mb-4">
+        <h3 class="font-display font-bold text-xl text-center" style="color:var(--pink-deep)">Kuis 2: Pecahan dari Gambar</h3>
+        <p class="text-center text-sm mt-1" style="color:var(--ink)">Lihat gambar, lalu pilih pecahan yang sesuai!</p>
+      </div>
+      <div id="quiz2Container"></div>
+    </div>
+  </div>
+  
+  <div class="sub-content" id="sub-5-3">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink mb-4">
+        <h3 class="font-display font-bold text-xl text-center" style="color:var(--pink-deep)">Kuis 3: Soal Setengah & Seperempat</h3>
+        <p class="text-center text-sm mt-1" style="color:var(--ink)">5 soal setengah benda + 5 soal seperempat benda</p>
+      </div>
+      <div id="quiz3Container"></div>
+    </div>
+  </div>
+  
+  <div class="sub-content" id="sub-5-4">
+    <div class="max-w-4xl mx-auto">
+      <div class="cute-card pink mb-4">
+        <h3 class="font-display font-bold text-xl text-center" style="color:var(--pink-deep)">Kuis 4: Pecahan Senilai (Kompleks)</h3>
+        <p class="text-center text-sm mt-1" style="color:var(--ink)">Boleh pilih lebih dari satu jawaban yang benar!</p>
+      </div>
+      <div id="quiz4Container"></div>
+    </div>
+  </div>
+</section>
+
+<!-- SLIDE 6: CONCLUSION -->
+<section class="slide" id="slide-6">
+  <div class="text-center mb-6">
+    <div class="slide-badge">Kesimpulan</div>
+    <h2 class="slide-title">Selamat, Kamu Hebat!</h2>
+    <p class="slide-subtitle">Kita sudah belajar banyak hal tentang pecahan 🎉</p>
+  </div>
+  
+  <div class="max-w-3xl mx-auto">
+    <div class="cute-card pink mb-4">
+      <h3 class="font-display font-bold text-xl mb-3" style="color:var(--pink-deep)">📋 Yang Sudah Kita Pelajari</h3>
+      <div class="grid md:grid-cols-2 gap-3">
+        <div class="flex items-start gap-2 p-3 rounded-xl" style="background:rgba(255,255,255,.6)">
+          <span style="font-size:1.5rem">✅</span>
+          <p class="text-sm" style="color:var(--ink)">Pecahan = bagian dari keseluruhan, ditulis sebagai <strong>pembilang/penyebut</strong></p>
+        </div>
+        <div class="flex items-start gap-2 p-3 rounded-xl" style="background:rgba(255,255,255,.6)">
+          <span style="font-size:1.5rem">✅</span>
+          <p class="text-sm" style="color:var(--ink)">Pecahan bisa terbentuk dari <strong>gambar</strong> atau <strong>cerita</strong></p>
+        </div>
+        <div class="flex items-start gap-2 p-3 rounded-xl" style="background:rgba(255,255,255,.6)">
+          <span style="font-size:1.5rem">✅</span>
+          <p class="text-sm" style="color:var(--ink)"><strong>Setengah (½)</strong> = bagi 2 sama besar, ambil 1</p>
+        </div>
+        <div class="flex items-start gap-2 p-3 rounded-xl" style="background:rgba(255,255,255,.6)">
+          <span style="font-size:1.5rem">✅</span>
+          <p class="text-sm" style="color:var(--ink)"><strong>Seperempat (¼)</strong> = bagi 4 sama besar, ambil 1</p>
+        </div>
+        <div class="flex items-start gap-2 p-3 rounded-xl" style="background:rgba(255,255,255,.6)">
+          <span style="font-size:1.5rem">✅</span>
+          <p class="text-sm" style="color:var(--ink)"><strong>Pecahan senilai</strong> = pecahan dengan bentuk sederhana sama</p>
+        </div>
+        <div class="flex items-start gap-2 p-3 rounded-xl" style="background:rgba(255,255,255,.6)">
+          <span style="font-size:1.5rem">✅</span>
+          <p class="text-sm" style="color:var(--ink)">Pecahan ada di mana-mana di kehidupan sehari-hari!</p>
+        </div>
+      </div>
+    </div>
+    
+    <div class="cute-card yellow mb-4">
+      <h3 class="font-display font-bold text-xl mb-3 text-center" style="color:var(--ink)">💭 Refleksi Yuk!</h3>
+      <p class="text-sm text-center mb-3" style="color:var(--ink-soft)">Beri tahu Pipi pendapatmu tentang petualangan hari ini 💕</p>
+      
+      <div class="space-y-3">
+        <div>
+          <label class="font-display font-semibold text-sm block mb-1" style="color:var(--ink)">1. Bagian yang paling aku suka:</label>
+          <textarea class="reflection-input" id="refl1" placeholder="Misal: game memory, soal cerita, gambar kue..."></textarea>
+        </div>
+        <div>
+          <label class="font-display font-semibold text-sm block mb-1" style="color:var(--ink)">2. Bagian yang masih agak sulit:</label>
+          <textarea class="reflection-input" id="refl2" placeholder="Misal: pecahan senilai, soal HOTS..."></textarea>
+        </div>
+        <div>
+          <label class="font-display font-semibold text-sm block mb-1" style="color:var(--ink)">3. Perasaanku setelah belajar pecahan:</label>
+          <div class="flex gap-2 flex-wrap">
+            <button class="mc-option reflection-mood" onclick="selectMood(this, 'happy')" style="flex:1;min-width:100px;justify-content:center">
+              <span style="font-size:1.3rem">😊</span> Senang!
+            </button>
+            <button class="mc-option reflection-mood" onclick="selectMood(this, 'curious')" style="flex:1;min-width:100px;justify-content:center">
+              <span style="font-size:1.3rem">🤔">🤔</span> Ingin tahu lebih
+            </button>
+            <button class="mc-option reflection-mood" onclick="selectMood(this, 'confused')" style="flex:1;min-width:100px;justify-content:center">
+              <span style="font-size:1.3rem">😐</span> Bingung
+            </button>
+          </div>
+        </div>
+      </div>
+      
+      <div class="text-center mt-4">
+        <button class="btn btn-primary" onclick="saveReflection()">
+          <span>💾 Simpan Refleksiku</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="result-card" id="thankYouCard">
+      <div class="mascot mx-auto" style="width:120px;height:120px">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <ellipse cx="100" cy="140" rx="62" ry="52" fill="#FFE4EC"/>
+          <circle cx="100" cy="95" r="52" fill="#FFE4EC"/>
+          <path d="M 58 62 L 70 28 L 88 58 Z" fill="#FFE4EC"/>
+          <path d="M 142 62 L 130 28 L 112 58 Z" fill="#FFE4EC"/>
+          <path d="M 64 56 L 72 38 L 82 54 Z" fill="#FFB6D9"/>
+          <path d="M 136 56 L 128 38 L 118 54 Z" fill="#FFB6D9"/>
+          <ellipse cx="84" cy="42" rx="13" ry="9" fill="#FF3B8B"/>
+          <ellipse cx="72" cy="42" rx="8" ry="6" fill="#FF3B8B"/>
+          <ellipse cx="96" cy="42" rx="8" ry="6" fill="#FF3B8B"/>
+          <circle cx="84" cy="42" r="4" fill="#FF6B9D"/>
+          <path d="M 75 95 Q 81 90 87 95" stroke="#4A1942" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M 113 95 Q 119 90 125 95" stroke="#4A1942" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <path d="M 90 110 Q 100 122 110 110" stroke="#4A1942" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+          <circle cx="72" cy="108" r="6" fill="#FFB6D9" opacity="0.7"/>
+          <circle cx="128" cy="108" r="6" fill="#FFB6D9" opacity="0.7"/>
+        </svg>
+      </div>
+      <h3 class="font-display font-bold text-3xl mt-2 mb-2">Thank You for Today!</h3>
+      <p class="text-base mb-1">Terima kasih sudah belajar pecahan bareng Pipi!</p>
+      <p class="text-sm opacity-90" id="thankYouMsg">Kamu sudah menyelesaikan petualangan pecahan dengan baik 💕</p>
+      <div class="mt-4 flex justify-center gap-2 flex-wrap">
+        <button class="btn btn-secondary" onclick="restartAdventure()" style="background:white;color:white;border:3px solid white">
+          <span>🔄 Ulang Lagi</span>
+        </button>
+      </div>
+    </div>
+    
+    <div class="text-center mt-4 text-sm" style="color:var(--ink-soft)">
+      <p>Dibuat dengan 💕 untuk sobat pecahan kelas 3 SD</p>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<script>
+// ===========================
+// STATE & DATA
+// ===========================
+const state = {
+  currentSlide: 1,
+  totalSlides: 6,
+  studentName: '',
+  tutorShape: 'rect',
+  memoryGame: {
+    round: 1,
+    totalRounds: 5,
+    score: 0,
+    pairs: 0,
+    canFlip: false,
+    firstCard: null,
+    secondCard: null,
+    lock: false,
+    started: false
+  }
+};
+
+// Materi stories (4.2.b) - 10 soal
+const materiStories = [
+  {q:"Ibu membeli 8 apel. 3 di antaranya berwarna merah. Pecahan apel merah adalah...",a:"3/8",exp:"Total apel = 8 (penyebut). Apel merah = 3 (pembilang). Jadi pecahannya 3/8."},
+  {q:"Kelas Budi ada 12 siswa, 5 memakai kacamata. Pecahan siswa berkacamata adalah...",a:"5/12",exp:"Total siswa = 12 (penyebut). Siswa berkacamata = 5 (pembilang). Jadi pecahannya 5/12."},
+  {q:"Doni punya 10 kelereng, 7 sudah hilang. Pecahan kelereng hilang adalah...",a:"7/10",exp:"Total kelereng = 10. Yang hilang = 7. Pecahannya 7/10."},
+  {q:"Kebun Pak Tani ada 15 pohon mangga, 9 berbuah. Pecahan pohon berbuah adalah...",a:"9/15",exp:"Total pohon = 15. Pohon berbuah = 9. Pecahannya 9/15."},
+  {q:"Dari 14 bunga di taman, 8 berwarna pink. Pecahan bunga pink adalah...",a:"8/14",exp:"Total bunga = 14. Bunga pink = 8. Pecahannya 8/14."},
+  {q:"Ibu membuat 20 kue, 12 sudah dimakan. Pecahan kue yang dimakan adalah...",a:"12/20",exp:"Total kue = 20. Kue dimakan = 12. Pecahannya 12/20."},
+  {q:"Dari 9 boneka, 4 berbentuk beruang. Pecahan boneka beruang adalah...",a:"4/9",exp:"Total boneka = 9. Boneka beruang = 4. Pecahannya 4/9."},
+  {q:"Ada 16 buku di rak, 6 berwarna biru. Pecahan buku biru adalah...",a:"6/16",exp:"Total buku = 16. Buku biru = 6. Pecahannya 6/16."},
+  {q:"Dari 18 permen, 10 diberi adik. Pecahan permen yang diberikan adalah...",a:"10/18",exp:"Total permen = 18. Diberi adik = 10. Pecahannya 10/18."},
+  {q:"Andi punya 6 pensil, 2 patah. Pecahan pensil patah adalah...",a:"2/6",exp:"Total pensil = 6. Pensil patah = 2. Pecahannya 2/6."}
+];
+
+// Half/quarter exercises (4.3) - 10 soal
+const halfQuarterExercises = [
+  {q:"Ibu punya 10 permen. Separuh permen diberikan ke adik. Berapa permen yang diberikan?",a:5,exp:"Separuh dari 10 = 10 ÷ 2 = 5 permen."},
+  {q:"Doni punya 12 kelereng. Separuhnya berwarna merah. Berapa kelereng merah?",a:6,exp:"Separuh dari 12 = 12 ÷ 2 = 6 kelereng."},
+  {q:"Andi punya 8 roti. Separuhnya sudah dimakan. Berapa roti yang dimakan?",a:4,exp:"Separuh dari 8 = 8 ÷ 2 = 4 roti."},
+  {q:"Siti punya 16 apel. Separuhnya diberi ke tetangga. Berapa apel yang diberikan?",a:8,exp:"Separuh dari 16 = 16 ÷ 2 = 8 apel."},
+  {q:"Tono punya 14 mainan. Separuhnya adalah mobil-mobilan. Berapa mobil-mobilan Tono?",a:7,exp:"Separuh dari 14 = 14 ÷ 2 = 7 mobil-mobilan."},
+  {q:"Lia punya 4 kue. Seperempat kue diberi adik. Berapa kue yang diberikan?",a:1,exp:"Seperempat dari 4 = 4 ÷ 4 = 1 kue."},
+  {q:"Budi punya 8 mangga. Seperempatnya sudah matang. Berapa mangga matang?",a:2,exp:"Seperempat dari 8 = 8 ÷ 4 = 2 mangga."},
+  {q:"Andi punya 20 pensil. Seperempatnya dipinjam teman. Berapa pensil yang dipinjam?",a:5,exp:"Seperempat dari 20 = 20 ÷ 4 = 5 pensil."},
+  {q:"Rina punya 12 bunga. Seperempatnya berwarna kuning. Berapa bunga kuning?",a:3,exp:"Seperempat dari 12 = 12 ÷ 4 = 3 bunga."},
+  {q:"Doni punya 24 permen. Seperempatnya disimpan di toples. Berapa permen di toples?",a:6,exp:"Seperempat dari 24 = 24 ÷ 4 = 6 permen."}
+];
+
+// Quiz 1: Story problems (easy to HOTS) - 10 soal
+const quiz1Stories = [
+  {diff:"mudah",diffLabel:"Mudah",q:"Bu Guru punya 5 permen, 2 diberikan ke siswa. Pecahan permen yang diberikan adalah...",a:"2/5",exp:"Total permen = 5. Diberikan = 2. Pecahannya 2/5."},
+  {diff:"mudah",diffLabel:"Mudah",q:"Ada 6 burung di pohon, 4 terbang pergi. Pecahan burung yang terbang adalah...",a:"4/6",exp:"Total burung = 6. Terbang = 4. Pecahannya 4/6."},
+  {diff:"mudah",diffLabel:"Mudah",q:"Andi makan 3 dari 8 potong pizza. Pecahan pizza yang dimakan Andi adalah...",a:"3/8",exp:"Total potongan pizza = 8. Dimakan = 3. Pecahannya 3/8."},
+  {diff:"menengah",diffLabel:"Menengah",q:"Dari 10 bola, 7 berwarna merah. Pecahan bola yang TIDAK merah adalah...",a:"3/10",exp:"Bola tidak merah = 10 - 7 = 3. Total = 10. Pecahannya 3/10."},
+  {diff:"menengah",diffLabel:"Menengah",q:"Ibu memotong kue jadi 12 bagian, keluarga makan 7. Pecahan kue yang TERSISA adalah...",a:"5/12",exp:"Kue tersisa = 12 - 7 = 5. Total = 12. Pecahannya 5/12."},
+  {diff:"menengah",diffLabel:"Menengah",q:"Kebun Pak Tani ada 20 pohon, 8 berbuah. Pecahan pohon yang TIDAK berbuah adalah...",a:"12/20",exp:"Pohon tidak berbuah = 20 - 8 = 12. Total = 20. Pecahannya 12/20."},
+  {diff:"hots",diffLabel:"HOTS",q:"Andi punya 15 permen. Dia memberi 1/3 ke Budi (5 permen) dan 2/5 ke Cindy (6 permen). Pecahan permen yang MASIH dimiliki Andi adalah...",a:"4/15",exp:"Total diberi = 5 + 6 = 11. Sisa Andi = 15 - 11 = 4. Pecahannya 4/15."},
+  {diff:"hots",diffLabel:"HOTS",q:"Andi makan 2/8 pizza, Budi makan 3/8 pizza. Pecahan pizza yang TERSISA adalah...",a:"3/8",exp:"Total dimakan = 2/8 + 3/8 = 5/8. Tersisa = 8/8 - 5/8 = 3/8."},
+  {diff:"hots",diffLabel:"HOTS",q:"Kelas ada 24 siswa. 1/4 naik sepeda (6), 1/6 naik motor (4), sisanya jalan kaki. Pecahan siswa yang jalan kaki adalah...",a:"14/24",exp:"Jalan kaki = 24 - 6 - 4 = 14. Total = 24. Pecahannya 14/24."},
+  {diff:"hots",diffLabel:"HOTS",q:"Budi punya 18 kartu. 1/3 kartu berwarna merah (6), sisanya biru. Pecahan kartu yang berwarna biru adalah...",a:"12/18",exp:"Kartu biru = 18 - 6 = 12. Total = 18. Pecahannya 12/18."}
+];
+
+// Quiz 2: Image MC - 10 soal
+const quiz2Images = [
+  {total:4,colored:2,shape:'rect',a:"2/4",opts:["1/4","2/4","3/4","4/4"],exp:"Ada 4 bagian, 2 diwarnai. Pecahannya 2/4."},
+  {total:6,colored:1,shape:'circle',a:"1/6",opts:["1/6","2/6","5/6","1/3"],exp:"Ada 6 bagian, 1 diwarnai. Pecahannya 1/6."},
+  {total:8,colored:3,shape:'rect',a:"3/8",opts:["3/8","5/8","3/5","8/3"],exp:"Ada 8 bagian, 3 diwarnai. Pecahannya 3/8."},
+  {total:5,colored:2,shape:'circle',a:"2/5",opts:["2/3","3/5","2/5","5/2"],exp:"Ada 5 bagian, 2 diwarnai. Pecahannya 2/5."},
+  {total:6,colored:5,shape:'rect',a:"5/6",opts:["1/6","5/6","6/5","5/1"],exp:"Ada 6 bagian, 5 diwarnai. Pecahannya 5/6."},
+  {total:4,colored:1,shape:'circle',a:"1/4",opts:["1/3","1/4","3/4","4/1"],exp:"Ada 4 bagian, 1 diwarnai. Pecahannya 1/4."},
+  {total:10,colored:7,shape:'rect',a:"7/10",opts:["3/10","7/10","7/3","10/7"],exp:"Ada 10 bagian, 7 diwarnai. Pecahannya 7/10."},
+  {total:3,colored:2,shape:'circle',a:"2/3",opts:["1/3","2/3","3/2","1/2"],exp:"Ada 3 bagian, 2 diwarnai. Pecahannya 2/3."},
+  {total:8,colored:6,shape:'rect',a:"6/8",opts:["2/8","6/8","8/6","6/2"],exp:"Ada 8 bagian, 6 diwarnai. Pecahannya 6/8."},
+  {total:6,colored:3,shape:'circle',a:"3/6",opts:["3/6","1/2","3/4","6/3"],exp:"Ada 6 bagian, 3 diwarnai. Pecahannya 3/6."}
+];
+
+// Quiz 3: 5 half + 5 quarter stories
+const quiz3Stories = [
+  // Setengah
+  {type:"setengah",q:"Andi punya 10 permen. Separuh permen diberi ke adik. Berapa permen yang diberi adik?",a:5,exp:"Separuh dari 10 = 10 ÷ 2 = 5 permen."},
+  {type:"setengah",q:"Ibu membeli 12 roti. Separuh roti dimakan keluarga. Berapa roti yang dimakan?",a:6,exp:"Separuh dari 12 = 12 ÷ 2 = 6 roti."},
+  {type:"setengah",q:"Kelas Siti ada 24 siswa, separuhnya perempuan. Berapa siswa perempuan?",a:12,exp:"Separuh dari 24 = 24 ÷ 2 = 12 siswa."},
+  {type:"setengah",q:"Pak Tani punya 16 ekor ayam, separuhnya jantan. Berapa ayam jantan?",a:8,exp:"Separuh dari 16 = 16 ÷ 2 = 8 ayam."},
+  {type:"setengah",q:"Dari 20 bunga di taman, separuh berwarna merah. Berapa bunga merah?",a:10,exp:"Separuh dari 20 = 20 ÷ 2 = 10 bunga."},
+  // Seperempat
+  {type:"seperempat",q:"Budi punya 8 kue, seperempatnya dimakan adik. Berapa kue yang dimakan adik?",a:2,exp:"Seperempat dari 8 = 8 ÷ 4 = 2 kue."},
+  {type:"seperempat",q:"Andi punya 12 pensil, seperempatnya patah. Berapa pensil yang patah?",a:3,exp:"Seperempat dari 12 = 12 ÷ 4 = 3 pensil."},
+  {type:"seperempat",q:"Siti punya 16 buku, seperempatnya berwarna pink. Berapa buku pink?",a:4,exp:"Seperempat dari 16 = 16 ÷ 4 = 4 buku."},
+  {type:"seperempat",q:"Ibu punya 20 permen, seperempatnya diberi ke Budi. Berapa permen Budi?",a:5,exp:"Seperempat dari 20 = 20 ÷ 4 = 5 permen."},
+  {type:"seperempat",q:"Dari 24 mangga, seperempat sudah matang. Berapa mangga matang?",a:6,exp:"Seperempat dari 24 = 24 ÷ 4 = 6 mangga."}
+];
+
+// Quiz 4: Complex equivalent fractions MC - 5 soal
+const quiz4Complex = [
+  {q:"Pilih SEMUA pecahan yang senilai dengan 1/2!",opts:["2/4","3/5","4/8","5/10"],correct:[0,2,3],exp:"1/2 = 2/4 = 4/8 = 5/10. Sedangkan 3/5 tidak senilai karena bentuk sederhananya 3/5 (tidak sama dengan 1/2)."},
+  {q:"Pilih SEMUA pecahan yang senilai dengan 2/3!",opts:["4/6","6/9","5/6","8/12"],correct:[0,1,3],exp:"2/3 = 4/6 = 6/9 = 8/12. Sedangkan 5/6 sudah dalam bentuk sederhana, tidak sama dengan 2/3."},
+  {q:"Pilih SEMUA pecahan yang senilai dengan 3/4!",opts:["6/8","9/12","12/16","4/5"],correct:[0,1,2],exp:"3/4 = 6/8 = 9/12 = 12/16. Sedangkan 4/5 sudah sederhana, tidak sama dengan 3/4."},
+  {q:"Pilih SEMUA pecahan yang senilai dengan 2/5!",opts:["4/10","6/15","5/8","8/20"],correct:[0,1,3],exp:"2/5 = 4/10 = 6/15 = 8/20. Sedangkan 5/8 sudah sederhana, tidak sama dengan 2/5."},
+  {q:"Pilih SEMUA pecahan yang senilai dengan 1/3!",opts:["2/6","3/9","4/12","5/15"],correct:[0,1,2,3],exp:"1/3 = 2/6 = 3/9 = 4/12 = 5/15. Semuanya senilai dengan 1/3!"}
+];
+
+// Memory game pairs for 5 rounds
+const memoryPairsData = [
+  // Round 1
+  [["1/2","2/4"],["1/3","2/6"],["3/4","6/8"],["2/5","4/10"],["1/4","2/8"],["3/5","6/10"]],
+  // Round 2
+  [["2/3","4/6"],["1/2","3/6"],["4/5","8/10"],["3/4","9/12"],["1/6","2/12"],["5/6","10/12"]],
+  // Round 3
+  [["1/2","5/10"],["2/3","6/9"],["3/5","9/15"],["1/3","3/9"],["2/4","4/8"],["1/4","4/16"]],
+  // Round 4
+  [["3/4","12/16"],["2/5","6/15"],["1/2","6/12"],["5/6","10/12"],["1/4","3/12"],["2/3","8/12"]],
+  // Round 5
+  [["1/2","4/8"],["3/4","15/20"],["2/5","8/20"],["1/3","4/12"],["4/5","12/15"],["3/5","12/20"]]
+];
+
+// ===========================
+// FRACTION HELPERS
+// ===========================
+function gcd(a,b){return b===0?a:gcd(b,a%b)}
+function simplify(n,d){const g=gcd(n,d);return [n/g,d/g]}
+function fractionsEqual(f1,f2){
+  const [n1,d1]=f1.split('/').map(Number);
+  const [n2,d2]=f2.split('/').map(Number);
+  const [s1n,s1d]=simplify(n1,d1);
+  const [s2n,s2d]=simplify(n2,d2);
+  return s1n===s2n && s1d===s2d;
+}
+
+// SVG shape generator
+function shapeSVG(total,colored,shape='rect',size=100){
+  if(shape==='rect'){
+    const w=280,h=70,gap=4;
+    const partW=(w-(total-1)*gap)/total;
+    let parts='';
+    for(let i=0;i<total;i++){
+      const x=i*(partW+gap);
+      const fill=i<colored?'#FF3B8B':'white';
+      parts+=`<rect x="${x.toFixed(2)}" y="0" width="${partW.toFixed(2)}" height="${h}" fill="${fill}" stroke="#C2185B" stroke-width="2.5" rx="6"/>`;
+    }
+    return `<svg viewBox="0 0 ${w} ${h}" width="${w}" height="${h}" style="max-width:100%">${parts}</svg>`;
+  } else if(shape==='circle'){
+    const r=42,cx=50,cy=50;
+    let paths='';
+    for(let i=0;i<total;i++){
+      const a1=(i/total)*2*Math.PI-Math.PI/2;
+      const a2=((i+1)/total)*2*Math.PI-Math.PI/2;
+      const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+      const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+      const large=(a2-a1)>Math.PI?1:0;
+      const fill=i<colored?'#FF3B8B':'white';
+      paths+=`<path d="M ${cx} ${cy} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${fill}" stroke="#C2185B" stroke-width="2.5"/>`;
+    }
+    return `<svg viewBox="0 0 100 100" width="${size}" height="${size}">${paths}</svg>`;
+  } else if(shape==='heart'){
+    // Heart divided vertically - simplified
+    const r=42,cx=50,cy=50;
+    let paths='';
+    for(let i=0;i<total;i++){
+      const a1=(i/total)*2*Math.PI-Math.PI/2;
+      const a2=((i+1)/total)*2*Math.PI-Math.PI/2;
+      const x1=cx+r*Math.cos(a1),y1=cy+r*Math.sin(a1);
+      const x2=cx+r*Math.cos(a2),y2=cy+r*Math.sin(a2);
+      const large=(a2-a1)>Math.PI?1:0;
+      const fill=i<colored?'#FF6B9D':'#FFE4EC';
+      paths+=`<path d="M ${cx} ${cy} L ${x1.toFixed(2)} ${y1.toFixed(2)} A ${r} ${r} 0 ${large} 1 ${x2.toFixed(2)} ${y2.toFixed(2)} Z" fill="${fill}" stroke="#C2185B" stroke-width="2"/>`;
+    }
+    return `<svg viewBox="0 0 100 100" width="${size}" height="${size}">${paths}</svg>`;
+  }
+  return '';
+}
+
+// ===========================
+// NAVIGATION
+// ===========================
+function navigate(dir){
+  const newSlide=state.currentSlide+dir;
+  if(newSlide<1||newSlide>state.totalSlides) return;
+  goToSlide(newSlide);
+}
+
+function goToSlide(n){
+  document.querySelectorAll('.slide').forEach(s=>s.classList.remove('active'));
+  document.getElementById('slide-'+n).classList.add('active');
+  state.currentSlide=n;
+  updateProgress();
+  window.scrollTo({top:0,behavior:'smooth'});
+  
+  // Init specific slides
+  if(n===4 && !document.getElementById('notasiShape1').hasChildNodes()){
+    initSlide4();
+  }
+  if(n===5 && !document.getElementById('quiz1Container').hasChildNodes()){
+    initSlide5();
+  }
+}
+
+function updateProgress(){
+  const pct=(state.currentSlide/state.totalSlides)*100;
+  document.getElementById('progressFill').style.width=pct+'%';
+  document.getElementById('slideCounter').textContent=`Slide ${state.currentSlide} dari ${state.totalSlides}`;
+  document.getElementById('slideInfo').textContent=`${state.currentSlide} / ${state.totalSlides}`;
+  document.getElementById('prevBtn').disabled=state.currentSlide===1;
+  document.getElementById('nextBtn').disabled=state.currentSlide===state.totalSlides;
+  
+  // Update dots
+  document.querySelectorAll('.nav-dot').forEach((d,i)=>{
+    d.classList.toggle('active',i===state.currentSlide-1);
+  });
+}
+
+function buildNavDots(){
+  const c=document.getElementById('navDots');
+  c.innerHTML='';
+  for(let i=1;i<=state.totalSlides;i++){
+    const d=document.createElement('div');
+    d.className='nav-dot'+(i===1?' active':'');
+    d.onclick=()=>goToSlide(i);
+    c.appendChild(d);
+  }
+}
+
+// Sub-tab navigation
+function goToSub(subId,btn){
+  // Find parent slide
+  const slide=btn.closest('.slide');
+  slide.querySelectorAll('.sub-tab').forEach(t=>t.classList.remove('active'));
+  slide.querySelectorAll('.sub-content').forEach(c=>c.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(subId).classList.add('active');
+}
+
+// ===========================
+// COVER & NAME
+// ===========================
+function startAdventure(){
+  const name=document.getElementById('nameInput').value.trim();
+  if(!name){
+    showToast('Isi nama dulu yuk, sobat! 💕','error');
+    document.getElementById('nameInput').focus();
+    return;
+  }
+  state.studentName=name;
+  const tag=document.getElementById('studentNameTag');
+  tag.textContent='♥ '+name;
+  tag.style.display='inline-block';
+  showToast(`Halo ${name}! Selamat datang di petualangan pecahan! 🎉`,`success`);
+  setTimeout(()=>goToSlide(2),800);
+}
+
+// ===========================
+// TRIGGER QUESTION
+// ===========================
+function revealTrigger(card,type){
+  const reveal=document.getElementById('triggerReveal');
+  if(reveal.style.display==='none'){
+    reveal.style.display='block';
+    reveal.scrollIntoView({behavior:'smooth',block:'center'});
+  }
+  // Highlight animation
+  card.style.transform='scale(1.1) rotate(5deg)';
+  setTimeout(()=>{card.style.transform=''},300);
+  showToast('Bagus! Kamu menemukan pecahan! 🌟','success');
+}
+
+// ===========================
+// TOAST & CONFETTI
+// ===========================
+function showToast(msg,type='info'){
+  const t=document.getElementById('toast');
+  t.className='toast '+type;
+  t.innerHTML=msg;
+  t.classList.add('show');
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>t.classList.remove('show'),2800);
+}
+
+function confetti(amount=60){
+  const colors=['#FF3B8B','#FF8A65','#FCD34D','#4ADE80','#C4B5FD','#FFB6D9'];
+  for(let i=0;i<amount;i++){
+    const el=document.createElement('div');
+    el.className='confetti';
+    el.style.left=Math.random()*100+'vw';
+    el.style.background=colors[Math.floor(Math.random()*colors.length)];
+    el.style.animationDelay=Math.random()*0.5+'s';
+    el.style.borderRadius=Math.random()>0.5?'50%':'2px';
+    const s=8+Math.random()*8;
+    el.style.width=s+'px';
+    el.style.height=s+'px';
+    document.body.appendChild(el);
+    setTimeout(()=>el.remove(),3500);
+  }
+}
+
+// ===========================
+// SLIDE 4 INIT
+// ===========================
+function initSlide4(){
+  // Notasi shapes
+  document.getElementById('notasiShape1').innerHTML=shapeSVG(2,1,'circle',80);
+  document.getElementById('notasiShape2').innerHTML=shapeSVG(3,2,'circle',80);
+  document.getElementById('notasiShape3').innerHTML=shapeSVG(8,5,'rect');
+  document.getElementById('notasiShape4').innerHTML=shapeSVG(4,3,'circle',80);
+  
+  // Tutor shape
+  updateTutor();
+  
+  // Materi stories
+  renderStoryQuestions('materiStoriesContainer',materiStories,'materiStory');
+  
+  // Half/quarter
+  renderNumberQuestions('halfQuarterContainer',halfQuarterExercises,'hqEx');
+}
+
+function updateTutor(){
+  const total=parseInt(document.getElementById('tutorTotal').value);
+  let colored=parseInt(document.getElementById('tutorColored').value);
+  if(colored>total){colored=total;document.getElementById('tutorColored').value=colored}
+  document.getElementById('tutorColored').max=total;
+  document.getElementById('tutorTotalVal').textContent=total;
+  document.getElementById('tutorColoredVal').textContent=colored;
+  document.getElementById('tutorShapeDisplay').innerHTML=shapeSVG(total,colored,state.tutorShape,state.tutorShape==='rect'?100:160);
+}
+
+function setTutorShape(shape,btn){
+  state.tutorShape=shape;
+  document.querySelectorAll('.tutor-shape-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  updateTutor();
+}
+
+function checkTutorAnswer(){
+  const total=parseInt(document.getElementById('tutorTotal').value);
+  const colored=parseInt(document.getElementById('tutorColored').value);
+  const num=parseInt(document.getElementById('tutorAnsNum').value);
+  const den=parseInt(document.getElementById('tutorAnsDen').value);
+  
+  if(isNaN(num)||isNaN(den)){
+    showToast('Isi pembilang dan penyebut dulu ya! 💕','error');
+    return;
+  }
+  
+  const exp=document.getElementById('tutorExp');
+  if(num===colored && den===total){
+    exp.innerHTML=`<strong>🎉 Benar!</strong> Pecahannya adalah <span class="fraction-display"><span>${colored}</span><span class="bar"></span><span>${total}</span></span>. Bagian diwarnai = ${colored} (pembilang), total bagian = ${total} (penyebut).`;
+    exp.classList.add('show');
+    showToast('Hebat! Jawabanmu benar! 🌟','success');
+    confetti(40);
+  } else {
+    exp.innerHTML=`<strong>Belum tepat.</strong> Ingat: Pembilang (atas) = bagian yang diwarnai = ${colored}. Penyebut (bawah) = total semua bagian = ${total}. Jadi pecahannya <span class="fraction-display"><span>${colored}</span><span class="bar"></span><span>${total}</span></span>.`;
+    exp.classList.add('show');
+    showToast('Coba lihat petunjuk ya! 💪','error');
+  }
+}
+
+function showTutorHint(){
+  document.getElementById('tutorHint').classList.toggle('show');
+}
+
+// ===========================
+// RENDER QUESTIONS
+// ===========================
+function renderStoryQuestions(containerId,questions,prefix){
+  const c=document.getElementById(containerId);
+  let html='';
+  questions.forEach((q,i)=>{
+    const idx=i+1;
+    html+=`
+      <div class="question-card" id="${prefix}-${idx}">
+        <div class="flex items-start gap-3">
+          <span class="question-num">${idx}</span>
+          <div class="flex-1">
+            <p class="font-semibold" style="color:var(--ink);font-size:.95rem">${q.q}</p>
+            <div class="mt-3 flex items-center gap-2 flex-wrap">
+              <span class="font-semibold text-sm">Jawaban:</span>
+              <div class="fraction-input-group">
+                <input type="number" class="fraction-input" id="${prefix}-${idx}-num" min="0" placeholder="?" style="width:60px">
+                <div class="fraction-line" style="width:70px"></div>
+                <input type="number" class="fraction-input" id="${prefix}-${idx}-den" min="1" placeholder="?" style="width:60px">
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="checkFractionAnswer('${prefix}',${idx},'${q.a}')">Cek Jawaban</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleExp('${prefix}-${idx}-exp')">Pembahasan</button>
+            </div>
+            <div class="explanation" id="${prefix}-${idx}-exp">
+              <strong>Pembahasan:</strong> ${q.exp}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  c.innerHTML=html;
+}
+
+function renderNumberQuestions(containerId,questions,prefix){
+  const c=document.getElementById(containerId);
+  let html='';
+  questions.forEach((q,i)=>{
+    const idx=i+1;
+    const typeColor=q.type==='setengah'?'var(--pink)':q.type==='seperempat'?'var(--mint-deep)':'var(--coral)';
+    const typeBg=q.type==='setengah'?'#FFE0EC':q.type==='seperempat'?'#DCFCE7':'#FFE4D6';
+    const typeLabel=q.type==='setengah'?'Setengah (½)':q.type==='seperempat'?'Seperempat (¼)':'';
+    html+=`
+      <div class="question-card" id="${prefix}-${idx}">
+        <div class="flex items-start gap-3">
+          <span class="question-num">${idx}</span>
+          <div class="flex-1">
+            ${typeLabel?`<span class="difficulty-tag" style="background:${typeBg};color:${typeColor}">${typeLabel}</span>`:''}
+            <p class="font-semibold mt-1" style="color:var(--ink);font-size:.95rem">${q.q}</p>
+            <div class="mt-3 flex items-center gap-2 flex-wrap">
+              <span class="font-semibold text-sm">Jawaban:</span>
+              <input type="number" class="fraction-input" id="${prefix}-${idx}-ans" placeholder="?" style="width:80px;font-size:1.2rem">
+              <button class="btn btn-primary btn-sm" onclick="checkNumberAnswer('${prefix}',${idx},${q.a})">Cek Jawaban</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleExp('${prefix}-${idx}-exp')">Pembahasan</button>
+            </div>
+            <div class="explanation" id="${prefix}-${idx}-exp">
+              <strong>Pembahasan:</strong> ${q.exp}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  c.innerHTML=html;
+}
+
+function checkFractionAnswer(prefix,idx,correctAns){
+  const numEl=document.getElementById(`${prefix}-${idx}-num`);
+  const denEl=document.getElementById(`${prefix}-${idx}-den`);
+  const num=parseInt(numEl.value);
+  const den=parseInt(denEl.value);
+  
+  if(isNaN(num)||isNaN(den)){
+    showToast('Isi pembilang dan penyebut dulu ya! 💕','error');
+    return;
+  }
+  
+  const card=document.getElementById(`${prefix}-${idx}`);
+  const userAns=`${num}/${den}`;
+  
+  if(userAns===correctAns){
+    card.classList.add('correct');
+    card.classList.remove('incorrect');
+    showToast('Hebat! Jawabanmu benar! 🌟','success');
+    confetti(30);
+  } else {
+    card.classList.add('incorrect');
+    card.classList.remove('correct');
+    showToast('Belum tepat, coba lihat pembahasan ya! 💪','error');
+  }
+}
+
+function checkNumberAnswer(prefix,idx,correctAns){
+  const el=document.getElementById(`${prefix}-${idx}-ans`);
+  const ans=parseInt(el.value);
+  
+  if(isNaN(ans)){
+    showToast('Isi jawaban dulu ya! 💕','error');
+    return;
+  }
+  
+  const card=document.getElementById(`${prefix}-${idx}`);
+  
+  if(ans===correctAns){
+    card.classList.add('correct');
+    card.classList.remove('incorrect');
+    showToast('Selamat! Jawabanmu benar! 🎉','success');
+    confetti(30);
+  } else {
+    card.classList.add('incorrect');
+    card.classList.remove('correct');
+    showToast('Belum tepat, coba lagi ya! 💪','error');
+  }
+}
+
+function toggleExp(id){
+  document.getElementById(id).classList.toggle('show');
+}
+
+// ===========================
+// SLIDE 5 INIT
+// ===========================
+function initSlide5(){
+  // Quiz 1: Story problems
+  renderQuiz1();
+  
+  // Quiz 2: Image MC
+  renderQuiz2();
+  
+  // Quiz 3: Half/quarter stories
+  renderQuiz3();
+  
+  // Quiz 4: Complex equivalent
+  renderQuiz4();
+}
+
+function renderQuiz1(){
+  const c=document.getElementById('quiz1Container');
+  let html='';
+  quiz1Stories.forEach((q,i)=>{
+    const idx=i+1;
+    html+=`
+      <div class="question-card" id="q1-${idx}">
+        <div class="flex items-start gap-3">
+          <span class="question-num">${idx}</span>
+          <div class="flex-1">
+            <span class="difficulty-tag diff-${q.diff}">${q.diffLabel}</span>
+            <p class="font-semibold mt-1" style="color:var(--ink);font-size:.95rem">${q.q}</p>
+            <div class="mt-3 flex items-center gap-2 flex-wrap">
+              <span class="font-semibold text-sm">Jawaban:</span>
+              <div class="fraction-input-group">
+                <input type="number" class="fraction-input" id="q1-${idx}-num" min="0" placeholder="?" style="width:60px">
+                <div class="fraction-line" style="width:70px"></div>
+                <input type="number" class="fraction-input" id="q1-${idx}-den" min="1" placeholder="?" style="width:60px">
+              </div>
+              <button class="btn btn-primary btn-sm" onclick="checkFractionAnswer('q1',${idx},'${q.a}')">Cek Jawaban</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleExp('q1-${idx}-exp')">Pembahasan</button>
+            </div>
+            <div class="explanation" id="q1-${idx}-exp">
+              <strong>Pembahasan:</strong> ${q.exp}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  c.innerHTML=html;
+}
+
+function renderQuiz2(){
+  const c=document.getElementById('quiz2Container');
+  let html='';
+  quiz2Images.forEach((q,i)=>{
+    const idx=i+1;
+    const optsHtml=q.opts.map((opt,oi)=>{
+      const [n,d]=opt.split('/');
+      return `<div class="mc-option" onclick="selectMC('q2-${idx}',${oi})" data-idx="${oi}">
+        <div class="mc-radio"></div>
+        <span class="fraction-display"><span>${n}</span><span class="bar"></span><span>${d}</span></span>
+      </div>`;
+    }).join('');
+    
+    html+=`
+      <div class="question-card" id="q2-${idx}">
+        <div class="flex items-start gap-3">
+          <span class="question-num">${idx}</span>
+          <div class="flex-1">
+            <p class="font-semibold mb-2" style="color:var(--ink);font-size:.95rem">Pecahan yang sesuai dengan gambar di bawah ini adalah...</p>
+            <div class="my-3 p-3 rounded-2xl flex justify-center" style="background:linear-gradient(135deg,#FFF9F5 0%,#FFE4EC 100%);border:3px dashed var(--pink-soft)">
+              ${shapeSVG(q.total,q.colored,q.shape,q.shape==='rect'?100:120)}
+            </div>
+            <div class="mt-2">${optsHtml}</div>
+            <div class="mt-3 flex gap-2 flex-wrap">
+              <button class="btn btn-primary btn-sm" onclick="checkMC('q2',${idx},'${q.a}')">Cek Jawaban</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleExp('q2-${idx}-exp')">Pembahasan</button>
+            </div>
+            <div class="explanation" id="q2-${idx}-exp">
+              <strong>Pembahasan:</strong> ${q.exp}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  c.innerHTML=html;
+}
+
+function renderQuiz3(){
+  const c=document.getElementById('quiz3Container');
+  let html='';
+  quiz3Stories.forEach((q,i)=>{
+    const idx=i+1;
+    const typeColor=q.type==='setengah'?'var(--pink)':'var(--mint-deep)';
+    const typeBg=q.type==='setengah'?'#FFE0EC':'#DCFCE7';
+    const typeLabel=q.type==='setengah'?'Setengah (½)':'Seperempat (¼)';
+    html+=`
+      <div class="question-card" id="q3-${idx}">
+        <div class="flex items-start gap-3">
+          <span class="question-num">${idx}</span>
+          <div class="flex-1">
+            <span class="difficulty-tag" style="background:${typeBg};color:${typeColor}">${typeLabel}</span>
+            <p class="font-semibold mt-1" style="color:var(--ink);font-size:.95rem">${q.q}</p>
+            <div class="mt-3 flex items-center gap-2 flex-wrap">
+              <span class="font-semibold text-sm">Jawaban:</span>
+              <input type="number" class="fraction-input" id="q3-${idx}-ans" placeholder="?" style="width:80px;font-size:1.2rem">
+              <button class="btn btn-primary btn-sm" onclick="checkNumberAnswer('q3',${idx},${q.a})">Cek Jawaban</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleExp('q3-${idx}-exp')">Pembahasan</button>
+            </div>
+            <div class="explanation" id="q3-${idx}-exp">
+              <strong>Pembahasan:</strong> ${q.exp}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  c.innerHTML=html;
+}
+
+function renderQuiz4(){
+  const c=document.getElementById('quiz4Container');
+  let html='';
+  quiz4Complex.forEach((q,i)=>{
+    const idx=i+1;
+    const optsHtml=q.opts.map((opt,oi)=>{
+      const [n,d]=opt.split('/');
+      return `<div class="mc-option" onclick="toggleCheckbox('q4-${idx}',${oi})" data-idx="${oi}">
+        <div class="mc-checkbox"></div>
+        <span class="fraction-display"><span>${n}</span><span class="bar"></span><span>${d}</span></span>
+      </div>`;
+    }).join('');
+    
+    const correctStr=JSON.stringify(q.correct);
+    html+=`
+      <div class="question-card" id="q4-${idx}">
+        <div class="flex items-start gap-3">
+          <span class="question-num">${idx}</span>
+          <div class="flex-1">
+            <span class="difficulty-tag diff-hots">HOTS</span>
+            <p class="font-semibold mt-1" style="color:var(--ink);font-size:.95rem">${q.q}</p>
+            <div class="mt-2">${optsHtml}</div>
+            <div class="mt-3 flex gap-2 flex-wrap">
+              <button class="btn btn-primary btn-sm" onclick="checkComplex('q4',${idx},${correctStr})">Cek Jawaban</button>
+              <button class="btn btn-secondary btn-sm" onclick="toggleExp('q4-${idx}-exp')">Pembahasan</button>
+            </div>
+            <div class="explanation" id="q4-${idx}-exp">
+              <strong>Pembahasan:</strong> ${q.exp}
+            </div>
+          </div>
+        </div>
+      </div>
+    `;
+  });
+  c.innerHTML=html;
+}
+
+function selectMC(prefix,idx){
+  const card=document.getElementById(prefix);
+  card.querySelectorAll('.mc-option').forEach((o,i)=>{
+    o.classList.toggle('selected',i===idx);
+  });
+}
+
+function checkMC(prefix,idx,correctAns){
+  const card=document.getElementById(`${prefix}-${idx}`);
+  const selected=card.querySelector('.mc-option.selected');
+  if(!selected){
+    showToast('Pilih salah satu jawaban dulu ya! 💕','error');
+    return;
+  }
+  const selectedIdx=parseInt(selected.dataset.idx);
+  const opts=quiz2Images[idx-1].opts;
+  const selectedAns=opts[selectedIdx];
+  
+  card.querySelectorAll('.mc-option').forEach((o,i)=>{
+    if(opts[i]===correctAns) o.classList.add('correct');
+    else if(i===selectedIdx) o.classList.add('incorrect');
+  });
+  
+  if(selectedAns===correctAns){
+    card.classList.add('correct');
+    showToast('Hebat! Jawabanmu benar! 🌟','success');
+    confetti(30);
+  } else {
+    card.classList.add('incorrect');
+    showToast('Belum tepat. Lihat pembahasan ya! 💪','error');
+  }
+}
+
+function toggleCheckbox(prefix,idx){
+  const card=document.getElementById(prefix);
+  const options=card.querySelectorAll('.mc-option');
+  options[idx].classList.toggle('selected');
+}
+
+function checkComplex(prefix,idx,correctArr){
+  const card=document.getElementById(`${prefix}-${idx}`);
+  const selected=Array.from(card.querySelectorAll('.mc-option.selected')).map(o=>parseInt(o.dataset.idx));
+  
+  if(selected.length===0){
+    showToast('Pilih minimal satu jawaban ya! 💕','error');
+    return;
+  }
+  
+  const correctSet=new Set(correctArr);
+  const selectedSet=new Set(selected);
+  const isCorrect=correctSet.size===selectedSet.size && [...correctSet].every(x=>selectedSet.has(x));
+  
+  card.querySelectorAll('.mc-option').forEach((o,i)=>{
+    if(correctSet.has(i)) o.classList.add('correct');
+    else if(selectedSet.has(i)) o.classList.add('incorrect');
+  });
+  
+  if(isCorrect){
+    card.classList.add('correct');
+    showToast('Luar biasa! Semua jawaban benar! 🎉','success');
+    confetti(50);
+  } else {
+    card.classList.add('incorrect');
+    showToast('Ada yang belum tepat. Cek pembahasan ya! 💪','error');
+  }
+}
+
+// ===========================
+// MEMORY GAME
+// ===========================
+function buildRoundIndicator(){
+  const c=document.getElementById('roundIndicator');
+  c.innerHTML='';
+  for(let i=1;i<=5;i++){
+    const d=document.createElement('div');
+    d.className='round-dot';
+    if(i<state.memoryGame.round) d.classList.add('complete');
+    else if(i===state.memoryGame.round) d.classList.add('active');
+    c.appendChild(d);
+  }
+}
+
+function startMemoryGame(){
+  state.memoryGame.round=1;
+  state.memoryGame.score=0;
+  state.memoryGame.started=true;
+  document.getElementById('memoryStats').style.display='block';
+  document.getElementById('memoryScore').textContent='0';
+  startMemoryRound();
+}
+
+function startMemoryRound(){
+  const mg=state.memoryGame;
+  mg.pairs=0;
+  mg.canFlip=false;
+  mg.firstCard=null;
+  mg.secondCard=null;
+  mg.lock=false;
+  
+  buildRoundIndicator();
+  
+  // Build cards for this round
+  const pairs=memoryPairsData[mg.round-1];
+  let cards=[];
+  pairs.forEach(([a,b])=>{
+    cards.push({text:a,match:b});
+    cards.push({text:b,match:a});
+  });
+  // Shuffle
+  for(let i=cards.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [cards[i],cards[j]]=[cards[j],cards[i]];
+  }
+  
+  const area=document.getElementById('memoryGameArea');
+  area.innerHTML=`
+    <div class="memory-overlay" id="memOverlay">
+      <div class="font-display font-bold text-3xl mb-2" style="color:var(--pink-deep)">Ronde ${mg.round} dari 5</div>
+      <p style="color:var(--ink-soft)">Siap-siap! Hafalkan pasangan pecahan senilai!</p>
+      <div class="timer-display" id="memTimer">10</div>
+      <p class="text-sm" style="color:var(--ink-soft)">Kartu akan ditutup otomatis...</p>
+    </div>
+    <div class="memory-grid" id="memGrid">
+      ${cards.map((c,i)=>`
+        <div class="memory-card flipped" data-idx="${i}" data-text="${c.text}" data-match="${c.match}" onclick="flipMemoryCard(${i})">
+          <div class="memory-card-inner">
+            <div class="memory-card-face memory-card-cover">?</div>
+            <div class="memory-card-face memory-card-content">${c.text}</div>
+          </div>
+        </div>
+      `).join('')}
+    </div>
+  `;
+  
+  document.getElementById('memPairs').textContent='0';
+  
+  // Show overlay
+  const overlay=document.getElementById('memOverlay');
+  overlay.classList.add('show');
+  overlay.style.position='relative';
+  overlay.style.marginBottom='1rem';
+  
+  // Countdown
+  let timeLeft=10;
+  const timerEl=document.getElementById('memTimer');
+  const timer=setInterval(()=>{
+    timeLeft--;
+    timerEl.textContent=timeLeft;
+    if(timeLeft<=3) timerEl.classList.add('urgent');
+    if(timeLeft<=0){
+      clearInterval(timer);
+      overlay.classList.remove('show');
+      overlay.style.display='none';
+      // Flip all cards back
+      document.querySelectorAll('#memGrid .memory-card').forEach(c=>c.classList.remove('flipped'));
+      mg.canFlip=true;
+      showToast('Sekarang cari pasangannya! 🃏','success');
+    }
+  },1000);
+}
+
+function flipMemoryCard(idx){
+  const mg=state.memoryGame;
+  if(!mg.canFlip||mg.lock) return;
+  
+  const card=document.querySelector(`#memGrid .memory-card[data-idx="${idx}"]`);
+  if(card.classList.contains('flipped')||card.classList.contains('matched')) return;
+  
+  card.classList.add('flipped');
+  
+  if(!mg.firstCard){
+    mg.firstCard=card;
+    return;
+  }
+  
+  mg.secondCard=card;
+  mg.lock=true;
+  
+  // Check match
+  const t1=mg.firstCard.dataset.text;
+  const t2=mg.secondCard.dataset.text;
+  
+  if(fractionsEqual(t1,t2) && t1!==t2){
+    // Match!
+    setTimeout(()=>{
+      mg.firstCard.classList.add('matched');
+      mg.secondCard.classList.add('matched');
+      mg.pairs++;
+      mg.score+=10;
+      document.getElementById('memoryPairs').textContent=mg.pairs;
+      document.getElementById('memoryScore').textContent=mg.score;
+      mg.firstCard=null;
+      mg.secondCard=null;
+      mg.lock=false;
+      
+      if(mg.pairs===6){
+        // Round complete
+        setTimeout(()=>{
+          if(mg.round<5){
+            showToast(`Ronde ${mg.round} selesai! +10 💎 Skor: ${mg.score}`,'success');
+            confetti(60);
+            setTimeout(()=>{
+              mg.round++;
+              startMemoryRound();
+            },2000);
+          } else {
+            // Game complete
+            completeMemoryGame();
+          }
+        },500);
+      }
+    },600);
+  } else {
+    // No match
+    setTimeout(()=>{
+      mg.firstCard.classList.remove('flipped');
+      mg.secondCard.classList.remove('flipped');
+      mg.firstCard=null;
+      mg.secondCard=null;
+      mg.lock=false;
+    },1000);
+  }
+}
+
+function completeMemoryGame(){
+  const area=document.getElementById('memoryGameArea');
+  const mg=state.memoryGame;
+  const stars=mg.score>=40?'⭐⭐⭐':mg.score>=25?'⭐⭐':'⭐';
+  area.innerHTML=`
+    <div class="memory-overlay" style="display:flex">
+      <div style="font-size:3rem">🏆</div>
+      <div class="font-display font-bold text-3xl mt-2" style="color:var(--pink-deep)">Game Selesai!</div>
+      <div class="text-2xl mt-2">${stars}</div>
+      <p class="font-display text-xl mt-3" style="color:var(--ink)">Skor Akhir: <span style="color:var(--pink)">${mg.score}</span></p>
+      <p class="text-sm mt-2" style="color:var(--ink-soft)">Kamu sudah menyelesaikan 5 ronde game memory pecahan senilai!</p>
+      <button class="btn btn-primary mt-4" onclick="startMemoryGame()">
+        <span>🔄 Main Lagi</span>
+      </button>
+    </div>
+  `;
+  showToast(`Selamat! Skor akhir: ${mg.score} 🎉`,'success');
+  confetti(100);
+}
+
+// ===========================
+// REFLECTION
+// ===========================
+function selectMood(btn,mood){
+  document.querySelectorAll('.reflection-mood').forEach(b=>b.classList.remove('selected'));
+  btn.classList.add('selected');
+  btn.dataset.mood=mood;
+}
+
+function saveReflection(){
+  const r1=document.getElementById('refl1').value.trim();
+  const r2=document.getElementById('refl2').value.trim();
+  const moodEl=document.querySelector('.reflection-mood.selected');
+  
+  if(!r1 && !r2){
+    showToast('Isi refleksimu dulu ya! 💕','error');
+    return;
+  }
+  
+  const mood=moodEl?moodEl.dataset.mood:'happy';
+  const moodMsg={happy:'Senang sekali belajar pecahan!',curious:'Ingin tahu lebih banyak lagi!',confused:'Masih semangat belajar lagi!'}[mood];
+  
+  document.getElementById('thankYouMsg').textContent=`${state.studentName}, ${moodMsg} 💕`;
+  
+  showToast('Refleksi tersimpan! Terima kasih ya! 💖','success');
+  confetti(80);
+  
+  document.getElementById('thankYouCard').scrollIntoView({behavior:'smooth',block:'center'});
+}
+
+function restartAdventure(){
+  state.currentSlide=1;
+  state.studentName='';
+  document.getElementById('studentNameTag').style.display='none';
+  document.getElementById('nameInput').value='';
+  document.getElementById('refl1').value='';
+  document.getElementById('refl2').value='';
+  document.querySelectorAll('.reflection-mood').forEach(b=>b.classList.remove('selected'));
+  goToSlide(1);
+}
+
+// ===========================
+// BACKGROUND DECORATIONS
+// ===========================
+function buildBgDecorations(){
+  const c=document.getElementById('bgDeco');
+  const items=[
+    {type:'heart',svg:'<svg viewBox="0 0 24 24" fill="#FF3B8B"><path d="M12 21s-7-4.5-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 11c0 5.5-7 10-7 10z"/></svg>'},
+    {type:'star',svg:'<svg viewBox="0 0 24 24" fill="#FCD34D"><path d="M12 2l3 7h7l-5.5 4.5L18 21l-6-4-6 4 1.5-7.5L2 9h7z"/></svg>'},
+    {type:'sparkle',svg:'<svg viewBox="0 0 24 24" fill="#C4B5FD"><path d="M12 2l1.5 8L22 12l-8.5 2L12 22l-1.5-8L2 12l8.5-2z"/></svg>'},
+    {type:'flower',svg:'<svg viewBox="0 0 24 24" fill="#FF8A65"><circle cx="12" cy="12" r="3"/><circle cx="12" cy="5" r="3"/><circle cx="12" cy="19" r="3"/><circle cx="5" cy="12" r="3"/><circle cx="19" cy="12" r="3"/></svg>'}
+  ];
+  let html='';
+  for(let i=0;i<18;i++){
+    const item=items[Math.floor(Math.random()*items.length)];
+    const x=Math.random()*100;
+    const y=Math.random()*100;
+    const size=20+Math.random()*30;
+    const delay=Math.random()*5;
+    const dur=8+Math.random()*5;
+    const animName=item.type==='sparkle'?'twinkleDeco':'floatDeco';
+    html+=`<div class="deco" style="left:${x}%;top:${y}%;width:${size}px;height:${size}px;animation-delay:${delay}s;animation-duration:${dur}s;animation-name:${animName}">${item.svg}</div>`;
+  }
+  c.innerHTML=html;
+}
+
+// ===========================
+// KEYBOARD
+// ===========================
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight') navigate(1);
+  else if(e.key==='ArrowLeft') navigate(-1);
+  else if(e.key==='Enter' && state.currentSlide===1){
+    if(document.activeElement.id==='nameInput') startAdventure();
+  }
+});
+
+// ===========================
+// INIT
+// ===========================
+window.addEventListener('load',()=>{
+  buildBgDecorations();
+  buildNavDots();
+  updateProgress();
+  document.getElementById('nameInput').focus();
+});
+</script>
+</body>
+</html>
