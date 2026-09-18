@@ -90,6 +90,8 @@ h3{font-size:20px; margin-bottom:8px}
 .whole-big{font:800 46px 'Baloo 2'}
 .ans-show{display:inline-flex; align-items:center; gap:8px; background:var(--sun); border:2.5px solid var(--ink); border-radius:11px; padding:5px 12px}
 .big-sign{font:800 30px 'Baloo 2'}
+.mi-w{width:74px; height:54px; text-align:center; font:800 26px 'Baloo 2'; border:2.5px solid var(--ink); border-radius:12px; background:var(--sun); box-shadow:inset 2px 2px 0 rgba(58,46,36,.15)}
+.mi-w:focus{outline:3px solid var(--acc); background:#fff}
 
 /* Stepper */
 .stepper{display:inline-flex; align-items:center; gap:10px; background:#fff; border:2.5px solid var(--ink); border-radius:13px; padding:6px 12px; box-shadow:3px 3px 0 var(--ink)}
@@ -393,9 +395,10 @@ const ICONS={
  help:'<circle cx="12" cy="12" r="9"/><path d="M9.4 9.2a2.6 2.6 0 114.2 2.1c-.9.7-1.6 1.1-1.6 2.3M12 17h.01"/>',
  frown:'<circle cx="12" cy="12" r="9"/><path d="M16 16.2a5.4 5.4 0 00-8 0M9 9.4h.01M15 9.4h.01"/>',
  wand:'<path d="M15 4V2M15 10V8M11.5 6h-2M20.5 6h-2M18 3.2l1.4-1.4M12 3.2L10.6 1.8M18 8.8l1.4 1.4M12 8.8l-1.4 1.4M3 21l9.5-9.5"/>',
- pie:'<circle cx="12" cy="12" r="9"/><path d="M12 3v9l7.8 4.5"/>'
+ pie:'<circle cx="12" cy="12" r="9"/><path d="M12 3v9l7.8 4.5"/>',
+ flag:'<path d="M5 21V4M5 4h11l-2.5 3.5L16 11H5"/>'
 };
-const ic=(n,s=20)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]}</svg>`;
+const ic=(n,s=20)=>`<svg viewBox="0 0 24 24" width="${s}" height="${s}" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[n]||''}</svg>`;
 
 let toastT;
 function toast(msg,icon='check'){
@@ -448,15 +451,15 @@ const cmpQHTML=(a,b)=>{
 const Q={
  frac:{
   controls:()=>`<div class="fr-in"><input class="fi-n" inputmode="numeric" maxlength="3" placeholder="?"><i></i><input class="fi-d" inputmode="numeric" maxlength="3" placeholder="?"></div>`,
-  read:b=>{const n=b.querySelector('.fi-n').value.trim(),d=b.querySelector('.fi-d').value.trim();return(n&&d)?`${parseInt(n)}/${parseInt(d)}`:''},
+  read:b=>{const n=b.querySelector('.fi-n').value.trim(),d=b.querySelector('.fi-d').value.trim();return(n&&d)?`${parseInt(n,10)}/${parseInt(d,10)}`:''},
   ok:(it,v)=>v===it.answer,
   show:it=>`<span class="ans-show">${F(it.answer)}</span>`,
-  done:b=>b.querySelector('.fi-n').value.trim()&&b.querySelector('.fi-d').value.trim()
+  done:b=>b.querySelector('.fi-n').value.trim()!==''&&b.querySelector('.fi-d').value.trim()!==''
  },
  input:{
   controls:()=>`<input class="ans-num" inputmode="numeric" maxlength="4" placeholder="0">`,
   read:b=>b.querySelector('.ans-num').value.trim(),
-  ok:(it,v)=>v===String(it.answer),
+  ok:(it,v)=>v!==''&&parseInt(v,10)===it.answer,
   show:it=>`<span class="ans-show big-sign">${it.answer}</span>`,
   done:b=>b.querySelector('.ans-num').value.trim()!==''
  },
@@ -466,8 +469,8 @@ const Q={
     const dp=it.pos==='d'?`<input class="fi-d" inputmode="numeric" maxlength="3" placeholder="?">`:`<b>${it.den}</b>`;
     return `<div class="mix-in"><span class="whole-big">${it.whole}</span><span class="eq">=</span><span class="fr-in"><span class="fr-part">${np}</span><i></i><span class="fr-part">${dp}</span></span></div>`;
   },
-  read:b=>{const i=b.querySelector('input');return i&&i.value.trim()?String(parseInt(i.value)):''},
-  ok:(it,v)=>v===String(it.answer),
+  read:b=>{const i=b.querySelector('input');return i&&i.value.trim()!==''?String(parseInt(i.value,10)):''},
+  ok:(it,v)=>v!==''&&parseInt(v,10)===it.answer,
   show:it=>`<span class="ans-show">${it.pos==='n'?F(it.answer+'/'+it.den):F(it.num+'/'+it.answer)}</span>`,
   done:b=>{const i=b.querySelector('input');return i&&i.value.trim()!==''}
  },
@@ -486,17 +489,21 @@ const Q={
   show:it=>`<span class="ans-show">${it.answer.map(k=>it.options[k]).join(' &nbsp;')}</span>`,
   done:b=>b.querySelectorAll('input:checked').length>0
  },
+ /* ===== FIX UTAMA: field jawaban kini bernama jelas & terpisah dari soal.
+    it.n & it.d = pembilang/penyebut SOAL (pecahan biasa).
+    it.aw = bilangan utuh JAWABAN, it.an = pembilang JAWABAN.
+    (Sebelumnya it.n dipakai ganda sehingga kunci tampil "2 7/3".) ===== */
  mixed:{
   controls:it=>`<div class="mix-in">${fracHTML(it.n,it.d,'xl')}<span class="eq">=</span><input class="mi-w" inputmode="numeric" maxlength="3" placeholder="?"><span class="fr-in"><input class="fi-n" inputmode="numeric" maxlength="3" placeholder="?"><i></i><b>${it.d}</b></span></div>`,
-  read:b=>{const w=b.querySelector('.mi-w').value.trim(),n=b.querySelector('.fi-n').value.trim();return(w&&n)?`${parseInt(w)}|${parseInt(n)}|${it.d}`:''},
-  ok:(it,v)=>v===`${it.w}|${it.n}|${it.d}`,
-  show:it=>`<span class="ans-show big-sign">${it.w}&nbsp;${fracHTML(it.n,it.d)}</span>`,
-  done:b=>b.querySelector('.mi-w').value.trim()&&b.querySelector('.fi-n').value.trim()
+  read:b=>({w:b.querySelector('.mi-w').value.trim(),n:b.querySelector('.fi-n').value.trim()}),
+  ok:(it,v)=>parseInt(v.w,10)===it.aw&&parseInt(v.n,10)===it.an,
+  show:it=>`<span class="ans-show big-sign">${it.aw}&nbsp;${fracHTML(it.an,it.d)}</span>`,
+  done:b=>b.querySelector('.mi-w').value.trim()!==''&&b.querySelector('.fi-n').value.trim()!==''
  },
  improper:{
   controls:it=>`<div class="mix-in"><span class="whole-big">${it.w}</span>&nbsp;${fracHTML(it.n,it.d,'xl')}<span class="eq">=</span><span class="fr-in"><input class="fi-n" inputmode="numeric" maxlength="3" placeholder="?"><i></i><b>${it.d}</b></span></div>`,
-  read:b=>{const v=b.querySelector('.fi-n').value.trim();return v?String(parseInt(v)):''},
-  ok:(it,v)=>v===String(it.answer),
+  read:b=>b.querySelector('.fi-n').value.trim(),
+  ok:(it,v)=>v!==''&&parseInt(v,10)===it.answer,
   show:it=>`<span class="ans-show">${fracHTML(it.answer,it.d)}</span>`,
   done:b=>b.querySelector('.fi-n').value.trim()!==''
  },
@@ -504,7 +511,7 @@ const Q={
   controls:()=>`<div class="cmp-btns"><button type="button" class="opt cmp" data-v="<">&lt;</button><button type="button" class="opt cmp" data-v="=">=</button><button type="button" class="opt cmp" data-v=">">&gt;</button></div>`,
   read:b=>b._sel||'',
   ok:(it,v)=>v===it.answer,
-  show:()=>'',
+  show:it=>`<span class="ans-show big-sign">${it.answer==='<'?'&lt;':it.answer==='>'?'&gt;':'='}</span>`,
   after:b=>{b.querySelectorAll('.cmp').forEach(o=>o.onclick=()=>{b.querySelectorAll('.cmp').forEach(x=>x.classList.remove('sel'));o.classList.add('sel');b._sel=o.dataset.v;});},
   done:b=>!!b._sel
  },
@@ -531,7 +538,7 @@ const Q={
 };
 
 function buildQuiz(host,cfg){
-  const S={i:0,score:0,res:cfg.items.map(()=>null)};
+  const S={i:0,score:0,checked:false,res:cfg.items.map(()=>null)};
   host.innerHTML=`<div class="wrap">
     <span class="kicker">${cfg.kicker||ic('pencil',16)} Latihan Interaktif</span>
     <div class="quiz-head"><h2>${cfg.title}</h2>
@@ -547,8 +554,8 @@ function buildQuiz(host,cfg){
     <div class="quiz-foot">
       <div class="qdots" id="${cfg.id}-dots"></div>
       <div class="quiz-actions">
-        <button class="btn primary" id="${cfg.id}-check">${ic('check')} Periksa</button>
-        <button class="btn dark" id="${cfg.id}-next" style="display:none">Soal Berikutnya ${ic('arr')}</button>
+        <button type="button" class="btn primary" id="${cfg.id}-check">${ic('check')} Periksa</button>
+        <button type="button" class="btn dark" id="${cfg.id}-next" style="display:none">Soal Berikutnya ${ic('arr')}</button>
       </div>
     </div>
   </div>`;
@@ -558,19 +565,29 @@ function buildQuiz(host,cfg){
   const dotsR=()=>{q('#'+cfg.id+'-dots').innerHTML=cfg.items.map((_,k)=>`<span class="dot ${k===S.i?'now':S.res[k]===true?'ok':S.res[k]===false?'no':''}">${k+1}</span>`).join('');};
   function show(){
     const it=cfg.items[S.i], t=Q[it.type];
+    S.checked=false;
     q('#'+cfg.id+'-no').textContent=`Soal ${S.i+1} dari ${cfg.items.length}`;
     q('.q-now').textContent=S.i+1;
     q('#'+cfg.id+'-qt').innerHTML=it.q||'';
     ctl.className='q-ctl'; ctl.innerHTML=t.controls(it); ctl._sel=null; ctl._picked=null;
     if(t.after)t.after(ctl,it);
+    ctl.querySelectorAll('input').forEach(inp=>inp.addEventListener('keydown',e=>{
+      if(e.key!=='Enter')return;
+      e.preventDefault();
+      if(S.checked)nextBtn.click(); else check();
+    }));
     fb.className='fb'; fb.innerHTML='';
     checkBtn.style.display=''; nextBtn.style.display='none';
     dotsR();
+    const f=ctl.querySelector('input'); if(f)f.focus({preventScroll:true});
   }
   function check(){
+    if(S.checked)return;
     const it=cfg.items[S.i], t=Q[it.type];
+    if(!t)return;
     if(t.done&&!t.done(ctl)){fb.className='fb warn show';fb.innerHTML=`<div class="fb-title">${ic('bulb')} Isi dulu jawabanmu ya!</div>`;return;}
-    const ok=t.ok(it,t.read(ctl));
+    const ok=!!t.ok(it,t.read(ctl));
+    S.checked=true;
     S.res[S.i]=ok; if(ok){S.score++;q('.q-sc').textContent=S.score;}
     ctl.classList.add('locked');
     checkBtn.style.display='none'; nextBtn.style.display='';
@@ -590,12 +607,12 @@ function buildQuiz(host,cfg){
       <h3>${ratio===1?'Sempurna! Kamu luar biasa!':ratio>=0.8?'Hebat sekali!':ratio>=0.6?'Kerja bagus!':'Ayo pelajari lagi, kamu pasti bisa!'}</h3>
       <p>Kamu menjawab <b>${S.score}</b> dari <b>${cfg.items.length}</b> soal dengan benar.</p>
       ${ratio>=0.8?`<span class="fin-star">${ic('star',18)} Bintang latihan diperoleh!</span>`:''}<br>
-      <button class="btn ghost" id="${cfg.id}-re">${ic('refresh')} Ulangi Latihan</button>`;
+      <button type="button" class="btn ghost" id="${cfg.id}-re">${ic('refresh')} Ulangi Latihan</button>`;
     q('#'+cfg.id+'-re').onclick=()=>{S.i=0;S.score=0;S.res=cfg.items.map(()=>null);q('.q-sc').textContent='0';show();};
     award(cfg.id,ratio);
   }
-  checkBtn.onclick=check;
-  nextBtn.onclick=()=>{S.i++;S.i<cfg.items.length?show():finish();};
+  checkBtn.addEventListener('click',check);
+  nextBtn.addEventListener('click',()=>{S.i++;S.i<cfg.items.length?show():finish();});
   show();
 }
 
@@ -639,17 +656,19 @@ const FRACQ_ITEMS=[
  {whole:4,pos:'n',den:5,answer:20,e:'4 × 5 = 20, jadi 4 = <b>20/5</b>.'},
  {whole:5,pos:'d',num:15,answer:3,e:'5 = 15/? → cari penyebutnya: <b>15 : 5 = 3</b>, jadi 5 = 15/3.'}
 ];
+/* FIX: field jawaban diganti menjadi "aw" (utuh) dan "an" (pembilang jawaban)
+   agar tidak bentrok dengan "n" (pembilang soal). Cek: aw×d + an = pembilang soal. */
 const MIXED_ITEMS=[
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:7,d:3,w:2,ansN:1,e:'7 : 3 = <b>2 sisa 1</b>. Bilangan bulatnya 2, penyebut tetap 3, sisanya menjadi pembilang: <b>2 1/3</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:9,d:2,w:4,ansN:1,e:'9 : 2 = <b>4 sisa 1</b> → <b>4 1/2</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:11,d:4,w:2,ansN:3,e:'11 : 4 = <b>2 sisa 3</b> → <b>2 3/4</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:13,d:5,w:2,ansN:3,e:'13 : 5 = <b>2 sisa 3</b> → <b>2 3/5</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:17,d:6,w:2,ansN:5,e:'17 : 6 = <b>2 sisa 5</b> → <b>2 5/6</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:10,d:3,w:3,ansN:1,e:'10 : 3 = <b>3 sisa 1</b> → <b>3 1/3</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:23,d:8,w:2,ansN:7,e:'23 : 8 = <b>2 sisa 7</b> → <b>2 7/8</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:14,d:5,w:2,ansN:4,e:'14 : 5 = <b>2 sisa 4</b> → <b>2 4/5</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:19,d:4,w:4,ansN:3,e:'19 : 4 = <b>4 sisa 3</b> → <b>4 3/4</b>.'},
- {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:25,d:6,w:4,ansN:1,e:'25 : 6 = <b>4 sisa 1</b> → <b>4 1/6</b>.'}
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:7,d:3,aw:2,an:1,e:'7 : 3 = <b>2 sisa 1</b>. Bilangan bulatnya 2, penyebut tetap 3, sisanya menjadi pembilang: <b>2 1/3</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:9,d:2,aw:4,an:1,e:'9 : 2 = <b>4 sisa 1</b> → <b>4 1/2</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:11,d:4,aw:2,an:3,e:'11 : 4 = <b>2 sisa 3</b> → <b>2 3/4</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:13,d:5,aw:2,an:3,e:'13 : 5 = <b>2 sisa 3</b> → <b>2 3/5</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:17,d:6,aw:2,an:5,e:'17 : 6 = <b>2 sisa 5</b> → <b>2 5/6</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:10,d:3,aw:3,an:1,e:'10 : 3 = <b>3 sisa 1</b> → <b>3 1/3</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:23,d:8,aw:2,an:7,e:'23 : 8 = <b>2 sisa 7</b> → <b>2 7/8</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:14,d:5,aw:2,an:4,e:'14 : 5 = <b>2 sisa 4</b> → <b>2 4/5</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:19,d:4,aw:4,an:3,e:'19 : 4 = <b>4 sisa 3</b> → <b>4 3/4</b>.'},
+ {q:'Ubah pecahan biasa berikut menjadi pecahan campuran.',n:25,d:6,aw:4,an:1,e:'25 : 6 = <b>4 sisa 1</b> → <b>4 1/6</b>.'}
 ];
 const IMPROPER_ITEMS=[
  {q:'Ubah pecahan campuran berikut menjadi pecahan biasa.',w:2,n:1,d:4,answer:9,e:'(2 × 4) + 1 = <b>9</b>, jadi 2 1/4 = <b>9/4</b>.'},
@@ -671,12 +690,14 @@ const CMP_ITEMS=[
  {q:cmpQHTML('2/6','1/3'),answer:'=',e:'2/6 dan 1/3 adalah <b>pecahan senilai</b>! 2/6 = 1/3 karena 1 dan 3 dikalikan 2 menjadi 2 dan 6.'},
  {q:cmpQHTML('7/10','3/4'),answer:'<',e:'Samakan penyebut: 7/10 = 14/20 dan 3/4 = 15/20. Karena 14 &lt; 15, maka 7/10 <b>&lt;</b> 3/4.'},
  {q:cmpQHTML('1/4','1/5'),answer:'>',e:'Pembilangnya sama (1). Karena 4 &lt; 5, potongan 1/4 lebih besar daripada 1/5: 1/4 <b>&gt;</b> 1/5.'},
- {q:cmpQHTML('4/5','5/6'),answer:'<',e:'Samakan penyebut: 4/5 = 24/30 dan 5/6 = 25/30. Karena 24 &lt; 30, maka 4/5 <b>&lt;</b> 5/6.'},
+ {q:cmpQHTML('4/5','5/6'),answer:'<',e:'Samakan penyebut: 4/5 = 24/30 dan 5/6 = 25/30. Karena 24 &lt; 25, maka 4/5 <b>&lt;</b> 5/6.'},
  {q:cmpQHTML('2/9','2/7'),answer:'<',e:'Pembilangnya sama (2). Karena 9 &gt; 7, potongan 2/9 lebih kecil: 2/9 <b>&lt;</b> 2/7.'},
  {q:cmpQHTML('6/8','3/4'),answer:'=',e:'6/8 dan 3/4 adalah <b>pecahan senilai</b>! 6/8 = 3/4 karena 6 dan 8 masing-masing dibagi 2 menjadi 3 dan 4.'}
 ];
+/* FIX: soal no.1 dulu punya pasangan bernilai sama (1/2 = 2/4) sehingga dua
+   urutan berbeda sama-sama sah. Diganti agar keempat nilainya berbeda. */
 const ORD_ITEMS=[
- {chips:['1/2','1/4','3/4','2/4'],correct:['1/4','1/2','2/4','3/4'],e:'Semua punya hubungan per-4: 1/4 &lt; 2/4 &lt; 3/4, dan 1/2 = 2/4. Urutannya 1/4, 1/2, 2/4, 3/4.'},
+ {chips:['1/2','1/4','3/4','1/8'],correct:['1/8','1/4','1/2','3/4'],e:'Samakan ke per-8: 1/8, 1/4 = 2/8, 1/2 = 4/8, 3/4 = 6/8. Urutannya 1/8 &lt; 2/8 &lt; 4/8 &lt; 6/8.'},
  {chips:['2/3','1/3','3/3','1/2'],correct:['1/3','1/2','2/3','3/3'],e:'1/3 paling kecil, lalu 1/2 (antara 1/3 dan 2/3), lalu 2/3, dan 3/3 = 1 utuh paling besar.'},
  {chips:['1/5','3/5','2/5','4/5'],correct:['1/5','2/5','3/5','4/5'],e:'Penyebut sama (5), jadi urutkan pembilangnya: 1, 2, 3, 4.'},
  {chips:['1/2','2/3','5/6','1/3'],correct:['1/3','1/2','2/3','5/6'],e:'Samakan ke per-6: 1/3 = 2/6, 1/2 = 3/6, 2/3 = 4/6, 5/6. Urutannya jelas: 2/6 &lt; 3/6 &lt; 4/6 &lt; 5/6.'},
@@ -759,12 +780,10 @@ function buildDaily(host){
       </ol>
     </div>
   </div>`;
-  // Pizza
   const pOn=new Set([0,1,2]), pz=$('#dzPizza');
   const pzCap=()=>{$('#dzPizzaCap').innerHTML=`<b>${pOn.size} potong dari 8</b> sudah dimakan — itu ${fracHTML(pOn.size,8)} bagian pizza.`;};
   renderPie(pz,8,pOn,'var(--acc)'); pzCap();
   pz.addEventListener('click',e=>{const s=e.target.closest('.slice');if(!s)return;const i=+s.dataset.i;pOn.has(i)?pOn.delete(i):pOn.add(i);s.classList.toggle('on');pzCap();});
-  // Gelas jus
   const LEV=[0,.25,.5,.75,1], GLAB=['kosong','1/4','1/2','3/4','penuh']; let li=2;
   const gWrap=$('#dzGlass');
   const drawGlass=()=>{
@@ -781,7 +800,6 @@ function buildDaily(host){
   };
   drawGlass();
   gWrap.onclick=()=>{li=(li+1)%5;drawGlass();};
-  // Cokelat
   const ch=new Set([0]), chW=$('#dzChoc');
   const chCap=()=>{$('#dzChocCap').innerHTML= ch.size===0?'Belum ada yang dimakan.':`<b>${fracHTML(ch.size,4)}</b> batang cokelat sudah dimakan.`;};
   const drawChoc=()=>{chW.innerHTML=Array.from({length:4},(_,i)=>`<div class="ch-seg ${ch.has(i)?'eaten':''}" data-i="${i}"></div>`).join('');chCap();};
@@ -890,16 +908,10 @@ function buildShape(host,kind){
       </div>
     </div>
   </div>`;
-  let den=isBar?4:4; const on=new Set();
+  let den=4; const on=new Set();
   const stage=host.querySelector('#shStage'), fb=host.querySelector('#shFb');
-  const draw=()=>{
-    on.clear(); on.forEach(()=>{}); // (set dijaga oleh klik)
-    if(isBar) renderBar(stage,den,new Set([...on]),warna);
-    else renderPie(stage,den,new Set([...on]),warna);
-  };
-  // render awal
   const render=()=>{isBar?renderBar(stage,den,on,warna):renderPie(stage,den,on,warna);fb.className='fb';};
-  const st=makeStepper('Banyak bagian',2,isBar?12:12,den,v=>{den=v;on.clear();render();});
+  const st=makeStepper('Banyak bagian',2,12,den,v=>{den=v;on.clear();render();});
   host.querySelector('#shStepper').appendChild(st.el);
   stage.addEventListener('click',e=>{const s=e.target.closest('[data-i]');if(!s)return;const i=+s.dataset.i;on.has(i)?on.delete(i):on.add(i);s.classList.toggle('on');});
   const guru=()=>{
@@ -982,12 +994,11 @@ function buildObjects(host){
     if(picked.size===4){
       solved=true; chk.style.display='none';
       nxt.style.display=''; nxt.innerHTML=`Tantangan Bintang ${ic('star')}`;
-      nxt.onclick=()=>{$('#obStar')||host.querySelector('#obStar');const sc=host.querySelector('#obStar');sc.style.display='';sc.scrollIntoView({behavior:'smooth',block:'center'});nxt.style.display='none';};
+      nxt.onclick=()=>{const sc=host.querySelector('#obStar');sc.style.display='';sc.scrollIntoView({behavior:'smooth',block:'center'});nxt.style.display='none';};
       toast('Hebat! Tantangan bintang terbuka.','star');
     }
   };
   draw();
-  // Bintang
   const SG=host.querySelector('#obSG'), sOn=new Set();
   const drawS=()=>{SG.innerHTML=Array.from({length:8},(_,i)=>`<button class="sstar ${sOn.has(i)?'on':''}" data-i="${i}">${starSVG}</button>`).join('');};
   SG.addEventListener('click',e=>{const s=e.target.closest('.sstar');if(!s)return;const i=+s.dataset.i;sOn.has(i)?sOn.delete(i):sOn.add(i);s.classList.toggle('on');});
@@ -1115,7 +1126,7 @@ function buildLineMatch(host){
   });
   host.querySelector('#lmClear').onclick=()=>{lines.length=0;redraw();fb.className='fb';};
   host.querySelector('#lmCheck').onclick=()=>{
-    if(lines.length<5){fb.className='fb warn show';fb.innerHTML=`<div class="fb-title">${ic('bulb')} Hubungkan semua pasangan dulu ya — baru 5 garis perlu dibuat (baru ${lines.length}).</div>`;return;}
+    if(lines.length<5){fb.className='fb warn show';fb.innerHTML=`<div class="fb-title">${ic('bulb')} Hubungkan semua pasangan dulu ya — perlu 5 garis (baru ${lines.length}).</div>`;return;}
     let ok=0;
     lines.forEach(l=>{const benar=COR[l.l]===l.r;l.state=benar?'ok':'bad';if(benar)ok++;else{l.le.classList.add('bad');l.re.classList.add('bad');}});
     redraw();
@@ -1239,9 +1250,9 @@ function buildMixed(host){
 /* ================= SLIDE 15: LATIHAN CAMPURAN (20) ================= */
 function buildMixedQuiz(host){
   buildQuiz(host,{id:'qmix',title:'Latihan Pecahan Campuran',kicker:ic('pencil',15)+' Materi 4',
-   intro:'10 soal pertama: ubah <b>pecahan biasa menjadi campuran</b> (isi utuh + pembilangnya). 10 soal berikutnya: ubah <b>campuran menjadi pecahan biasa</b> (isi pembilangnya).',
+   intro:'10 soal pertama: ubah <b>pecahan biasa menjadi campuran</b> (isi kotak kuning = bilangan utuh, lalu pembilangnya). 10 soal berikutnya: ubah <b>campuran menjadi pecahan biasa</b> (isi pembilangnya). Tekan <b>Periksa</b> atau <b>Enter</b>.',
    items:[
-    ...MIXED_ITEMS.map(s=>({q:s.q,type:'mixed',n:s.n,d:s.d,w:s.w,ansN:s.ansN,e:s.e})),
+    ...MIXED_ITEMS.map(s=>({q:s.q,type:'mixed',n:s.n,d:s.d,aw:s.aw,an:s.an,e:s.e})),
     ...IMPROPER_ITEMS.map(s=>({q:s.q,type:'improper',w:s.w,n:s.n,d:s.d,answer:s.answer,e:s.e}))
    ]});
 }
@@ -1320,17 +1331,24 @@ function buildOrdQuiz(host){
 }
 
 /* ================= SLIDE 19: EXIT TICKET ================= */
+/* FIX: opsi jawaban diacak setiap latihan; indeks kunci di-remap otomatis
+   (semua opsi dalam satu soal unik, sehingga indexOf aman). */
 function buildExit(host){
+  const items=EXIT_ITEMS.map(s=>{
+    const benar=s.options[s.answer];
+    const opts=shuffle(s.options);
+    return {q:s.q,type:'choice',options:opts,answer:opts.indexOf(benar),e:s.e};
+  });
   buildQuiz(host,{id:'qexit',title:'Exit Ticket: Tunjukkan Kamu Bisa!',kicker:ic('flag',15)+' Evaluasi Akhir',
-   intro:'10 soal pilihan dari seluruh materi hari ini. Jawab dengan teliti — raih skor 80 ke atas untuk mendapatkan bintang emas!',
-   items:EXIT_ITEMS.map(s=>({q:s.q,type:'choice',options:s.options,answer:s.answer,e:s.e}))});
+   intro:'10 soal pilihan dari seluruh materi hari ini (urutan opsi diacak). Raih skor 80 ke atas untuk mendapatkan bintang emas!',
+   items});
 }
 
 /* ================= SLIDE 20: KESIMPULAN ================= */
 function buildSummary(host){
   const sums=[
    ['book','var(--acc)','Pecahan = Bagian dari Keseluruhan','Penyebut (bawah) = banyak seluruh bagian sama besar; pembilang (atas) = bagian yang diambil. Contoh: 3/4 dibaca "tiga per empat".'],
-   ['star','var(--sun)','Pecahan Bisa Berhitung Benda','1/3 dari 12 benda artinya 12 dibagi 3 kelompok sama banyak = 4 benda. 4/12 senilai dengan 1/3.'],
+   ['star','var(--sun)','Pecahan Bisa Menghitung Benda','1/3 dari 12 benda artinya 12 dibagi 3 kelompok sama banyak = 4 benda. 4/12 senilai dengan 1/3.'],
    ['refresh','var(--grn)','Pecahan Senilai','Kalikan atau bagi pembilang DAN penyebut dengan bilangan yang sama: 1/2 = 2/4 = 4/8. Gambarnya selalu sama besar.'],
    ['pencil','var(--tea)','"Per" Artinya Bagi','3 per 5 = 3 : 5 = 3/5. Setiap bilangan asli n bisa ditulis n/1, dan 3 = 3/1 = 6/2 = 9/3.'],
    ['heart','var(--red)','Pecahan Campuran','Biasa → campuran: bagi (7/3 = 2 1/3). Campuran → biasa: kalikan lalu tambah (2 1/3 = (2×3)+1 = 7/3).'],
