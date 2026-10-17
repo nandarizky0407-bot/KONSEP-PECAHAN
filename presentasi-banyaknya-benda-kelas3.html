@@ -1,0 +1,1336 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Petualangan Diamond 💎 Banyaknya Benda — Perkalian Pecahan × Bilangan Cacah (Kelas 3 SD)</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#332A5E; --muted:#8A82AD; --bg:#FFF7EA;
+  --s1:#3D8BFD; --s1bg:#E7F2FF; --s2:#9B5DE5; --s2bg:#F3E9FF;
+  --pink:#FF5FA2; --yellow:#FFC93C; --green:#22C55E; --red:#FF6B6B;
+  --dia:#0AA6C9; --line:#EAE4F6; --r:22px;
+  --shadow:0 10px 24px rgba(80,60,160,.13);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:'Baloo 2','Comic Sans MS','Chalkboard SE','Trebuchet MS',sans-serif;
+  color:var(--ink); overflow:hidden; background:var(--bg);
+  background-image:radial-gradient(#F0E9FF 9%,transparent 10%),radial-gradient(#FFF0D9 9%,transparent 10%);
+  background-size:48px 48px; background-position:0 0,24px 24px;
+}
+[hidden]{display:none!important}
+.hidden{display:none!important}
+.g{color:#15803D}.r{color:#C02626}
+.mut{color:var(--muted);font-weight:600;font-size:14px}
+
+/* ====== HUD ====== */
+#hud{position:fixed;top:0;left:0;right:0;height:58px;z-index:60;display:flex;align-items:center;
+  justify-content:space-between;padding:0 16px;background:rgba(255,255,255,.88);
+  backdrop-filter:blur(8px);border-bottom:3px solid #F0E9FA}
+.chip{display:inline-flex;align-items:center;gap:8px;background:#fff;border-radius:999px;padding:7px 14px;
+  box-shadow:var(--shadow);font-weight:800;font-size:15px;border:2px solid var(--line)}
+.hud-title{border-color:#FFE3B8;background:linear-gradient(90deg,#FFF9EC,#FFF)}
+.hud-kls{font-size:12px;background:#FFE9A8;color:#8A6100;border-radius:999px;padding:2px 9px}
+.hud-right{display:flex;gap:8px;align-items:center}
+.schip{cursor:default}
+.schip .nm{max-width:130px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.schip .dv{color:var(--dia);font-weight:800}
+.av{font-size:17px}
+.iconb{width:40px;height:40px;border-radius:12px;border:2px solid var(--line);background:#fff;
+  font-size:17px;cursor:pointer;font-family:inherit;transition:.15s;box-shadow:0 3px 8px rgba(80,60,160,.08)}
+.iconb:hover{transform:translateY(-2px);border-color:#FF6FA5}
+.pop{animation:pop .45s}
+@keyframes pop{0%{transform:scale(1)}45%{transform:scale(1.22)}100%{transform:scale(1)}}
+
+/* ====== STAGE & SLIDES ====== */
+#stage{position:fixed;inset:0}
+.slide{position:absolute;inset:0;padding:70px 26px 78px;opacity:0;visibility:hidden;
+  transform:translateX(60px) scale(.985);
+  transition:opacity .4s ease,transform .45s cubic-bezier(.22,1,.36,1),visibility 0s .45s;overflow:hidden}
+.slide.active{opacity:1;visibility:visible;transform:none;
+  transition:opacity .4s ease,transform .45s cubic-bezier(.22,1,.36,1)}
+.wrap{max-width:1180px;margin:0 auto;height:100%;display:flex;flex-direction:column}
+.slideh{margin-bottom:14px;flex:none}
+.slideh h2{font-size:clamp(22px,3vw,34px);font-weight:800;line-height:1.15}
+.slideh .sub{color:var(--muted);font-weight:700;margin-top:2px}
+.rise{opacity:0;transform:translateY(18px)}
+.play .rise{animation:rise .55s cubic-bezier(.22,1,.36,1) both}
+.play .d1{animation-delay:.07s}.play .d2{animation-delay:.15s}.play .d3{animation-delay:.23s}
+.play .d4{animation-delay:.31s}.play .d5{animation-delay:.4s}
+@keyframes rise{to{opacity:1;transform:none}}
+
+/* ====== KOMPONEN UMUM ====== */
+.card{background:#fff;border-radius:var(--r);padding:18px 20px;box-shadow:var(--shadow);
+  border:3px solid #F1EBFF;display:flex;flex-direction:column;gap:10px;min-height:0}
+.card h3{font-size:19px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0;align-items:start}
+.btn{border:none;cursor:pointer;font-family:inherit;font-weight:800;border-radius:16px;
+  padding:12px 22px;font-size:16.5px;color:#fff;
+  background:linear-gradient(135deg,#FF6FA5,#9B5DE5);box-shadow:0 5px 0 rgba(155,93,229,.32);transition:.15s}
+.btn:hover{filter:brightness(1.05);transform:translateY(-2px)}
+.btn:active{transform:translateY(3px);box-shadow:0 1px 0 rgba(155,93,229,.32)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn-green{background:linear-gradient(135deg,#34D399,#0EA36B);box-shadow:0 5px 0 rgba(14,163,107,.35)}
+.btn-blue{background:linear-gradient(135deg,#5AA2FF,#2D6FE0);box-shadow:0 5px 0 rgba(45,111,224,.35)}
+.btn-purple{background:linear-gradient(135deg,#B07CFF,#7C3AED);box-shadow:0 5px 0 rgba(124,58,237,.35)}
+.btn-ghost{background:#fff;color:var(--ink);border:3px solid var(--line);box-shadow:0 4px 0 rgba(80,60,160,.08)}
+.btn-sm{padding:8px 14px;font-size:14.5px;border-radius:13px}
+.btn-big{font-size:21px;padding:16px 34px;border-radius:22px}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.outbox{background:#FFF9E8;border:2px dashed #E8C558;border-radius:14px;padding:11px 14px;
+  font-weight:700;font-size:15.5px;line-height:1.5}
+.outbox.ok{background:#EAFBF1;border-color:#7BDCA6}
+.outbox.no{background:#FFEEEE;border-color:#F5A9A9}
+
+/* pecahan */
+.fr{display:inline-flex;flex-direction:column;align-items:center;vertical-align:middle;
+  line-height:1;margin:0 5px;font-weight:800;font-size:.95em;transform:translateY(-2px)}
+.fr-n{border-bottom:3px solid currentColor;padding:0 7px 3px}
+.fr-d{padding-top:3px}
+
+/* emoji grid */
+.egrid{display:flex;flex-wrap:wrap;gap:7px;font-size:29px;line-height:1}
+.esl{transition:.2s;border-radius:8px}
+.esl.sm{font-size:21px}
+.esl.lit{filter:drop-shadow(0 0 7px #FFC93C);transform:scale(1.2);background:#FFF3CE}
+
+/* ====== COVER ====== */
+.s-cover{background:linear-gradient(160deg,#FFF3F9 0%,#F5F1FF 55%,#EAF7FF 100%)}
+.cover{align-items:center;justify-content:center;text-align:center;gap:14px}
+.cover-top{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.tag{background:#fff;border-radius:999px;padding:8px 18px;font-weight:800;box-shadow:var(--shadow);font-size:15px}
+.tag2{background:linear-gradient(90deg,#FFF0F7,#F3EAFF)}
+.cover h1{font-size:clamp(38px,6.6vw,68px);font-weight:800;letter-spacing:2px;line-height:1.05;
+  background:linear-gradient(90deg,#FF5FA2,#9B5DE5 55%,#38C6E8);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cover-sub{font-size:clamp(16px,2.2vw,22px);font-weight:700;color:#5B5386}
+.name-row{display:flex;gap:16px;align-items:center;margin-top:8px;flex-wrap:wrap;justify-content:center}
+.ncard{background:#fff;border-radius:24px;padding:14px 18px 10px;box-shadow:var(--shadow);
+  border:4px solid var(--s1);width:min(280px,86vw)}
+.ncard.n2{border-color:var(--s2)}
+.ntitle{font-weight:800;font-size:17px;display:flex;align-items:center;gap:8px;justify-content:center}
+.ncard input{width:100%;border:none;border-bottom:3px dashed #D9D2EC;font-family:inherit;font-size:19px;
+  font-weight:800;padding:9px 2px;text-align:center;outline:none;background:transparent;color:var(--ink)}
+.ncard input:focus{border-bottom-color:var(--pink)}
+.vs{width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#FFC93C,#FF9F43);
+  display:grid;place-items:center;font-weight:800;color:#fff;font-size:17px;box-shadow:var(--shadow)}
+.hint{color:var(--muted);font-weight:600;font-size:14px;max-width:640px}
+
+/* hujan diamond */
+.rain{position:absolute;inset:0;overflow:hidden;pointer-events:none}
+.rain span{position:absolute;top:-60px;animation:floaty linear infinite;opacity:.55}
+@keyframes floaty{to{transform:translateY(120vh) rotate(340deg)}}
+
+/* ====== APERSEPSI ====== */
+.pmt{background:#FBFAFF;border:3px solid #EFE8FF;border-radius:16px;padding:12px 14px;margin-top:10px;
+  cursor:pointer;transition:.2s;font-weight:700;line-height:1.55}
+.pmt:hover{border-color:#C9B6FF;transform:translateY(-2px)}
+.pmt-a{display:none;margin-top:9px;background:#EAFBF1;border-radius:12px;padding:9px 12px;
+  font-weight:600;color:#155E37;font-size:14.5px}
+.pmt.open .pmt-a{display:block;animation:rise .35s both}
+
+/* ====== TUJUAN ====== */
+.mis-grid{max-width:880px;width:100%;margin:0 auto;flex:1;overflow:auto;min-height:0;padding:2px}
+.mis{display:flex;gap:14px;align-items:center;background:#fff;border-radius:20px;padding:14px 16px;
+  box-shadow:var(--shadow);border:3px solid #F1EBFF;margin-bottom:12px}
+.mis h4{font-size:16.5px;margin-bottom:2px}
+.mis p{font-weight:600;font-size:14.5px;line-height:1.5}
+.mico{font-size:32px;flex:none}
+.mchk{margin-left:auto;white-space:nowrap;border:3px solid var(--line);background:#fff;border-radius:999px;
+  padding:8px 15px;font-weight:800;cursor:pointer;font-family:inherit;font-size:14px;transition:.2s;flex:none}
+.mchk:hover{border-color:#22C55E}
+.mchk.done{background:linear-gradient(135deg,#34D399,#0EA36B);color:#fff;border-color:#0EA36B}
+
+/* ====== MATERI 1 ====== */
+.mach-ctl{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.stepbox{display:flex;flex-direction:column;gap:5px;align-items:center;font-weight:700;font-size:13.5px}
+.stepper{display:flex;align-items:center;gap:10px;background:#F6F3FE;border-radius:14px;padding:6px 10px}
+.stepper b{min-width:30px;text-align:center;font-size:23px}
+.stepper button{width:36px;height:36px;border-radius:11px;border:none;background:linear-gradient(135deg,#FF6FA5,#9B5DE5);
+  color:#fff;font-size:19px;font-weight:800;cursor:pointer;font-family:inherit;transition:.15s}
+.stepper button:active{transform:scale(.9)}
+.frac-big{display:flex;align-items:center;justify-content:center;gap:14px;margin:8px 0;font-size:34px}
+.feq{font-weight:800}
+.segbar{display:flex;gap:6px;margin-top:4px;flex-wrap:wrap;justify-content:center}
+.seg{width:46px;height:54px;border-radius:10px;background:#EFEAF9;border:2px dashed #CFC3EC;transition:.2s}
+.seg.on{background:linear-gradient(160deg,#FFD86B,#FFB33C);border:2px solid #E8A126;transform:scale(1.04)}
+.dv-stage{min-height:74px;display:flex;align-items:center;justify-content:center}
+.kwrap{display:flex;gap:10px;flex-wrap:wrap;justify-content:center}
+.kgroup{display:flex;flex-wrap:wrap;gap:5px;padding:8px 10px;border:3px dashed #D8D0EE;border-radius:14px;
+  min-width:104px;justify-content:center;background:#FBFAFF;max-width:210px}
+.kgroup.lit{border-color:#22C55E;background:#EAFBF1}
+
+/* ====== MATERI 2 ====== */
+.rule-row{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px}
+.rule{background:#fff;border-radius:18px;padding:12px 10px;display:flex;flex-direction:column;gap:3px;
+  align-items:center;text-align:center;box-shadow:var(--shadow);border:3px solid #F1EBFF}
+.rule b{color:#7C3AED;font-size:14px}
+.rule span{font-weight:700;font-size:14.5px;line-height:1.35}
+.pp.on{outline:3px solid #FFC93C;outline-offset:2px}
+.steps{min-height:60px;margin:6px 0 12px}
+.stepcard{background:#FFF9E8;border:2px solid #F2DC9B;border-radius:14px;padding:10px 14px;margin-top:8px;
+  font-weight:700;line-height:1.6;animation:rise .4s both;font-size:16px}
+.trik{background:linear-gradient(90deg,#FFF6D9,#FFEBBE);border:3px solid #F2DC9B;border-radius:18px;
+  padding:13px 18px;font-weight:700;line-height:1.6;margin-top:14px}
+
+/* ====== MATERI 3 ====== */
+.dwrap{flex:1;overflow:auto;min-height:0;display:flex;flex-direction:column;gap:12px;padding:2px}
+.dcard{background:#fff;border:3px solid #FFE1EF;border-radius:20px;padding:14px 16px;box-shadow:var(--shadow)}
+.dtxt{font-weight:700;line-height:1.7;font-size:16.5px}
+.dari{font-family:inherit;font-weight:800;background:#FFE3F0;border:2px dashed #FF6FA5;border-radius:10px;
+  padding:2px 12px;cursor:pointer;font-size:15px;color:var(--ink);transition:.2s;margin:0 3px}
+.dari:hover{transform:scale(1.08)}
+.dari.xd{background:linear-gradient(135deg,#34D399,#0EA36B);color:#fff;border:2px solid #0EA36B;
+  transform:rotate(-5deg) scale(1.12)}
+.dsol{display:none;background:#EAFBF1;border-radius:12px;padding:10px 13px;margin-top:9px;font-weight:700;line-height:1.6}
+.dsol.show{display:block;animation:rise .35s both}
+.dgrid{margin-top:9px;font-size:23px;max-height:86px;overflow:auto;display:none}
+.dgrid.show{display:flex}
+
+/* ====== LATIHAN ====== */
+.lat-wrap{display:grid;grid-template-columns:1fr 1fr;gap:16px;flex:1;min-height:0}
+.lat-col{display:flex;flex-direction:column;min-height:0;border-radius:24px;border:4px solid var(--s1);
+  background:#fff;box-shadow:var(--shadow);overflow:hidden}
+.lat-col.c2{border-color:var(--s2)}
+.lat-head{padding:9px 14px;color:#fff;font-weight:800;display:flex;align-items:center;gap:10px;flex:none}
+.lat-head.h1{background:linear-gradient(90deg,#3D8BFD,#6FB6FF)}
+.lat-head.h2{background:linear-gradient(90deg,#9B5DE5,#C39BFF)}
+.lav{font-size:21px}
+.lhn{display:flex;flex-direction:column;line-height:1.1}
+.lhn .nslot{font-size:16px}
+.lprog{font-size:12.5px;opacity:.92;font-weight:700}
+.ldia{margin-left:auto;background:rgba(255,255,255,.25);border-radius:999px;padding:5px 12px;font-size:14px}
+.lat-list{flex:1;overflow:auto;padding:10px 12px;background:#FDFCFF}
+.lat-list::-webkit-scrollbar,.sbody::-webkit-scrollbar,.exit-list::-webkit-scrollbar,.mis-grid::-webkit-scrollbar,.dwrap::-webkit-scrollbar{width:10px}
+.lat-list::-webkit-scrollbar-thumb,.sbody::-webkit-scrollbar-thumb,.exit-list::-webkit-scrollbar-thumb,.mis-grid::-webkit-scrollbar-thumb,.dwrap::-webkit-scrollbar-thumb{background:#DCD2F2;border-radius:8px}
+.qc{border:3px solid var(--line);border-radius:18px;padding:12px 14px;margin-bottom:12px;background:#FFFDF8}
+.qc-t{font-weight:800;font-size:17px;line-height:1.6;margin-bottom:4px}
+.qno{display:inline-block;background:#F1EDFB;color:#7A5FD0;border-radius:999px;padding:2px 11px;font-size:12.5px;margin-right:8px;vertical-align:middle}
+.opts{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;margin:10px 0}
+.opt{display:flex;align-items:center;background:#fff;border:3px solid var(--line);border-radius:14px;
+  padding:9px 11px;font-family:inherit;font-weight:800;font-size:15.5px;cursor:pointer;color:var(--ink);transition:.15s;text-align:left}
+.opt:hover:not(:disabled){transform:translateY(-2px);border-color:#FF6FA5}
+.opt:disabled{cursor:default}
+.opt i{font-style:normal;background:#F1EDFB;border-radius:8px;padding:1px 9px;margin-right:9px;
+  font-weight:800;color:#7A5FD0;flex:none}
+.opt.sel{border-color:#FF6FA5;background:#FFF0F6}
+.opt.correct{border-color:#22C55E;background:#E5F9EC}
+.opt.wrong{border-color:#FF6B6B;background:#FFECEC}
+.opt.dim{opacity:.45}
+.chk{margin-top:2px}
+.fbb{margin-top:10px}
+.fb{border-radius:12px;padding:10px 13px;font-weight:800;line-height:1.5}
+.fb.ok{background:#E5F9EC;color:#15803D}
+.fb.no{background:#FFEBEB;color:#C02626}
+.pemb{background:#FFF6D9;border:2px dashed #E8C558;border-radius:12px;padding:10px 13px;margin-top:8px;
+  font-weight:600;line-height:1.7;font-size:15.5px}
+
+/* ====== KUIS ====== */
+#s7 .slideh{margin-bottom:9px}
+#s7 .slideh .sub{font-size:14px}
+.quiz-board{display:grid;grid-template-columns:repeat(15,1fr);gap:6px;flex:none;margin-bottom:10px}
+.tile{position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:0;
+  border:none;border-radius:10px;cursor:pointer;font-family:inherit;padding:4px 2px 3px;
+  box-shadow:0 2px 0 rgba(80,60,160,.12);transition:.15s;min-height:40px}
+.tile:hover{transform:translateY(-2px)}
+.tn{font-size:15px;font-weight:800;line-height:1}
+.tv{font-size:9px;font-weight:800;opacity:.85;margin-top:1px;white-space:nowrap}
+.tile.easy{background:linear-gradient(160deg,#E4FBEE,#BDF5D4);color:#0E7A3D}
+.tile.med{background:linear-gradient(160deg,#FFF6D8,#FFE9A8);color:#946200}
+.tile.hard{background:linear-gradient(160deg,#F3E8FF,#E2CBFF);color:#6B21A8}
+.tile.open{outline:3px solid #FF6FA5;outline-offset:2px;animation:pulse 1.2s infinite}
+@keyframes pulse{0%,100%{outline-color:#FF6FA5}50%{outline-color:#FFC93C}}
+.tile.done{opacity:.6;cursor:default;transform:none!important}
+.tile.done::after{content:'✓';position:absolute;top:-6px;right:-6px;width:18px;height:18px;border-radius:50%;
+  background:#22C55E;color:#fff;font-size:11px;display:grid;place-items:center;font-weight:800}
+.tile.done.wrong::after{content:'✕';background:#FF6B6B}
+.tile.by0{border:2px solid #3D8BFD}
+.tile.by1{border:2px solid #9B5DE5}
+.qpanels{flex:1;min-height:0;display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:2px}
+.spanel{background:#fff;border:4px solid var(--s1);border-radius:24px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.spanel.s2{border-color:var(--s2)}
+.shead{padding:10px 15px;color:#fff;font-weight:800;display:flex;align-items:center;gap:9px;flex:none;font-size:16.5px}
+.spanel.s1 .shead{background:linear-gradient(90deg,#3D8BFD,#6FB6FF)}
+.spanel.s2 .shead{background:linear-gradient(90deg,#9B5DE5,#C39BFF)}
+.sbody{flex:1;overflow:auto;padding:14px 18px;display:flex;flex-direction:column}
+.idle{margin:auto;text-align:center;font-weight:700;color:var(--muted);font-size:17.5px;padding:26px 8px;line-height:1.7}
+.idle b{color:var(--ink);font-size:20.5px}
+.qmeta{display:flex;gap:10px;align-items:center;margin-bottom:10px;flex-wrap:wrap}
+.badge{padding:5px 15px;border-radius:999px;font-weight:800;font-size:14px;color:#fff}
+.b-easy{background:#22C55E}.b-med{background:#F59E0B}.b-hard{background:#A855F7}
+.qval{font-weight:800;color:var(--dia);font-size:16.5px}
+.qno2{color:var(--muted);font-weight:700;font-size:14px}
+.qq{font-weight:700;font-size:19.5px;line-height:1.65;margin-bottom:10px}
+.sbody .opts{gap:10px;margin:12px 0 10px}
+.sbody .opt{font-size:17px;padding:11px 14px;border-radius:15px}
+.turnbar{margin-top:8px;text-align:center;font-weight:800;flex:none;font-size:14.5px}
+.tchip{display:inline-block;padding:4px 15px;border-radius:999px;color:#fff;font-weight:800;margin-left:6px;font-size:14.5px}
+.t0{background:linear-gradient(90deg,#3D8BFD,#6FB6FF)}
+.t1{background:linear-gradient(90deg,#9B5DE5,#C39BFF)}
+
+/* ====== PEMILIH SISWA (KUIS) ====== */
+.pickbar{flex:none;background:#fff;border:3px solid var(--line);border-radius:16px;padding:7px 12px;
+  display:flex;align-items:center;justify-content:center;gap:10px;flex-wrap:wrap;box-shadow:var(--shadow)}
+.picklbl{font-weight:800;color:var(--ink);font-size:14px}
+.pickrow{display:flex;gap:8px;flex-wrap:wrap;justify-content:center}
+.pickbtn{border:3px solid var(--line);background:#fff;border-radius:999px;padding:5px 14px;
+  font-weight:800;font-family:inherit;font-size:13.5px;cursor:pointer;color:var(--muted);transition:.18s}
+.pickbtn.pb0{border-color:#6FB6FF;color:#1D4ED8;background:#EFF6FF}
+.pickbtn.pb1{border-color:#C39BFF;color:#6D28D9;background:#F5F0FF}
+.pickbtn:hover{transform:translateY(-2px)}
+.pickbtn.on{color:#fff;animation:pulsePick 1.3s ease-in-out infinite}
+.pickbtn.pb0.on{background:linear-gradient(90deg,#3D8BFD,#6FB6FF);border-color:transparent;
+  box-shadow:0 4px 14px rgba(61,139,253,.45)}
+.pickbtn.pb1.on{background:linear-gradient(90deg,#9B5DE5,#C39BFF);border-color:transparent;
+  box-shadow:0 4px 14px rgba(155,93,229,.45)}
+@keyframes pulsePick{0%,100%{transform:scale(1.06)}50%{transform:scale(1.12)}}
+.spanel.act{box-shadow:0 0 0 4px #FFE066,var(--shadow)}
+
+/* ====== GAME & EXIT ====== */
+.tabs{display:flex;gap:10px;margin-bottom:12px;flex:none}
+.tab{flex:1;max-width:330px;border:3px solid var(--line);background:#fff;border-radius:999px;
+  padding:10px 18px;font-weight:800;font-family:inherit;font-size:15.5px;cursor:pointer;color:var(--muted);transition:.2s}
+.tab.on{background:linear-gradient(135deg,#FF6FA5,#9B5DE5);color:#fff;border-color:transparent;box-shadow:var(--shadow)}
+.pane{flex:1;min-height:0;overflow:auto}
+.coolbox{max-width:760px;margin:0 auto;align-items:center;text-align:center}
+.crow{display:flex;gap:12px;align-items:center;justify-content:center;flex-wrap:wrap}
+.rnd{background:#EFF6FF;color:#1D4ED8;border-radius:999px;padding:5px 15px;font-weight:800;font-size:14px}
+.coolgrid{max-height:130px;overflow:auto;justify-content:center;margin:6px 0}
+.coolq{font-weight:800;font-size:19px;line-height:1.6;max-width:600px}
+.coolopts{display:flex;gap:12px;flex-wrap:wrap;justify-content:center;margin:6px 0}
+.etn{margin-bottom:10px;font-size:15px}
+.exit-list{flex:1;overflow:auto;min-height:0;padding:2px 2px 10px}
+.exrow{display:flex;gap:10px;align-items:center;margin-top:8px;flex-wrap:wrap}
+.exrow .opts{flex:1;margin:0;grid-template-columns:repeat(4,1fr)}
+.extag{font-weight:800;font-size:14.5px;flex:none;min-width:150px}
+.exrow.s1 .extag{color:var(--s1)}
+.exrow.s2 .extag{color:var(--s2)}
+.exfb{border-radius:999px;padding:3px 12px;font-weight:800;font-size:13px}
+.exfb.ok{background:#E5F9EC;color:#15803D}
+.exfb.no{background:#FFEBEB;color:#C02626}
+
+/* ====== KESIMPULAN ====== */
+.flip-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:14px;flex:none}
+.flip{height:200px;cursor:pointer;perspective:900px}
+.fin{position:relative;width:100%;height:100%;transition:transform .6s;transform-style:preserve-3d}
+.flip.flipped .fin{transform:rotateY(180deg)}
+.fface{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;border-radius:20px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:14px;
+  text-align:center;font-weight:800;box-shadow:var(--shadow)}
+.front{background:linear-gradient(160deg,#fff,#F6F1FF);border:3px solid #E4D9FF;font-size:21px}
+.front .mini{font-size:13px;color:var(--muted);font-weight:700}
+.back{transform:rotateY(180deg);background:linear-gradient(160deg,#FFF9E8,#FFEDCB);border:3px solid #F2DC9B;
+  font-size:14.5px;line-height:1.55;font-weight:700}
+.back b{font-size:16.5px}
+.flip:nth-child(1) .front{border-color:#BBE7FF}
+.flip:nth-child(2) .front{border-color:#E4D9FF}
+.flip:nth-child(3) .front{border-color:#FFD9EC}
+.flip:nth-child(4) .front{border-color:#D6F5E3}
+
+/* ====== REFLEKSI ====== */
+.emorow{display:flex;align-items:center;gap:12px;margin:12px 0;flex-wrap:wrap}
+.emorow>b{min-width:140px;font-size:16px}
+.emos{display:flex;gap:8px;flex-wrap:wrap}
+.emo{font-size:29px;background:#F6F3FE;border:3px solid transparent;border-radius:14px;padding:4px 9px;
+  cursor:pointer;transition:.15s;font-family:inherit}
+.emo:hover{transform:scale(1.1)}
+.emo.on{border-color:#FF6FA5;background:#FFF0F6;transform:scale(1.16)}
+.card textarea{width:100%;border:3px solid var(--line);border-radius:14px;padding:9px 12px;
+  font-family:inherit;font-weight:600;font-size:15px;margin:2px 0 10px;resize:vertical;outline:none;color:var(--ink)}
+.card textarea:focus{border-color:#C9B6FF}
+.card label{font-weight:800;font-size:15px}
+.diam-note{margin-top:auto}
+
+/* ====== PENUTUP ====== */
+.podium{display:grid;grid-template-columns:repeat(2,minmax(240px,300px));gap:16px;justify-content:center;margin:6px 0}
+.pcard{border-radius:24px;padding:15px 18px;text-align:center;color:#fff;box-shadow:var(--shadow)}
+.pcard.p1{background:linear-gradient(160deg,#3D8BFD,#6FB6FF)}
+.pcard.p2{background:linear-gradient(160deg,#9B5DE5,#C39BFF)}
+.pc-head{font-weight:800;font-size:17px;display:flex;gap:8px;align-items:center;justify-content:center}
+.pc-dia{font-size:38px;font-weight:800;margin:4px 0}
+.pc-sub{font-size:12.5px;font-weight:700;opacity:.95}
+.crown{font-size:22px}
+#winMsg{max-width:640px;text-align:center}
+
+/* ====== NAV ====== */
+#nav{position:fixed;bottom:0;left:0;right:0;height:62px;z-index:60;display:flex;align-items:center;
+  justify-content:center;gap:16px;background:rgba(255,255,255,.88);backdrop-filter:blur(8px);
+  border-top:3px solid #F0E9FA;padding:0 14px}
+.navb{width:46px;height:46px;border-radius:50%;border:none;cursor:pointer;font-size:26px;font-weight:800;
+  color:#fff;background:linear-gradient(135deg,#FF6FA5,#9B5DE5);box-shadow:0 4px 0 rgba(155,93,229,.35);
+  font-family:inherit;line-height:1;transition:.15s;padding-bottom:4px}
+.navb:hover{transform:translateY(-2px)}
+.navb:active{transform:translateY(2px);box-shadow:none}
+.navb:disabled{opacity:.35;cursor:default;transform:none}
+#dots{display:flex;gap:7px;align-items:center;flex-wrap:wrap;justify-content:center}
+.dot{width:11px;height:11px;border-radius:50%;background:#D9D2EC;border:none;cursor:pointer;transition:.2s;padding:0}
+.dot:hover{background:#B9A9E8}
+.dot.on{width:27px;border-radius:7px;background:linear-gradient(90deg,#FF6FA5,#9B5DE5)}
+#slCount{font-weight:800;color:var(--muted);font-size:13.5px;min-width:44px;text-align:center}
+
+/* ====== EFEK ====== */
+#toast{position:fixed;left:50%;bottom:80px;transform:translateX(-50%) translateY(22px);background:#332A5E;
+  color:#fff;padding:11px 22px;border-radius:999px;font-weight:700;opacity:0;pointer-events:none;
+  transition:.28s;z-index:95;box-shadow:0 12px 30px rgba(40,20,90,.35);max-width:82vw;text-align:center;font-size:15px}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+#confettiLayer{position:fixed;inset:0;pointer-events:none;z-index:90;overflow:hidden}
+#confettiLayer i{position:absolute;width:11px;height:15px;border-radius:3px;opacity:1;
+  animation:cfall .95s ease-in forwards}
+#confettiLayer i:nth-child(odd){border-radius:50%}
+@keyframes cfall{to{transform:translate(var(--dx),86vh) rotate(var(--rz));opacity:0}}
+.fdia{position:fixed;z-index:96;font-weight:800;font-size:16px;pointer-events:none;animation:fup 1.05s forwards;
+  text-shadow:0 2px 6px rgba(0,0,0,.15)}
+.fdia.up{color:#0AA6C9}.fdia.down{color:#E24A4A}
+@keyframes fup{to{transform:translateY(-48px);opacity:0}}
+.shake{animation:shake .4s}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-7px)}75%{transform:translateX(7px)}}
+
+/* ====== RESPONSIVE ====== */
+@media (max-width:960px){
+  .two-col,.lat-wrap,.qpanels,.podium{grid-template-columns:1fr}
+  .quiz-board{grid-template-columns:repeat(10,1fr);gap:5px}
+  .tile{min-height:38px;border-radius:9px}
+  .tn{font-size:13.5px}
+  .tv{font-size:8.5px}
+  .qq{font-size:17.5px}
+  .sbody .opt{font-size:15.5px;padding:9px 11px}
+  .flip-grid{grid-template-columns:repeat(2,1fr)}
+  .rule-row{grid-template-columns:1fr}
+  .slide{padding:66px 14px 74px;overflow-y:auto}
+  .vs{display:none}
+  .schip .nm{max-width:70px}
+  .exrow .opts{grid-template-columns:repeat(2,1fr)}
+}
+</style>
+</head>
+<body>
+<div id="confettiLayer"></div>
+<div id="toast"></div>
+
+<header id="hud">
+  <div class="chip hud-title">🎓 Banyaknya Benda <span class="hud-kls">Kelas 3 SD</span></div>
+  <div class="hud-right">
+    <div class="chip schip" id="chip1"><span class="av">💙</span><span class="nm" id="hName1">Siswa 1</span><span class="dv" id="hD1">0</span><span>💎</span></div>
+    <div class="chip schip" id="chip2"><span class="av">💜</span><span class="nm" id="hName2">Siswa 2</span><span class="dv" id="hD2">0</span><span>💎</span></div>
+    <button class="iconb" id="btnSnd" title="Suara: aktif">🔊</button>
+    <button class="iconb" id="btnFs" title="Layar penuh">⛶</button>
+  </div>
+</header>
+
+<main id="stage">
+<!-- ============ SLIDE 1: COVER ============ -->
+<section class="slide s-cover active" id="s0" data-name="Cover">
+  <div class="rain" id="rain0"></div>
+  <div class="wrap cover">
+    <div class="cover-top rise">
+      <span class="tag">🎓 Matematika Kelas 3 SD</span>
+      <span class="tag tag2">💎 Petualangan Diamond</span>
+    </div>
+    <h1 class="rise d1">BANYAKNYA BENDA</h1>
+    <p class="cover-sub rise d2">Perkalian <b>Pecahan</b> dengan <b>Bilangan Cacah</b></p>
+    <div class="name-row rise d3">
+      <div class="ncard n1">
+        <div class="ntitle"><span>💙</span> Siswa 1</div>
+        <input id="inp1" type="text" maxlength="18" placeholder="Tulis nama Siswa 1…" autocomplete="off">
+      </div>
+      <div class="vs">VS</div>
+      <div class="ncard n2">
+        <div class="ntitle"><span>💜</span> Siswa 2</div>
+        <input id="inp2" type="text" maxlength="18" placeholder="Tulis nama Siswa 2…" autocomplete="off">
+      </div>
+    </div>
+    <button class="btn btn-big rise d4" id="btnStart">🚀 Mulai Petualangan Diamond!</button>
+    <p class="hint rise d5">Masukkan nama kalian berdua, lalu kumpulkan diamond sebanyak-banyaknya dengan
+      menjawab soal dengan benar! Gunakan tombol <b>‹ ›</b> atau <b>panah keyboard</b> untuk berpindah slide.</p>
+  </div>
+</section>
+
+<!-- ============ SLIDE 2: APERSEPSI ============ -->
+<section class="slide" id="s1" data-name="Apersepsi">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>🤔 Apersepsi — Matematika di Sekitar Kita</h2>
+      <p class="sub">Pernahkah kamu membagi makanan atau mainan dengan teman? Itu adalah rahasia pecahan!</p>
+    </div>
+    <div class="two-col">
+      <div class="card rise d1">
+        <h3>🍕 Pesta Pizza di Rumah Dinda</h3>
+        <p style="font-weight:600;line-height:1.6">Ibu membeli <b>8 potong pizza</b>. Adik ingin <b>1/2 bagian</b>,
+          kakak ingin <b>1/4 bagian</b>. Berapa potong yang mereka dapatkan? Klik tombol di bawah untuk membagi!</p>
+        <div class="egrid" id="pizzaBox"></div>
+        <div class="btnrow">
+          <button class="btn btn-blue btn-sm" data-pf="2">Berikan 1/2 untuk Adik</button>
+          <button class="btn btn-purple btn-sm" data-pf="4">Berikan 1/4 untuk Kakak</button>
+          <button class="btn btn-ghost btn-sm" data-pf="0">🔄 Ulangi</button>
+        </div>
+        <div class="outbox" id="aperOut">Klik tombol di atas untuk membagi pizza! 👆</div>
+      </div>
+      <div class="card rise d2">
+        <h3>💭 Pertanyaan Pemantik <span class="mut">(klik kartu untuk membuka diskusi)</span></h3>
+        <div class="pmt">
+          <p>1️⃣ Bagaimana cara menunjukkan <b>setengah bagian</b> dari 8 potong pizza?</p>
+          <div class="pmt-a">💬 Diskusi: pilih 4 dari 8 potong yang sama besar. 4 potong itulah <b>setengah</b> dari 8!
+            Setengah ditulis <b>1/2</b>.</div>
+        </div>
+        <div class="pmt">
+          <p>2️⃣ Pernahkah kamu mendengar kata <b>"per"</b>? Contohnya: mobil melaju 60 km <i>per</i> jam.
+            Menurutmu, apa artinya?</p>
+          <div class="pmt-a">💬 Diskusi: kata <b>"per"</b> sering muncul saat membagi — 60 km untuk <b>setiap</b> 1 jam.
+            Nanti kita akan lihat bahwa "per" sama artinya dengan <b>dibagi</b>!</div>
+        </div>
+        <div class="pmt">
+          <p>3️⃣ Jika <b>1/3 dari</b> kelerengmu diberikan kepada adik, bagaimana cara menghitung banyaknya
+            kelereng yang diberikan?</p>
+          <div class="pmt-a">💬 Diskusi: bagi kelereng menjadi 3 kelompok yang sama banyak, lalu ambil 1 kelompok.
+            Itulah maksud <b>1/3 dari</b> kelereng.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 3: TUJUAN PEMBELAJARAN ============ -->
+<section class="slide" id="s2" data-name="Tujuan">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>🎯 Tujuan Pembelajaran</h2>
+      <p class="sub">Selesaikan 4 misi di bawah ini — Petualangan Diamond dimulai! 💎</p>
+    </div>
+    <div class="mis-grid">
+      <div class="mis rise d1">
+        <div class="mico">➗</div>
+        <div><h4>Misi 1 — Rahasia Kata "per"</h4>
+          <p>Aku dapat menjelaskan bahwa kata <b>"per"</b> pada pecahan sama artinya dengan operasi <b>pembagian</b>.</p></div>
+        <button class="mchk">✅ Aku Paham!</button>
+      </div>
+      <div class="mis rise d2">
+        <div class="mico">✖️</div>
+        <div><h4>Misi 2 — Master Perkalian</h4>
+          <p>Aku dapat <b>mengalikan pecahan dengan bilangan cacah</b> menggunakan langkah yang benar.</p></div>
+        <button class="mchk">✅ Aku Paham!</button>
+      </div>
+      <div class="mis rise d3">
+        <div class="mico">📝</div>
+        <div><h4>Misi 3 — Pemburu Kata "dari"</h4>
+          <p>Aku dapat menyelesaikan soal cerita yang memiliki kata <b>"dari"</b> atau <b>"bagian dari"</b> — artinya dikali!</p></div>
+        <button class="mchk">✅ Aku Paham!</button>
+      </div>
+      <div class="mis rise d4">
+        <div class="mico">💎</div>
+        <div><h4>Misi 4 — Petualang Diamond</h4>
+          <p>Aku dapat berlatih dan bermain game sambil belajar dengan <b>jujur dan sportif</b>.</p></div>
+        <button class="mchk">✅ Aku Paham!</button>
+      </div>
+      <div class="outbox rise d5" id="misOut">Misi selesai: <b>0</b> dari 4 — ayo tandai misimu setelah kamu memahaminya! 💪</div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 4: MATERI 1 ============ -->
+<section class="slide" id="s3" data-name="Materi 1">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>1️⃣ Konsep Awal — Kata "per" Artinya Dibagi ➗</h2>
+      <p class="sub">Pecahan a/b dibaca "a per b". Ingat: kata <b>"per"</b> sama artinya dengan <b>"dibagi" ( : )</b>.</p>
+    </div>
+    <div class="two-col">
+      <div class="card rise d1">
+        <h3 style="text-align:center">🎛️ Mesin Pecahan</h3>
+        <p class="mut" style="text-align:center">Atur pembilang dan penyebut, lalu lihat artinya!</p>
+        <div class="mach-ctl">
+          <div class="stepbox"><span>Pembilang (angka atas)</span>
+            <div class="stepper"><button data-m="a-">−</button><b id="mA">1</b><button data-m="a+">＋</button></div>
+          </div>
+          <div class="stepbox"><span>Penyebut (angka bawah)</span>
+            <div class="stepper"><button data-m="b-">−</button><b id="mB">2</b><button data-m="b+">＋</button></div>
+          </div>
+        </div>
+        <div class="frac-big" id="mFrac"></div>
+        <div class="outbox" id="mEq"></div>
+        <div class="segbar" id="mBar"></div>
+      </div>
+      <div class="card rise d2">
+        <h3>🍎 1/2 dari 6 Apel — Ayo Bagi!</h3>
+        <p class="mut">{1/2} × 6 artinya <b>1/2 dari 6 benda</b>. Pilih soal, lalu tekan tombol bagi!</p>
+        <div class="btnrow" id="dvPresets">
+          <button class="btn btn-blue btn-sm" data-dv="0">{1/2} × 6 🍎</button>
+          <button class="btn btn-blue btn-sm" data-dv="1">{1/3} × 9 🍌</button>
+          <button class="btn btn-blue btn-sm" data-dv="2">{1/4} × 12 🍪</button>
+        </div>
+        <div class="dv-stage" id="dvStage"></div>
+        <div class="btnrow">
+          <button class="btn btn-green" id="dvBtn">✂️ Bagi Kelompok!</button>
+        </div>
+        <div class="outbox" id="dvOut">Pilih soal di atas, lalu tekan "Bagi Kelompok!" 👆</div>
+      </div>
+    </div>
+  </div>
+</section>
+<!-- ============ SLIDE 5: MATERI 2 ============ -->
+<section class="slide" id="s4" data-name="Materi 2">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>2️⃣ Cara Mengalikan Pecahan dengan Bilangan Cacah ✖️</h2>
+      <p class="sub">Ingat: <b>penyebut (angka bawah) tidak berubah</b>. Kalikan pembilang (angka atas), lalu bagi!</p>
+    </div>
+    <div class="rule-row rise d1">
+      <div class="rule"><b>LANGKAH 1</b><span>Kalikan pembilang (atas) dengan bilangan cacah</span></div>
+      <div class="rule"><b>LANGKAH 2</b><span>Penyebut (bawah) tetap</span></div>
+      <div class="rule"><b>LANGKAH 3</b><span>Bagi pembilang dengan penyebut</span></div>
+    </div>
+    <div class="card rise d2">
+      <div class="btnrow" id="ppBtns">
+        <button class="btn btn-sm btn-blue pp on" data-p="0">{2/3} × 6</button>
+        <button class="btn btn-sm btn-blue pp" data-p="1">{3/4} × 8</button>
+        <button class="btn btn-sm btn-blue pp" data-p="2">{2/5} × 10</button>
+        <button class="btn btn-sm btn-blue pp" data-p="3">{5/6} × 12</button>
+      </div>
+      <div class="steps" id="stSteps"></div>
+      <div class="btnrow">
+        <button class="btn btn-green" id="stNext">Tampilkan Langkah ➜</button>
+        <button class="btn btn-ghost" id="stReset">🔄 Ulangi dari Awal</button>
+      </div>
+    </div>
+    <div class="trik rise d3">💡 <b>Trik Cepat:</b> bagi dulu bilangan cacahnya dengan penyebut, baru kalikan dengan pembilang!
+      Contoh: 14 × {3/7} → 14 : 7 = 2 → lalu 2 × 3 = <b>6</b>. Cepat sekali! ⚡</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 6: MATERI 3 ============ -->
+<section class="slide" id="s5" data-name="Materi 3">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>3️⃣ Pemecahan Masalah — Kata "dari" Artinya Dikali! 💡</h2>
+      <p class="sub">Di soal cerita, kata <b>"dari"</b> atau <b>"bagian dari"</b> adalah tanda perkalian.
+        Klik kata <b>"dari"</b> pada kalimat untuk membuktikannya! 👇</p>
+    </div>
+    <div class="dwrap rise d1">
+      <div class="dcard">
+        <p class="dtxt">🍎 Ibu membeli <b>8 buah apel</b>. Sebanyak {1/2} bagian <button class="dari">dari</button> apel
+          diberikan kepada Nenek. Berapa buah apel yang diterima Nenek?</p>
+        <div class="egrid dgrid" id="dg0"></div>
+        <div class="dsol" id="ds0"></div>
+      </div>
+      <div class="dcard">
+        <p class="dtxt">⭐ Edo memiliki <b>18 koleksi stiker</b>. Sebanyak {2/3} bagian <button class="dari">dari</button> stikernya
+          bergambar hewan. Berapa stiker Edo yang bergambar hewan?</p>
+        <div class="egrid dgrid" id="dg1"></div>
+        <div class="dsol" id="ds1"></div>
+      </div>
+      <div class="dcard">
+        <p class="dtxt">🥬 Pak Tani memanen <b>20 ikat bayam</b>. Sebanyak {3/4} bagian <button class="dari">dari</button> bayam
+          itu dijual ke pasar. Berapa ikat bayam yang dijual?</p>
+        <div class="egrid dgrid" id="dg2"></div>
+        <div class="dsol" id="ds2"></div>
+      </div>
+    </div>
+    <div class="outbox rise d2" style="margin-top:12px;flex:none">⚠️ <b>Kata kunci perkalian:</b>
+      <b>"dari"</b> • <b>"bagian dari"</b> • <b>"sebanyak … bagian"</b>. Kalau di soal cerita ketemu kata-kata itu,
+      langsung <b>dikali</b>! ✖️</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 7: LATIHAN ============ -->
+<section class="slide" id="s6" data-name="Latihan">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>🏋️ Latihan — Kumpulkan Diamond Perdana! 💎</h2>
+      <p class="sub">15 soal untuk setiap siswa. Jawaban benar <b class="g">+1 💎</b> • jawaban salah
+        <b class="r">−1 💎</b>. Pilih jawaban, lalu tekan <b>"Periksa"</b> untuk melihat pembahasannya!</p>
+    </div>
+    <div class="lat-wrap">
+      <div class="lat-col c1 rise d1">
+        <div class="lat-head h1">
+          <span class="lav">💙</span>
+          <div class="lhn"><b class="nslot" data-s="0">Siswa 1</b><span class="lprog" id="latP0">0/15 selesai</span></div>
+          <span class="ldia" id="latD0">💎 0</span>
+        </div>
+        <div class="lat-list" id="latList0"></div>
+      </div>
+      <div class="lat-col c2 rise d2">
+        <div class="lat-head h2">
+          <span class="lav">💜</span>
+          <div class="lhn"><b class="nslot" data-s="1">Siswa 2</b><span class="lprog" id="latP1">0/15 selesai</span></div>
+          <span class="ldia" id="latD1">💎 0</span>
+        </div>
+        <div class="lat-list" id="latList1"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 8: KUIS DIAMOND ============ -->
+<section class="slide" id="s7" data-name="Kuis Diamond">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>🎯 Kuis Diamond — Pilih Nomor Soalmu!</h2>
+      <p class="sub">🟩 Mudah <b>+1 💎</b> • 🟨 Sedang <b>+3 💎</b> • 🟪 Sulit <b>+5 💎</b>. Klik dulu tombol <b>nama
+        siswa</b> yang akan memilih soal, lalu klik nomor soalnya. <b>Tidak perlu menunggu giliran</b> — Siswa 2 boleh
+        langsung memilih, dan setelah menjawab langsung boleh pilih soal baru!</p>
+    </div>
+    <div class="pickbar rise d1">
+      <span class="picklbl">👆 Siapa yang akan memilih soal?</span>
+      <div class="pickrow">
+        <button class="pickbtn pb0" id="pickBtn0" onclick="setChooser(0)">💙 <b class="nslot" data-s="0">Siswa 1</b> pilih soal!</button>
+        <button class="pickbtn pb1" id="pickBtn1" onclick="setChooser(1)">💜 <b class="nslot" data-s="1">Siswa 2</b> pilih soal!</button>
+      </div>
+    </div>
+    <div class="quiz-board rise d1" id="qBoard"></div>
+    <div class="qpanels rise d2">
+      <div class="spanel s1">
+        <div class="shead"><span>💙 <b class="nslot" data-s="0">Siswa 1</b></span><span class="ldia" id="qD0">💎 0</span></div>
+        <div class="sbody" id="qp0" data-busy="0" data-tile=""></div>
+      </div>
+      <div class="spanel s2">
+        <div class="shead"><span>💜 <b class="nslot" data-s="1">Siswa 2</b></span><span class="ldia" id="qD1">💎 0</span></div>
+        <div class="sbody" id="qp1" data-busy="0" data-tile=""></div>
+      </div>
+    </div>
+    <div class="turnbar rise d3" id="turnMsg">👆 Klik dulu nama siswa yang akan memilih soal!</div>
+  </div>
+</section>
+<!-- ============ SLIDE 9: GAME PENDINGINAN & EXIT TICKET ============ -->
+<section class="slide" id="s8" data-name="Game & Exit">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>🎮 Pendinginan & 🎟️ Exit Ticket</h2>
+    </div>
+    <div class="tabs rise d1">
+      <button class="tab on" id="tabCool">❄️ Game Pendinginan</button>
+      <button class="tab" id="tabExit">🎟️ Exit Ticket — +2 💎 / soal</button>
+    </div>
+    <div class="pane rise d2" id="paneCool">
+      <div class="coolbox card">
+        <div class="crow"><span class="rnd" id="coolNum">Ronde 1/5</span>
+          <span class="mut">Santai! Tidak ada diamond di game ini — hanya keceriaan 😄</span></div>
+        <div class="egrid coolgrid" id="coolGrid"></div>
+        <div class="coolq" id="coolQ"></div>
+        <div class="coolopts" id="coolOpts"></div>
+        <div class="outbox" id="coolMsg">Diskusikan dengan teman sebangkumu, lalu pilih jawabannya!</div>
+        <button class="btn btn-green hidden" id="coolNext">Ronde Berikutnya ➜</button>
+      </div>
+    </div>
+    <div class="pane hidden rise d2" id="paneExit">
+      <p class="mut etn">🎟️ Tunjukkan kemampuanmu hari ini! Ada <b>3 soal singkat</b>. Setiap jawaban benar bernilai
+        <b>+2 💎</b>. <b class="g" style="color:var(--s1)">Siswa 1 menjawab di baris biru</b>,
+        <b style="color:var(--s2)">Siswa 2 di baris ungu</b>.</p>
+      <div class="exit-list" id="exitList"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 10: KESIMPULAN ============ -->
+<section class="slide" id="s9" data-name="Kesimpulan">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>📌 Kesimpulan — Ingat 4 Rahasia Ini!</h2>
+      <p class="sub">Klik setiap kartu untuk membuka rahasianya! 🔓</p>
+    </div>
+    <div class="flip-grid rise d1">
+      <div class="flip"><div class="fin">
+        <div class="fface front"><b>➗ Kata "per"</b><span class="mini">klik aku! 👆</span></div>
+        <div class="fface back"><b>"per" = dibagi</b><p>{1/2} dibaca "satu per dua" artinya 1 : 2. Kata "per" pada
+          pecahan sama dengan operasi pembagian.</p></div>
+      </div></div>
+      <div class="flip"><div class="fin">
+        <div class="fface front"><b>✖️ Cara Mengalikan</b><span class="mini">klik aku! 👆</span></div>
+        <div class="fface back"><b>Aturan perkalian</b><p>a/b × c = (a × b) : c. Pembilang dikali, penyebut tetap,
+          lalu bagi. Contoh: {2/3} × 6 = {12/3} = 4.</p></div>
+      </div></div>
+      <div class="flip"><div class="fin">
+        <div class="fface front"><b>📝 Kata "dari"</b><span class="mini">klik aku! 👆</span></div>
+        <div class="fface back"><b>"dari" = dikali</b><p>Jika ada kata "dari" atau "bagian dari" di soal cerita,
+          artinya dikali. Contoh: {1/2} dari 8 = {1/2} × 8 = 4.</p></div>
+      </div></div>
+      <div class="flip"><div class="fin">
+        <div class="fface front"><b>⚡ Trik Cepat</b><span class="mini">klik aku! 👆</span></div>
+        <div class="fface back"><b>Bagi dulu, baru kali</b><p>14 × {3/7} → 14 : 7 = 2 → 2 × 3 = 6.
+          Bagi bilangan cacah dengan penyebut, lalu kalikan pembilang.</p></div>
+      </div></div>
+    </div>
+    <div class="outbox rise d2">🌟 <b>Banyaknya benda</b> dari a/b × c bisa dicari dengan
+      <b>(a × b) : c</b> atau <b>b : c × a</b>. Dan ingat selalu: kata <b>"dari"</b> artinya <b>dikali</b>! ✖️💎</div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 11: REFLEKSI ============ -->
+<section class="slide" id="s10" data-name="Refleksi">
+  <div class="wrap">
+    <div class="slideh rise">
+      <h2>🪞 Refleksi — Ceritakan Perasaanmu!</h2>
+      <p class="sub">Tidak ada jawaban salah di sini. Ceritakan dengan jujur ya! 💚</p>
+    </div>
+    <div class="two-col">
+      <div class="card rise d1">
+        <h3>😄 Bagaimana perasaanmu hari ini?</h3>
+        <div class="emorow"><b class="nslot" data-s="0">Siswa 1</b>
+          <div class="emos" data-s="0"></div>
+        </div>
+        <div class="emorow"><b class="nslot" data-s="1">Siswa 2</b>
+          <div class="emos" data-s="1"></div>
+        </div>
+        <div class="outbox" id="emoMsg">Pilih emoji yang paling menggambarkan perasaanmu hari ini! 😊</div>
+        <div class="diam-note outbox ok" id="reflDia"></div>
+      </div>
+      <div class="card rise d2">
+        <h3>✍️ Ayo Ceritakan (tuliskan atau sampaikan lisan)</h3>
+        <label>💡 Hari ini aku belajar…</label>
+        <textarea id="refA" rows="2" placeholder="Contoh: kata 'per' artinya dibagi dan kata 'dari' artinya dikali…"></textarea>
+        <label>🤯 Hal yang masih membingungkan bagiku…</label>
+        <textarea id="refB" rows="2" placeholder="Contoh: menghitung 3/4 × 8 dengan trik cepat…"></textarea>
+        <label>⭐ Hal seru yang tidak akan ku lupakan…</label>
+        <textarea id="refC" rows="2" placeholder="Contoh: mengumpulkan diamond bersama temanku! 💎"></textarea>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ SLIDE 12: PENUTUP ============ -->
+<section class="slide s-cover" id="s11" data-name="Penutup">
+  <div class="rain" id="rain1"></div>
+  <div class="wrap cover">
+    <h1 class="rise">Terima Kasih! 🌟</h1>
+    <p class="cover-sub rise d1"><b>Thank you for today!</b> Sampai jumpa di petualangan matematika berikutnya 👋</p>
+    <div class="podium rise d2">
+      <div class="pcard p1" id="pod0">
+        <div class="pc-head">💙 <b class="nslot" data-s="0">Siswa 1</b> <span class="crown hidden">👑</span></div>
+        <div class="pc-dia" id="podD0">💎 0</div>
+        <div class="pc-sub" id="podS0">Latihan 0 • Kuis 0 • Exit 0</div>
+      </div>
+      <div class="pcard p2" id="pod1">
+        <div class="pc-head">💜 <b class="nslot" data-s="1">Siswa 2</b> <span class="crown hidden">👑</span></div>
+        <div class="pc-dia" id="podD1">💎 0</div>
+        <div class="pc-sub" id="podS1">Latihan 0 • Kuis 0 • Exit 0</div>
+      </div>
+    </div>
+    <div class="outbox rise d3" id="winMsg"></div>
+    <div class="btnrow rise d4" style="justify-content:center">
+      <button class="btn" id="btnParty">🎉 Meriahkan!</button>
+      <button class="btn btn-ghost" id="btnReset">🔁 Ulangi Petualangan</button>
+    </div>
+  </div>
+</section>
+</main>
+
+<nav id="nav">
+  <button class="navb" id="btnPrev" aria-label="Slide sebelumnya">‹</button>
+  <div id="dots"></div>
+  <span id="slCount">1/12</span>
+  <button class="navb" id="btnNext" aria-label="Slide berikutnya">›</button>
+</nav>
+
+<script>
+"use strict";
+/* ================= DATA ================= */
+const QUIZ=[
+{lvl:'mudah',q:'Hasil dari {1/2} × 6 adalah …',o:['2','3','4','6'],c:1,p:'{1/2} × 6 = {6/2} = 6 : 2 = <b>3</b>'},
+{lvl:'mudah',q:'Hasil dari {1/3} × 9 adalah …',o:['2','3','6','9'],c:1,p:'{1/3} × 9 = {9/3} = 9 : 3 = <b>3</b>'},
+{lvl:'mudah',q:'Hasil dari {1/4} × 12 adalah …',o:['2','3','4','6'],c:1,p:'{1/4} × 12 = {12/4} = 12 : 4 = <b>3</b>'},
+{lvl:'mudah',q:'Hasil dari {2/3} × 6 adalah …',o:['2','3','4','5'],c:2,p:'{2/3} × 6 = {12/3} = 12 : 3 = <b>4</b>'},
+{lvl:'mudah',q:'Hasil dari {3/4} × 8 adalah …',o:['4','5','6','7'],c:2,p:'{3/4} × 8 = {24/4} = 24 : 4 = <b>6</b>'},
+{lvl:'mudah',q:'Hasil dari {2/5} × 10 adalah …',o:['2','4','5','8'],c:1,p:'{2/5} × 10 = {20/5} = 20 : 5 = <b>4</b>'},
+{lvl:'mudah',q:'Hasil dari 15 × {1/5} adalah …',o:['3','5','10','15'],c:0,p:'15 × {1/5} = {15/5} = 15 : 5 = <b>3</b>'},
+{lvl:'mudah',q:'Hasil dari 14 × {3/7} adalah …',o:['3','6','7','9'],c:1,p:'Trik cepat: 14 : 7 = 2, lalu 2 × 3 = <b>6</b>'},
+{lvl:'mudah',q:'Hasil dari {5/6} × 12 adalah …',o:['6','8','10','12'],c:2,p:'{5/6} × 12 = {60/6} = 60 : 6 = <b>10</b>'},
+{lvl:'mudah',q:'Hasil dari 20 × {3/10} adalah …',o:['3','6','10','12'],c:1,p:'Trik cepat: 20 : 10 = 2, lalu 2 × 3 = <b>6</b>'},
+{lvl:'sedang',q:'Ibu membeli <b>8 buah apel</b>. Sebanyak {1/2} bagian dari apel tersebut diberikan kepada Nenek. Berapa buah apel yang diterima Nenek?',o:['2 buah','4 buah','6 buah','8 buah'],c:1,p:'"dari" artinya dikali: {1/2} × 8 = {8/2} = 8 : 2 = <b>4 buah</b>'},
+{lvl:'sedang',q:'Budi memiliki <b>12 butir kelereng</b>. Ia memberikan {1/3} bagian kelerengnya kepada adiknya. Berapa butir kelereng yang diberikan?',o:['3 butir','4 butir','6 butir','9 butir'],c:1,p:'{1/3} × 12 = {12/3} = 12 : 3 = <b>4 butir</b>'},
+{lvl:'sedang',q:'Di dalam keranjang terdapat <b>15 buah jeruk</b>. Sebanyak {2/5} bagian dari jeruk tersebut sudah matang. Berapa jeruk yang sudah matang?',o:['3 buah','5 buah','6 buah','10 buah'],c:2,p:'{2/5} × 15 = {30/5} = 30 : 5 = <b>6 buah</b>'},
+{lvl:'sedang',q:'Siti mempunyai pita sepanjang <b>10 meter</b>. Pita tersebut digunakan {1/5} bagian untuk menghias kado. Berapa meter pita yang digunakan?',o:['1 meter','2 meter','4 meter','5 meter'],c:1,p:'{1/5} × 10 = {10/5} = 10 : 5 = <b>2 meter</b>'},
+{lvl:'sedang',q:'Pak Tani memanen <b>20 ikat bayam</b>. Sebanyak {3/4} bagian dari bayam tersebut dijual ke pasar. Berapa ikat bayam yang dijual?',o:['10 ikat','12 ikat','15 ikat','16 ikat'],c:2,p:'{3/4} × 20 = {60/4} = 60 : 4 = <b>15 ikat</b>'},
+{lvl:'sedang',q:'Setiap hari Lani minum {1/4} liter susu. Berapa liter susu yang diminum Lani selama <b>8 hari</b>?',o:['1 liter','2 liter','3 liter','4 liter'],c:1,p:'8 × {1/4} = {8/4} = 8 : 4 = <b>2 liter</b>'},
+{lvl:'sedang',q:'Ibu membuat <b>6 loyang kue bolu</b>. Setiap loyang membutuhkan {1/2} kg tepung terigu. Berapa kg total tepung yang dibutuhkan?',o:['2 kg','3 kg','4 kg','6 kg'],c:1,p:'6 × {1/2} = {6/2} = 6 : 2 = <b>3 kg</b>'},
+{lvl:'sedang',q:'Di kelas 3 terdapat <b>24 siswa</b>. Sebanyak {1/6} bagian dari siswa tersebut mengikuti ekstrakurikuler melukis. Berapa banyak siswa?',o:['3 siswa','4 siswa','6 siswa','8 siswa'],c:1,p:'{1/6} × 24 = {24/6} = 24 : 6 = <b>4 siswa</b>'},
+{lvl:'sedang',q:'Edo memiliki <b>18 koleksi stiker</b>. Sebanyak {2/3} bagian dari stikernya bergambar hewan. Berapa stiker yang bergambar hewan?',o:['6 stiker','9 stiker','12 stiker','15 stiker'],c:2,p:'{2/3} × 18 = {36/3} = 36 : 3 = <b>12 stiker</b>'},
+{lvl:'sedang',q:'Ayah membeli <b>16 potong tahu</b>. Sebanyak {3/8} bagian dari tahu tersebut digoreng oleh Ibu. Berapa potong tahu yang digoreng?',o:['4 potong','6 potong','8 potong','10 potong'],c:1,p:'{3/8} × 16 = {48/8} = 48 : 8 = <b>6 potong</b>'},
+{lvl:'sulit',q:'Rina memiliki <b>20 tangkai bunga mawar</b>. Sebanyak {2/5} bagian berwarna merah dan sisanya berwarna putih. Berapa tangkai mawar yang berwarna putih?',o:['8 tangkai','10 tangkai','12 tangkai','15 tangkai'],c:2,p:'Mawar merah = {2/5} × 20 = 8 tangkai. Mawar putih = 20 − 8 = <b>12 tangkai</b>'},
+{lvl:'sulit',q:'Ayah membawa <b>18 buah mangga</b>. Sebanyak {1/3} bagian diberikan kepada tetangga, lalu 2 buah dimakan Ayah. Berapa sisa mangga Ayah sekarang?',o:['6 buah','8 buah','10 buah','12 buah'],c:2,p:'Tetangga = {1/3} × 18 = 6 buah. Sisa = 18 − 6 − 2 = <b>10 buah</b>'},
+{lvl:'sulit',q:'Andi memiliki <b>24 butir kelereng</b>, Toni memiliki <b>15 butir</b>. Andi mengambil {1/4} bagian kelerengnya dan Toni mengambil {1/3} bagian kelerengnya untuk digabungkan. Berapa jumlah kelereng gabungan mereka?',o:['9 butir','10 butir','11 butir','12 butir'],c:2,p:'Andi = {1/4} × 24 = 6 butir. Toni = {1/3} × 15 = 5 butir. Gabungan = 6 + 5 = <b>11 butir</b>'},
+{lvl:'sulit',q:'Ibu membeli <b>30 butir telur</b>. Sebanyak {1/5} bagian untuk membuat kue dan {1/3} bagian untuk lauk makan siang. Berapa butir telur yang belum dimasak?',o:['12 butir','14 butir','15 butir','16 butir'],c:1,p:'Kue = {1/5} × 30 = 6. Lauk = {1/3} × 30 = 10. Sisa = 30 − (6 + 10) = <b>14 butir</b>'},
+{lvl:'sulit',q:'Toko buku memiliki persediaan <b>40 buku cerita</b>. Hari Sabtu terjual {1/4} bagian. Hari Minggu terjual {2/5} bagian dari total awal. Berapa selisih buku terjual hari Minggu dan hari Sabtu?',o:['4 buku','6 buku','8 buku','10 buku'],c:1,p:'Sabtu = {1/4} × 40 = 10 buku. Minggu = {2/5} × 40 = 16 buku. Selisih = 16 − 10 = <b>6 buku</b>'},
+{lvl:'sulit',q:'Kakak mempunyai tabungan <b>50 keping uang logam</b>. Ia memakai {2/5} bagian untuk membeli buku tulis dan {1/10} bagian untuk pensil. Berapa keping uang yang tersisa?',o:['20 keping','25 keping','30 keping','35 keping'],c:1,p:'Buku = {2/5} × 50 = 20. Pensil = {1/10} × 50 = 5. Sisa = 50 − (20 + 5) = <b>25 keping</b>'},
+{lvl:'sulit',q:'Untuk membuat 1 gelas jus mangga dibutuhkan {1/3} kg mangga. Ibu ingin membuat <b>9 gelas</b> jus, tetapi baru memiliki 1 kg mangga. Berapa kg mangga lagi yang harus dibeli?',o:['1 kg','2 kg','3 kg','4 kg'],c:1,p:'Kebutuhan = 9 × {1/3} = 3 kg. Harus dibeli lagi = 3 − 1 = <b>2 kg</b>'},
+{lvl:'sulit',q:'Di sebuah peternakan terdapat <b>36 ekor ayam</b>. Sebanyak {1/4} bagian adalah ayam jantan dan sisanya betina. Berapa selisih jumlah ayam betina dan ayam jantan?',o:['9 ekor','18 ekor','24 ekor','27 ekor'],c:1,p:'Jantan = {1/4} × 36 = 9 ekor. Betina = 36 − 9 = 27 ekor. Selisih = 27 − 9 = <b>18 ekor</b>'},
+{lvl:'sulit',q:'Dinda membaca buku setebal <b>32 halaman</b>. Hari pertama ia membaca {1/4} bagian, hari kedua {3/8} bagian dari total. Berapa halaman lagi agar buku selesai?',o:['10 halaman','12 halaman','14 halaman','16 halaman'],c:1,p:'Hari 1 = {1/4} × 32 = 8. Hari 2 = {3/8} × 32 = 12. Sisa = 32 − (8 + 12) = <b>12 halaman</b>'},
+{lvl:'sulit',q:'Pak Ahmad memetik <b>45 buah kelapa</b>. Sebanyak {2/9} bagian diberikan kepada Pak RT dan {1/5} bagian dijual ke warung. Sisanya dibawa pulang. Berapa yang dibawa pulang?',o:['19 buah','24 buah','26 buah','28 buah'],c:2,p:'Pak RT = {2/9} × 45 = 10. Warung = {1/5} × 45 = 9. Dibawa pulang = 45 − (10 + 9) = <b>26 buah</b>'}
+];
+
+const DPROBS=[
+{e:'🍎',n:8,a:1,b:2,r:4,txt:'apel untuk Nenek'},
+{e:'⭐',n:18,a:2,b:3,r:12,txt:'stiker bergambar hewan milik Edo'},
+{e:'🥬',n:20,a:3,b:4,r:15,txt:'ikat bayam yang dijual ke pasar'}
+];
+
+const STEPS=[{a:2,b:3,c:6},{a:3,b:4,c:8},{a:2,b:5,c:10},{a:5,b:6,c:12}];
+const DV=[{a:1,b:2,c:6,e:'🍎'},{a:1,b:3,c:9,e:'🍌'},{a:1,b:4,c:12,e:'🍪'}];
+const FRLIST=[[1,2],[1,3],[2,3],[1,4],[3,4],[1,5],[2,5],[3,5],[4,5],[1,6],[5,6],[1,8],[3,8],[5,8],[3,10],[7,10]];
+
+const COOL=[
+{v:'🍓',n:12,hl:6,q:'Ibu memberikan {1/2} bagian dari 12 stroberi ini kepada Dinda. Berapa banyak stroberi Dinda?',o:['4','6','8'],c:1},
+{v:'🎈',n:9,hl:3,q:'Dari 9 balon pesta, {1/3} bagian dipakai untuk menghias kelas. Berapa balon yang dipakai?',o:['3','4','6'],c:0},
+{v:'🍬',n:15,hl:9,q:'Ada 15 permen. Sebanyak {3/5} bagian dibagikan kepada teman-teman. Berapa permen yang dibagikan?',o:['6','9','12'],c:1},
+{v:'🚗',n:0,hl:0,q:'Mobil melaju 60 km <b>per</b> jam. Kata "per" sama artinya dengan …',o:['dibagi','dikali','ditambah'],c:0},
+{v:'⭐',n:20,hl:15,q:'Dari 20 bintang, {3/4} bagian berwarna emas. Berapa bintang yang berwarna emas?',o:['10','15','16'],c:1}
+];
+
+const EXIT=[
+{q:'Hasil dari {1/4} × 12 adalah …',o:['2','3','4','6'],c:1,p:'{1/4} × 12 = {12/4} = 12 : 4 = <b>3</b>'},
+{q:'Sebanyak {2/5} bagian dari 20 kue diberikan kepada tetangga. Berapa kue yang diberikan?',o:['4 buah','6 buah','8 buah','10 buah'],c:2,p:'Kata "dari" artinya dikali: {2/5} × 20 = {40/5} = 40 : 5 = <b>8 buah</b>'},
+{q:'Kata "per" pada pecahan memiliki arti yang sama dengan …',o:['dibagi','dikali','ditambah','dikurangi'],c:0,p:'{1/2} dibaca "satu per dua" artinya 1 : 2. Jadi "per" = <b>dibagi</b> ➗'}
+];
+
+/* ================= HELPER ================= */
+const $=(s,el=document)=>el.querySelector(s);
+const $$=(s,el=document)=>[...el.querySelectorAll(s)];
+function fracHTML(a,b){return '<span class="fr"><span class="fr-n">'+a+'</span><span class="fr-d">'+b+'</span></span>';}
+const tok=s=>s.replace(/\{(\d+)\/(\d+)\}/g,(m,a,b)=>fracHTML(+a,+b));
+function shuffle(arr){for(let i=arr.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[arr[i],arr[j]]=[arr[j],arr[i]];}return arr;}
+
+/* ================= STATE ================= */
+const S={i:0,names:['Siswa 1','Siswa 2'],dia:[0,0],stage:{lat:[0,0],quiz:[0,0],exit:[0,0]},latDone:[0,0],turn:-1,cool:0,coolSolved:false,sound:true};
+let slides=[],SLN=0;
+let LATQ=[[],[]],latAns=[[],[]];
+let qState=[];
+
+/* ================= SUARA ================= */
+let AC=null;
+function ac(){if(!AC){try{AC=new (window.AudioContext||window.webkitAudioContext)();}catch(e){}}
+  if(AC&&AC.state==='suspended')AC.resume();return AC;}
+function tone(f,d,t,v,when){t=t||'sine';v=(v===undefined?0.15:v);when=when||0;
+  const c=ac();if(!c||!S.sound)return;
+  const o=c.createOscillator(),g=c.createGain();o.type=t;o.frequency.value=f;
+  g.gain.setValueAtTime(v,c.currentTime+when);
+  g.gain.exponentialRampToValueAtTime(0.001,c.currentTime+when+d);
+  o.connect(g);g.connect(c.destination);
+  o.start(c.currentTime+when);o.stop(c.currentTime+when+d+0.05);}
+const sClick=()=>tone(620,0.06,'triangle',0.08);
+const sOk=()=>{tone(523,0.12,'sine',0.16);tone(659,0.12,'sine',0.16,0.1);tone(784,0.2,'sine',0.16,0.2);};
+const sNo=()=>{tone(220,0.18,'sawtooth',0.09);tone(165,0.25,'sawtooth',0.09,0.12);};
+const sDia=()=>{tone(1046,0.1,'triangle',0.14);tone(1568,0.18,'triangle',0.14,0.09);};
+const sWin=()=>{[523,659,784,1046,784,1046].forEach((f,i)=>tone(f,0.16,'triangle',0.15,i*0.13));};
+
+/* ================= EFEK VISUAL ================= */
+const CCOLS=['#FF6FA5','#FFC93C','#38C6E8','#9B5DE5','#22C55E','#FF9F43'];
+function confetti(x,y,n){n=n||26;
+  for(let k=0;k<n;k++){const p=document.createElement('i');
+    p.style.left=x+'px';p.style.top=y+'px';
+    p.style.background=CCOLS[k%CCOLS.length];
+    p.style.setProperty('--dx',(Math.random()*260-130)+'px');
+    p.style.setProperty('--rz',(Math.random()*720-360)+'deg');
+    p.style.animationDuration=(0.85+Math.random()*0.85)+'s';
+    p.style.animationDelay=(Math.random()*0.12)+'s';
+    $('#confettiLayer').appendChild(p);
+    setTimeout(()=>p.remove(),2000);}}
+function burstAt(el,n){const r=el.getBoundingClientRect();
+  confetti(r.left+r.width/2,r.top+r.height/2,n||28);}
+let tT=null;
+function toast(m){const t=$('#toast');t.innerHTML=m;t.classList.add('show');
+  clearTimeout(tT);tT=setTimeout(()=>t.classList.remove('show'),2300);}
+function rain(id,n){n=n||12;const R=$(id);if(!R)return;
+  for(let k=0;k<n;k++){const s=document.createElement('span');
+    s.textContent='💎';s.style.left=(Math.random()*100)+'%';
+    s.style.animationDuration=(6+Math.random()*7)+'s';
+    s.style.animationDelay=(-Math.random()*10)+'s';
+    s.style.fontSize=(15+Math.random()*22)+'px';R.appendChild(s);}}
+
+/* ================= DIAMOND & NAMA ================= */
+function setNames(n1,n2){S.names=[n1,n2];
+  $('#hName1').textContent=n1;$('#hName2').textContent=n2;
+  $$('.nslot').forEach(el=>el.textContent=S.names[+el.dataset.s]);}
+function floatDia(si,amt){const chip=$(si===0?'#chip1':'#chip2');const r=chip.getBoundingClientRect();
+  const f=document.createElement('b');f.className='fdia '+(amt>0?'up':'down');
+  f.textContent=(amt>0?'+':'−')+Math.abs(amt)+' 💎';
+  f.style.left=(r.left+r.width/2-30)+'px';f.style.top=(r.bottom+2)+'px';
+  document.body.appendChild(f);setTimeout(()=>f.remove(),1100);}
+function addD(si,amt,src){if(amt===0){floatDia(si,0);return;}
+  S.dia[si]+=amt;S.stage[src][si]+=amt;
+  $(si===0?'#hD1':'#hD2').textContent=S.dia[si];
+  const chip=$(si===0?'#chip1':'#chip2');
+  chip.classList.remove('pop');void chip.offsetWidth;chip.classList.add('pop');
+  floatDia(si,amt);refreshSideCounts();if(amt>0)sDia();}
+function refreshSideCounts(){for(let i=0;i<2;i++){
+    const le=$('#latD'+i);if(le)le.textContent='💎 '+S.stage.lat[i];
+    const qe=$('#qD'+i);if(qe)qe.textContent='💎 '+S.stage.quiz[i];}
+  const rd=$('#reflDia');
+  if(rd)rd.innerHTML='💎 Total diamond sementara — 💙 '+S.names[0]+': <b>'+S.dia[0]+'</b> &nbsp;•&nbsp; 💜 '+S.names[1]+': <b>'+S.dia[1]+'</b>';}
+
+/* ================= NAVIGASI ================= */
+function goTo(i){if(i<0||i>=SLN)return;
+  slides[S.i].classList.remove('active','play');
+  S.i=i;const s=slides[i];s.classList.add('active');
+  void s.offsetWidth;s.classList.add('play');
+  $$('#dots .dot').forEach((d,k)=>d.classList.toggle('on',k===i));
+  $('#slCount').textContent=(i+1)+'/'+SLN;
+  $('#btnPrev').disabled=(i===0);$('#btnNext').disabled=(i===SLN-1);
+  if(i===11)refreshFinal();}
+function buildDots(){const d=$('#dots');
+  for(let k=0;k<SLN;k++){const b=document.createElement('button');
+    b.className='dot'+(k===0?' on':'');b.title=slides[k].dataset.name||('Slide '+(k+1));
+    b.onclick=()=>{sClick();goTo(k);};d.appendChild(b);}}
+function attachNav(){
+  $('#btnPrev').onclick=()=>{sClick();goTo(S.i-1);};
+  $('#btnNext').onclick=()=>{sClick();goTo(S.i+1);};
+  document.addEventListener('keydown',e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+    if(e.key==='ArrowRight')goTo(S.i+1);
+    if(e.key==='ArrowLeft')goTo(S.i-1);});
+  let tx=null;
+  document.addEventListener('touchstart',e=>{
+    if(e.target.closest('.lat-list,.sbody,.exit-list,textarea,input,.mis-grid,.dwrap')){tx=null;return;}
+    tx=e.touches[0].clientX;},{passive:true});
+  document.addEventListener('touchend',e=>{if(tx===null)return;
+    const dx=e.changedTouches[0].clientX-tx;tx=null;
+    if(Math.abs(dx)>70)goTo(S.i+(dx<0?1:-1));},{passive:true});
+  $('#btnSnd').onclick=()=>{S.sound=!S.sound;
+    $('#btnSnd').textContent=S.sound?'🔊':'🔇';
+    $('#btnSnd').title=S.sound?'Suara: aktif':'Suara: mati';
+    if(S.sound)sClick();};
+  $('#btnFs').onclick=()=>{if(!document.fullscreenElement){
+      if(document.documentElement.requestFullscreen)document.documentElement.requestFullscreen();}
+    else if(document.exitFullscreen)document.exitFullscreen();};}
+
+/* ================= APERSEPSI ================= */
+function initPizza(){const bx=$('#pizzaBox');
+  bx.innerHTML=Array.from({length:8},()=>'<span class="esl">🍕</span>').join('');}
+function attachAper(){$$('#s1 [data-pf]').forEach(b=>b.onclick=()=>{
+  const f=+b.dataset.pf;const sl=$$('#pizzaBox .esl');
+  sl.forEach(e=>e.classList.remove('lit'));
+  if(f){const n=8/f;
+    for(let i=0;i<n;i++)sl[i].classList.add('lit');
+    $('#aperOut').innerHTML=fracHTML(1,f)+' × 8 = 8 : '+f+' = <b>'+n+' potong</b> '+(f===2?'untuk Adik 😋':'untuk Kakak 😋');
+    $('#aperOut').className='outbox ok';sOk();burstAt($('#aperOut'),14);}
+  else{$('#aperOut').textContent='Klik tombol di atas untuk membagi pizza! 👆';$('#aperOut').className='outbox';}});
+  $$('#s1 .pmt').forEach(p=>p.onclick=()=>{p.classList.toggle('open');sClick();});}
+
+/* ================= TUJUAN ================= */
+function attachMis(){$$('#s2 .mchk').forEach(c=>c.onclick=()=>{
+  c.classList.toggle('done');
+  const n=$$('#s2 .mchk.done').length;
+  $('#misOut').innerHTML='Misi selesai: <b>'+n+'</b> dari 4 '+(n===4?'— LUAR BIASA! Kamu siap bertualang! 🎉💎':'💪');
+  if(c.classList.contains('done')){sOk();burstAt(c,14);}});}
+
+/* ================= MATERI 1 ================= */
+let mA=1,mB=2;
+function drawMach(){$('#mA').textContent=mA;$('#mB').textContent=mB;
+  $('#mFrac').innerHTML=fracHTML(mA,mB)+'<span class="feq">= '+mA+' : '+mB+'</span>';
+  $('#mEq').innerHTML='<b>'+mA+' per '+mB+'</b> sama dengan <b>'+mA+' : '+mB+'</b> — artinya <b>'+mA+
+    ' bagian</b> dari <b>'+mB+' bagian</b> yang sama besar.';
+  $('#mBar').innerHTML=Array.from({length:mB},(_,i)=>'<span class="seg '+(i<mA?'on':'')+'"></span>').join('');}
+function attachMach(){$$('#s3 [data-m]').forEach(b=>b.onclick=()=>{sClick();
+  const k=b.dataset.m;
+  if(k==='a-')mA=Math.max(1,mA-1);
+  if(k==='a+')mA=Math.min(mB-1,mA+1);
+  if(k==='b-')mB=Math.max(2,mB-1);
+  if(k==='b+')mB=Math.min(6,mB+1);
+  if(mA>=mB)mA=mB-1;drawMach();});}
+let dvI=0,dvCut=false;
+function drawDV(){const d=DV[dvI];const st=$('#dvStage');
+  if(!dvCut){st.innerHTML='<div class="egrid">'+Array.from({length:d.c},()=>'<span class="esl">'+d.e+'</span>').join('')+'</div>';
+    $('#dvOut').textContent='Tekan "Bagi Kelompok!" untuk membagi benda.';$('#dvOut').className='outbox';}
+  else{const per=d.c/d.b;let g='';
+    for(let k=0;k<d.b;k++){g+='<div class="kgroup '+(k<d.a?'lit':'')+'">'+Array.from({length:per},()=>'<span class="esl sm">'+d.e+'</span>').join('')+'</div>';}
+    st.innerHTML='<div class="kwrap">'+g+'</div>';
+    $('#dvOut').innerHTML=fracHTML(d.a,d.b)+' × '+d.c+' = '+d.c+' : '+d.b+' = <b>'+per+' '+d.e+'</b> — satu kelompok dari '+d.b+' kelompok yang sama banyak!'+(d.a>1?' Lalu '+per+' × '+d.a+' = <b>'+(per*d.a)+'</b>.':'');
+    $('#dvOut').className='outbox ok';}}
+function attachDV(){$$('#dvPresets [data-dv]').forEach(b=>b.onclick=()=>{sClick();
+  dvI=+b.dataset.dv;dvCut=false;drawDV();});
+  $('#dvBtn').onclick=()=>{if(!dvCut){dvCut=true;sOk();burstAt($('#dvBtn'),16);}else sClick();drawDV();};}
+
+/* ================= MATERI 2 ================= */
+let pp=0,ps=0;
+function stBuild(){ps=0;$('#stSteps').innerHTML='';}
+function stShow(){const p=STEPS[pp];const n1=p.a*p.c;const r=n1/p.b;
+  const arr=[
+    '📝 Tulis soalnya: '+fracHTML(p.a,p.b)+' × '+p.c,
+    '✖️ Langkah 1 — kalikan pembilang dengan '+p.c+': '+fracHTML(n1,p.b)+' (penyebut tetap '+p.b+')',
+    '➗ Langkah 2 — bagi: '+n1+' : '+p.b+' = <b>'+r+'</b>',
+    '✅ Jadi, '+fracHTML(p.a,p.b)+' × '+p.c+' = <b>'+r+'</b> &nbsp;<span class="mut">Cek trik cepat: '+p.c+' : '+p.b+' = '+(p.c/p.b)+', lalu '+(p.c/p.b)+' × '+p.a+' = '+r+'</span>'];
+  if(ps<4){const li=document.createElement('div');li.className='stepcard';
+    li.innerHTML=arr[ps];$('#stSteps').appendChild(li);
+    tone(480+ps*130,0.07,'triangle',0.08);ps++;
+    if(ps===4){sOk();}}}
+function attachSteps(){
+  $$('#ppBtns .pp').forEach(b=>b.onclick=()=>{sClick();
+    $$('#ppBtns .pp').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');pp=+b.dataset.p;stBuild();});
+  $('#stNext').onclick=()=>stShow();
+  $('#stReset').onclick=()=>{sClick();stBuild();};}
+
+/* ================= MATERI 3 ================= */
+function attachDari(){$$('#s5 .dari').forEach((w,i)=>{w.onclick=()=>{
+  if(w.classList.contains('xd'))return;
+  w.textContent='✖️';w.classList.add('xd');sOk();
+  const d=DPROBS[i];
+  const g=$('#dg'+i);g.classList.add('show');
+  g.innerHTML=Array.from({length:d.n},(_,k)=>'<span class="esl sm '+(k<d.r?'lit':'')+'">'+d.e+'</span>').join('');
+  const sol=$('#ds'+i);sol.classList.add('show');
+  sol.innerHTML='Karena ada kata <b>"dari"</b>, berarti <b>dikali</b>! '+fracHTML(d.a,d.b)+' × '+d.n+
+    ' = '+fracHTML(d.a*d.n,d.b)+' = '+(d.a*d.n)+' : '+d.b+' = <b>'+d.r+'</b> '+d.e+
+    ' — yaitu '+d.txt+'.';burstAt(w,16);};});}
+
+/* ================= LATIHAN (15 SOAL / SISWA) ================= */
+function mkOpts(r){const set=new Set([r]);let guard=0;
+  while(set.size<4&&guard<80){guard++;
+    let cand;
+    if(guard<=40){const pool=[r+1,r-1,r+2,r-2,r*2,(r%2===0?r/2:null)]
+      .filter(x=>x&&x>0&&!set.has(x));
+      cand=pool.length?pool[Math.floor(Math.random()*pool.length)]:(r+set.size+guard);}
+    else cand=r+set.size+guard;
+    if(cand>0&&!set.has(cand))set.add(cand);}
+  return shuffle([...set].map(String));}
+function mkLat(){const used=new Set();const qs=[];
+  let guard=0;
+  while(qs.length<30&&guard<900){guard++;
+    const pr=FRLIST[Math.floor(Math.random()*FRLIST.length)];
+    const a=pr[0],b=pr[1];
+    const mults=[];for(let c=2*b;c<=20;c+=b)mults.push(c);
+    const c=mults[Math.floor(Math.random()*mults.length)];
+    const key=a+'/'+b+'x'+c;if(used.has(key))continue;used.add(key);
+    const rev=Math.random()<0.3;const r=a*c/b;
+    const opts=mkOpts(r);
+    qs.push({a:a,b:b,c:c,rev:rev,r:r,opts:opts,ci:opts.indexOf(String(r))});}
+  return [qs.slice(0,15),qs.slice(15)];}
+function latPemb(q){const num=q.a*q.c;
+  const base=q.rev?(q.c+' × '+fracHTML(q.a,q.b)):(fracHTML(q.a,q.b)+' × '+q.c);
+  let s=base+' = '+fracHTML(num,q.b)+' = '+num+' : '+q.b+' = <b>'+q.r+'</b>';
+  if(q.a>1)s+=' &nbsp;atau trik cepat: '+q.c+' : '+q.b+' = '+(q.c/q.b)+', lalu '+(q.c/q.b)+' × '+q.a+' = <b>'+q.r+'</b>';
+  return s;}
+function renderLat(){LATQ=mkLat();
+  for(let si=0;si<2;si++){const box=$('#latList'+si);box.innerHTML='';
+    latAns[si]=Array(15).fill(-1);S.latDone[si]=0;
+    $('#latP'+si).textContent='0/15 selesai';
+    LATQ[si].forEach((q,qi)=>{
+      const card=document.createElement('div');card.className='qc';
+      const expr=q.rev?(q.c+' × '+fracHTML(q.a,q.b)):(fracHTML(q.a,q.b)+' × '+q.c);
+      card.innerHTML='<div class="qc-t"><span class="qno">Soal '+(qi+1)+'</span>'+expr+' = …</div>'+
+        '<div class="opts">'+q.opts.map((o,k)=>'<button class="opt" data-k="'+k+'"><i>'+'ABCD'[k]+'</i>'+o+'</button>').join('')+'</div>'+
+        '<button class="btn btn-sm btn-green chk" disabled>Periksa ✔</button>'+
+        '<div class="fbb" hidden></div>';
+      box.appendChild(card);});
+    attachLatCol(si);}}
+function attachLatCol(si){$$('#latList'+si+' .qc').forEach(card=>{
+  const chk=$('.chk',card);const qi=[...card.parentNode.children].indexOf(card);
+  const opts=$$('.opt',card);
+  opts.forEach(b=>b.onclick=()=>{if(card.dataset.done==='1')return;
+    opts.forEach(x=>x.classList.remove('sel'));b.classList.add('sel');
+    latAns[si][qi]=+b.dataset.k;chk.disabled=false;sClick();});
+  chk.onclick=()=>{if(card.dataset.done==='1'||latAns[si][qi]<0)return;
+    card.dataset.done='1';
+    const q=LATQ[si][qi];const k=latAns[si][qi];const ok=(k===q.ci);
+    opts.forEach((x,kk)=>{x.disabled=true;x.classList.remove('sel');
+      if(kk===q.ci)x.classList.add('correct');
+      else if(kk===k&&!ok)x.classList.add('wrong');
+      else x.classList.add('dim');});
+    chk.disabled=true;
+    const fb=$('.fbb',card);fb.hidden=false;
+    fb.innerHTML='<div class="fb '+(ok?'ok':'no')+'">'+(ok
+      ?'✅ <b>Benar!</b> Hebat '+S.names[si]+', kamu dapat <b>+1 💎</b>!'
+      :'❌ <b>Belum tepat.</b> Jawaban yang benar: '+'ABCD'[q.ci]+' • kamu kehilangan <b>1 💎</b>. Semangat, jangan menyerah!')+
+      '</div><div class="pemb"><b>📖 Pembahasan:</b> '+latPemb(q)+'</div>';
+    addD(si,ok?1:-1,'lat');
+    S.latDone[si]++;$('#latP'+si).textContent=S.latDone[si]+'/15 selesai';
+    if(ok){sOk();burstAt(chk,16);}else sNo();};});}
+
+/* ================= KUIS DIAMOND ================= */
+const LV={mudah:{c:'easy',v:1,l:'Mudah 🟩'},sedang:{c:'med',v:3,l:'Sedang 🟨'},sulit:{c:'hard',v:5,l:'Sulit 🟪'}};
+function renderBoard(){qState=QUIZ.map(()=>({openBy:-1,by:-1,ok:false}));
+  $('#qBoard').innerHTML=QUIZ.map((q,i)=>{const L=LV[q.lvl];
+    return '<button class="tile '+L.c+'" data-i="'+i+'"><span class="tn">'+(i+1)+'</span><span class="tv">+'+L.v+' 💎</span></button>';}).join('');
+  $$('#qBoard .tile').forEach(t=>t.onclick=()=>pickTile(+t.dataset.i));
+  markTiles();}
+function markTiles(){$$('#qBoard .tile').forEach((t,i)=>{const st=qState[i];
+  t.classList.toggle('open',st.openBy>=0&&st.by<0);
+  t.classList.toggle('done',st.by>=0);
+  t.classList.toggle('wrong',st.by>=0&&!st.ok);
+  t.classList.toggle('by0',st.by===0);
+  t.classList.toggle('by1',st.by===1);});}
+function setChooser(si){S.turn=si;updateChooserUI();sClick();}
+function updateChooserUI(){const m=$('#turnMsg');
+  if(!m)return;
+  const b0=$('#pickBtn0'),b1=$('#pickBtn1');
+  if(b0)b0.classList.toggle('on',S.turn===0);
+  if(b1)b1.classList.toggle('on',S.turn===1);
+  const p0=$('#qp0'),p1=$('#qp1');
+  if(p0)p0.classList.toggle('act',S.turn===0);
+  if(p1)p1.classList.toggle('act',S.turn===1);
+  if(S.turn<0){m.innerHTML='👆 Klik dulu <b>nama siswa</b> yang akan memilih soal!';}
+  else{m.innerHTML='👉 Sedang memilih: <span class="tchip t'+S.turn+'">'+(S.turn===0?'💙 ':'💜 ')+S.names[S.turn]+
+    '</span> — klik nomor soal di papan! 🎯';}}
+function renderIdle(si){const p=$('#qp'+si);
+  p.dataset.busy='0';p.dataset.tile='';
+  p.innerHTML='<div class="idle">🎯 <b>'+S.names[si]+'</b>, klik namamu lalu pilih nomor soal di papan!<br>'+
+    '<span class="mut">🟩 Mudah +1 💎 &nbsp;•&nbsp; 🟨 Sedang +3 💎 &nbsp;•&nbsp; 🟪 Sulit +5 💎</span></div>';}
+function releaseTile(si){const p=$('#qp'+si);
+  if(p.dataset.busy==='1'&&p.dataset.tile!==''){
+    const ti=+p.dataset.tile;
+    if(qState[ti]&&qState[ti].by<0)qState[ti].openBy=-1;}
+  p.dataset.busy='0';p.dataset.tile='';}
+function pickTile(i){const st=qState[i];
+  if(S.turn<0){toast('👆 Klik dulu nama siswa yang akan memilih soal!');sNo();return;}
+  const si=S.turn;const p=$('#qp'+si);
+  if(st.by>=0){toast('Soal nomor '+(i+1)+' sudah dikerjakan 😊');sNo();return;}
+  if(p.dataset.busy==='1'&&p.dataset.tile===String(i))return;
+  if(p.dataset.busy==='1'){toast(S.names[si]+', jawab dulu soalmu ya! 😉');sClick();return;}
+  if(st.openBy>=0&&st.openBy!==si){toast('Soal sedang dikerjakan '+S.names[st.openBy]+' 😉');return;}
+  releaseTile(si);
+  st.openBy=si;p.dataset.busy='1';p.dataset.tile=String(i);
+  openInPanel(si,i);markTiles();sClick();}
+function openInPanel(si,i){const q=QUIZ[i];const L=LV[q.lvl];const p=$('#qp'+si);
+  p.innerHTML='<div class="qmeta"><span class="badge b-'+L.c+'">'+L.l+'</span>'+
+    '<span class="qval">+'+L.v+' 💎</span><span class="qno2">Soal No. '+(i+1)+'</span></div>'+
+    '<div class="qq">'+tok(q.q)+'</div>'+
+    '<div class="opts">'+q.o.map((o,k)=>'<button class="opt" data-k="'+k+'"><i>'+'ABCD'[k]+'</i>'+o+'</button>').join('')+'</div>'+
+    '<div class="btnrow"><button class="btn btn-sm btn-green" id="qchk'+si+'" disabled>Periksa ✔</button>'+
+    '<button class="btn btn-sm btn-ghost" id="qrel'+si+'">🔄 Ganti Soal</button></div>'+
+    '<div class="fbb" hidden></div>';
+  let pick=-1;
+  const optBtns=$$('.opt',p);
+  optBtns.forEach(b=>b.onclick=()=>{if(p.dataset.busy!=='1')return;
+    optBtns.forEach(x=>x.classList.remove('sel'));
+    b.classList.add('sel');pick=+b.dataset.k;
+    $('#qchk'+si).disabled=false;sClick();});
+  $('#qrel'+si).onclick=()=>{setChooser(si);releaseTile(si);renderIdle(si);markTiles();};
+  $('#qchk'+si).onclick=()=>{if(pick<0||p.dataset.busy!=='1')return;
+    const st=qState[i];const ok=(pick===q.c);
+    st.by=si;st.ok=ok;st.openBy=-1;
+    p.dataset.busy='0';p.dataset.tile='';
+    optBtns.forEach((x,kk)=>{x.disabled=true;x.classList.remove('sel');
+      if(kk===q.c)x.classList.add('correct');
+      else if(kk===pick&&!ok)x.classList.add('wrong');
+      else x.classList.add('dim');});
+    const fb=$('.fbb',p);fb.hidden=false;
+    fb.innerHTML='<div class="fb '+(ok?'ok':'no')+'">'+(ok
+      ?'✅ <b>Benar!</b> '+S.names[si]+' mendapat <b>+'+L.v+' 💎</b>!'
+      :'❌ <b>Belum tepat.</b> Jawaban yang benar: '+'ABCD'[q.c]+' • +0 💎. Tetap semangat, '+S.names[si]+'!')+
+      '</div><div class="pemb"><b>📖 Pembahasan:</b> '+tok(q.p)+'</div>'+
+      '<div class="btnrow" style="margin-top:9px"><button class="btn btn-sm" id="qnew'+si+'">🎯 Pilih Soal Baru</button></div>';
+    $('#qnew'+si).onclick=()=>{setChooser(si);renderIdle(si);};
+    if(ok){addD(si,L.v,'quiz');burstAt($('#qchk'+si),24);sDia();}else sNo();
+    markTiles();refreshSideCounts();};}
+
+/* ================= EXIT TICKET ================= */
+let exDone=[[false,false],[false,false],[false,false]];
+function renderExit(){exDone=[[false,false],[false,false],[false,false]];
+  $('#exitList').innerHTML=EXIT.map((q,qi)=>
+    '<div class="qc"><div class="qc-t"><span class="qno">Soal '+(qi+1)+'</span>'+tok(q.q)+'</div>'+
+    '<div class="exrow s1"><span class="extag">💙 <b class="nslot" data-s="0">Siswa 1</b></span>'+
+    '<div class="opts">'+q.o.map((o,k)=>'<button class="opt" data-q="'+qi+'" data-si="0" data-k="'+k+'"><i>'+'ABCD'[k]+'</i>'+o+'</button>').join('')+'</div></div>'+
+    '<div class="exrow s2"><span class="extag">💜 <b class="nslot" data-s="1">Siswa 2</b></span>'+
+    '<div class="opts">'+q.o.map((o,k)=>'<button class="opt" data-q="'+qi+'" data-si="1" data-k="'+k+'"><i>'+'ABCD'[k]+'</i>'+o+'</button>').join('')+'</div></div>'+
+    '<div class="pemb" hidden id="ep'+qi+'"><b>📖 Pembahasan:</b> '+tok(q.p)+'</div></div>').join('');
+  $$('#exitList .opt').forEach(b=>b.onclick=()=>{
+    const qi=+b.dataset.q,si=+b.dataset.si,k=+b.dataset.k;
+    if(exDone[qi][si])return;
+    exDone[qi][si]=true;
+    const q=EXIT[qi];const ok=(k===q.c);
+    const row=b.closest('.exrow');
+    $$('.opt',row).forEach((x,kk)=>{x.disabled=true;
+      if(kk===q.c)x.classList.add('correct');
+      else if(kk===k&&!ok)x.classList.add('wrong');
+      else x.classList.add('dim');});
+    const tag=$('.extag',row);
+    tag.insertAdjacentHTML('beforeend','<span class="exfb '+(ok?'ok':'no')+'">'+(ok?'+2 💎':'+0 💎')+'</span>');
+    if(ok){addD(si,2,'exit');burstAt(b,12);sDia();}else sNo();
+    if(exDone[qi][0]&&exDone[qi][1])$('#ep'+qi).hidden=false;});}
+
+/* ================= GAME PENDINGINAN ================= */
+function renderCool(){const r=COOL[S.cool];
+  $('#coolNum').textContent='Ronde '+(S.cool+1)+'/5';
+  const g=$('#coolGrid');
+  if(r.n>0){g.style.display='flex';
+    g.innerHTML=Array.from({length:r.n},()=>'<span class="esl">'+r.v+'</span>').join('');}
+  else{g.style.display='none';g.innerHTML='';}
+  $('#coolQ').innerHTML=tok(r.q);
+  $('#coolOpts').innerHTML=r.o.map((o,k)=>'<button class="btn btn-sm btn-blue co" data-k="'+k+'">'+o+'</button>').join('');
+  const msg=$('#coolMsg');msg.innerHTML='Diskusikan dengan teman sebangkumu, lalu pilih jawabannya!';
+  msg.className='outbox';
+  $('#coolNext').classList.add('hidden');
+  $('#coolNext').textContent=(S.cool===4)?'🏁 Selesai — Lihat Hasil!':'Ronde Berikutnya ➜';
+  S.coolSolved=false;
+  $$('#coolOpts .co').forEach(b=>b.onclick=()=>{
+    if(S.coolSolved)return;
+    const ok=(+b.dataset.k===r.c);
+    if(ok){S.coolSolved=true;sOk();burstAt(b,20);
+      const sl=$$('#coolGrid .esl');
+      sl.forEach((e,i)=>{if(i<r.hl)setTimeout(()=>e.classList.add('lit'),i*40);});
+      msg.innerHTML='🎉 <b>Tepat sekali!</b> Jawabannya <b>'+r.o[r.c]+'</b>. '+
+        (S.cool===4?'Kamu menyelesaikan semua ronde! 🏆':'Ayo lanjut ke ronde berikutnya!');
+      msg.className='outbox ok';
+      $('#coolNext').classList.remove('hidden');}
+    else{sNo();b.classList.add('shake');setTimeout(()=>b.classList.remove('shake'),420);
+      msg.textContent='😅 Belum tepat, coba lagi ya! Hitung baik-baik…';
+      msg.className='outbox no';}});}
+function attachCool(){$('#coolNext').onclick=()=>{sClick();
+  if(S.cool<4){S.cool++;renderCool();}
+  else{$('#coolMsg').innerHTML='🎉 <b>KEEEEREN!</b> Kalian semua hebat! Sekarang buka tab <b>🎟️ Exit Ticket</b> untuk menunjukkan kemampuanmu!';
+    $('#coolMsg').className='outbox ok';
+    $('#coolNext').classList.add('hidden');sWin();}};}
+
+/* ================= TABS, FLIP, EMOJI, FINAL ================= */
+function attachTabs(){
+  $('#tabCool').onclick=()=>{sClick();$('#tabCool').classList.add('on');
+    $('#tabExit').classList.remove('on');
+    $('#paneCool').classList.remove('hidden');$('#paneExit').classList.add('hidden');};
+  $('#tabExit').onclick=()=>{sClick();$('#tabExit').classList.add('on');
+    $('#tabCool').classList.remove('on');
+    $('#paneExit').classList.remove('hidden');$('#paneCool').classList.add('hidden');};}
+function attachFlip(){$$('#s9 .flip').forEach(f=>f.onclick=()=>{f.classList.toggle('flipped');sClick();});}
+const EMOMSG=['Terima kasih sudah jujur! Ayo kita belajar bersama lagi, kamu pasti bisa! 💪',
+'Tidak apa-apa! Perlahan tapi pasti, kamu akan paham. 😊',
+'Terima kasih! Semangat terus ya! ✨',
+'Wah, senang mendengarnya! Kamu hebat! 🎉',
+'LUAR BIASA! Kamu bintang kelas hari ini! 🌟'];
+function buildEmos(){const EMO=['😖','😕','😐','😄','🤩'];
+  $$('#s10 .emos').forEach(box=>{
+    box.innerHTML=EMO.map((e,i)=>'<button class="emo" data-v="'+i+'">'+e+'</button>').join('');
+    $$('.emo',box).forEach(b=>b.onclick=()=>{
+      $$('.emo',box).forEach(x=>x.classList.remove('on'));
+      b.classList.add('on');sOk();
+      const si=+box.dataset.s;
+      $('#emoMsg').innerHTML='💙💜 <b>'+S.names[si]+'</b> memilih '+b.textContent+' — '+EMOMSG[+b.dataset.v];
+      $('#emoMsg').className='outbox ok';burstAt(b,10);});});}
+function refreshFinal(){for(let i=0;i<2;i++){
+    $('#podD'+i).textContent='💎 '+S.dia[i];
+    $('#podS'+i).textContent='Latihan '+S.stage.lat[i]+' • Kuis '+S.stage.quiz[i]+' • Exit '+S.stage.exit[i];}
+  const w=$('#winMsg');
+  const c0=$('#pod0 .crown'),c1=$('#pod1 .crown');
+  c0.classList.add('hidden');c1.classList.add('hidden');
+  if(S.dia[0]>S.dia[1]){c0.classList.remove('hidden');
+    w.innerHTML='🏆 Selamat <b>'+S.names[0]+'</b>, juara diamond hari ini dengan <b>'+S.dia[0]+' 💎</b>! Tapi kalian berdua sama-sama hebat! 🌟';}
+  else if(S.dia[1]>S.dia[0]){c1.classList.remove('hidden');
+    w.innerHTML='🏆 Selamat <b>'+S.names[1]+'</b>, juara diamond hari ini dengan <b>'+S.dia[1]+' 💎</b>! Tapi kalian berdua sama-sama hebat! 🌟';}
+  else{w.innerHTML='🤝 <b>Seimbang!</b> Kalian berdua sama-sama keren dengan <b>'+S.dia[0]+' 💎</b>! Kerja tim yang luar biasa! 💎';}}
+function attachFinal(){
+  $('#btnParty').onclick=()=>{sWin();
+    for(let k=0;k<3;k++)setTimeout(()=>confetti(Math.random()*window.innerWidth,window.innerHeight*0.15+Math.random()*220,34),k*350);};
+  $('#btnReset').onclick=()=>{
+    if(confirm('Ulangi petualangan dari awal? Semua diamond akan direset.'))location.reload();};}
+function attachStart(){$('#btnStart').onclick=()=>{
+  const n1=($('#inp1').value||'').trim()||'Siswa 1';
+  const n2=($('#inp2').value||'').trim()||'Siswa 2';
+  setNames(n1,n2);sWin();burstAt($('#btnStart'),36);
+  toast('Selamat datang, <b>'+n1+'</b> &amp; <b>'+n2+'</b>! Ayo kumpulkan diamond sebanyak-banyaknya! 💎');
+  goTo(1);};}
+
+/* ================= INIT ================= */
+function init(){
+  slides=$$('.slide');SLN=slides.length;
+  slides.forEach(s=>{s.innerHTML=tok(s.innerHTML);});
+  buildDots();attachNav();attachStart();
+  rain('#rain0');rain('#rain1');
+  initPizza();attachAper();attachMis();
+  drawMach();attachMach();drawDV();attachDV();
+  stBuild();attachSteps();attachDari();
+  renderLat();renderBoard();renderIdle(0);renderIdle(1);updateChooserUI();
+  renderExit();renderCool();attachCool();
+  attachTabs();attachFlip();buildEmos();attachFinal();
+  refreshSideCounts();
+  goTo(0);}
+init();
+</script>
+</body>
+</html>
